@@ -61,10 +61,6 @@
 
     security.polkit.enable = true;
 
-#    fonts.packages = with pkgs; [
-#      nerd-fonts.blex-mono #latin & nerd fonts
-#      sarasa-gothic #cjk
-#	];
 	fonts = {
       enableDefaultPackages = true;
       fontDir.enable = true;
@@ -153,8 +149,8 @@
       enable = true;
       settings = {
         yazi = {
-        # === Text === ..... still not working :(
-          opener = {
+        # === Text ===
+					opener = {
             edit = [{
 		      run = ''${pkgs.vim}/bin/vim "$@"'';
 			  desc = "Edit with Vim";

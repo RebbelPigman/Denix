@@ -116,6 +116,7 @@
 		  }
 		];
 		binds = {
+		  "Print".screenshot = {};
 		  "Mod+Return".spawn = lib.getExe pkgs.kitty;
 		  "Mod+D".spawn = lib.getExe pkgs.fuzzel;
 		  "Mod+Shift+D".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call launcher toggle";
@@ -143,6 +144,7 @@
 		  "Mod+4".focus-workspace = 4;
 		  "Mod+5".focus-workspace = 5;
 		  "Mod+Space".toggle-window-floating = {};
+		  "Mod+Alt+Space".switch-focus-between-floating-and-tiling = {};
 		  "Mod+Minus".set-column-width = "-20%";
 		  "Mod+Equal".set-column-width = "+20%";
 		  "Mod+Alt+V".set-column-width = "30%";

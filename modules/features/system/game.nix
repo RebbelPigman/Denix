@@ -1,9 +1,17 @@
 { self, inputs, ... }: {
   flake.nixosModules.game = { pkgs, ... }: {
     environment.systemPackages = with pkgs; [
-      vesktop prismlauncher 
+      vesktop prismlauncher
+	  (heroic.override {
+        extraPkgs = pkgs': with pkgs'; [
+          gamescope
+          gamemode
+        ];
+      })
     ];
     programs = {
+	  gamescope.enable = true;
+	  gamemode.enable = true;
       steam = {
         enable = true;
         remotePlay.openFirewall = true;

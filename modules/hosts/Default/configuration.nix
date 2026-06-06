@@ -1,15 +1,12 @@
 { self, inputs, ... }: {
 
-  flake.nixosModules.lenovusConfiguration = { pkgs, lib, ... }: {
+  flake.nixosModules.deafaultConfiguration = { pkgs, lib, ... }: {
     
 # system module imports
     imports = [
-      self.nixosModules.core # must have
-      self.nixosModules.lenovusHardware
-      self.nixosModules.myHomeManager
-      self.nixosModules.desk
-      self.nixosModules.niri
-      self.nixosModules.game
+      self.nixosModules.core # needed utilities to make system usable
+      self.nixosModules.defaultHardware # hardware configuration
+      self.nixosModules.myHomeManager # home manager
     ];
 
 # system specific configuration
@@ -28,22 +25,24 @@
    
     time.timeZone = "Africa/Johannesburg";
 
-    networking.hostName = "Lenovus";
+    networking.hostName = "default";
 
-    users.users.rebb= {
+    users.users.john= {
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" ];
     };
 
-    home-manager.users.rebb = self.homeModules.rebbModule;
+    home-manager.users.john = self.homeModules.johnModule;
   
-    system.stateVersion = "25.11";
+    system.stateVersion = "25.11"; # first nixos version
 
-# for Noctalia
+    # Bluetooth (noctalia)
 	hardware.bluetooth = {
       enable = true;
 	  powerOnBoot = true;
     };
+
+	# power management (noctalia)
     services = {
 	  power-profiles-daemon.enable = true;
 	  upower.enable = true;

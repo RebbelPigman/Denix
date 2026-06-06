@@ -22,6 +22,7 @@
       packages = with pkgs; [
 		brave neovim anki
 		dropbox obsidian google-chrome # non free
+		nemo-with-extensions
 	  ];
     };
 	gtk = {
@@ -33,7 +34,21 @@
 	  };
 	};
 
-#kitty module content
+#nemo module
+	xdg = {
+      desktopEntries.nemo = {
+        name = "Nemo";
+        exec = "${pkgs.nemo-with-extensions}/bin/nemo";
+      };
+	  mimeApps = {
+        enable = true;
+        defaultApplications = {
+            "inode/directory" = [ "nemo.desktop" ];
+            "application/x-gnome-saved-search" = [ "nemo.desktop" ];
+        };
+      };
+	};
+#kitty & fish module content +++ to be put in external file
     programs = {
  	  fish = {
         enable = true;
@@ -70,8 +85,8 @@
    		  include themes/noctalia.conf
           map control+shift+v paste_from_clipboard
           map control+shift+c copy_to_clipboard
-          map alt+j scroll_line_down 
-   		  map alt+k scroll_line_up 
+          map alt+j next_window
+   		  map alt+k previous_window
    		  map alt+t new_tab 
    		  map alt+q close_tab
    		  map alt+h previous_tab 
@@ -79,11 +94,6 @@
    		  map control+alt+h move_tab_backward
    		  map control+alt+l move_tab_forward
    		  map control+shift+t set_tab_title 
-		  map control+k neighboring_window up
-		  map control+j neighboring_window down
-		  map control+h neighboring_window left
-		  map control+l neighboring_window right
-   		  map alt+control+k move_window up
    		  map alt+control+j move_window down
    		  map alt+control+h move_window left
    		  map alt+control+l move_window right
