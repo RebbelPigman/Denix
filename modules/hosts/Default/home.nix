@@ -16,6 +16,5 @@
   flake.homeModules.johnModule = { pkgs, lib, ... }: {
 	# Enter main home manager setting here
     programs.bash.enable = true;
-    };
   };
 }

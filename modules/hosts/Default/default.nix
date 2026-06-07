@@ -1,8 +1,8 @@
 { self, inputs, ... }: {
 
-  flake.nixosConfigurations.Lenovus = inputs.nixpkgs.lib.nixosSystem {
+  flake.nixosConfigurations.Default = inputs.nixpkgs.lib.nixosSystem {
     modules = [
-      self.nixosModules.lenovusConfiguration
+      self.nixosModules.defaultConfiguration
 	];
   };
 
