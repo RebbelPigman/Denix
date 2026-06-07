@@ -61,6 +61,11 @@
 		shellAbbrs = {
 		  nixos-test = "nixos-rebuild test --sudo --flake ~/.nixos#Lenovus";
 		  nixos-switch = "nixos-rebuild switch --sudo --flake ~/.nixos#Lenovus";
+		  git-acp = {
+            expansion = "git add -A && git commit -m \"%\" && git push";
+            setCursor = true;
+            position = "anywhere";
+          };
 		};
         interactiveShellInit = ''
           set fish_greeting # Disable greeting
