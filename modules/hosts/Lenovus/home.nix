@@ -71,6 +71,9 @@
 		};
         interactiveShellInit = ''
           set fish_greeting # Disable greeting
+		  if status is-interactive && command -q fastfetch
+            fastfetch
+          end
         '';
         plugins = [
           { name = "grc"; src = lib.getExe' pkgs.fishPlugins.grc.src "grc"; }
