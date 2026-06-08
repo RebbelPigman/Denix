@@ -123,7 +123,10 @@
           "Mod+S".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call controlCenter toggle";
           "Mod+Alt+L".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call lockScreen lock";
 		  "Mod+B".spawn = "brave";
+		  "Mod+Alt+B".spawn = "chromium";
+		  "Mod+Ctrl+B".spawn = "google-chrome";
 		  "Mod+E".spawn-sh = "kitty yazi";
+		  "Mod+Alt+E".spawn = "nemo";
 		  "Mod+I".spawn = "obsidian";
 		  "Mod+Q".close-window = {};
 		  "Mod+Shift+Q".quit = {};
