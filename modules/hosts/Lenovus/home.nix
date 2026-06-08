@@ -57,6 +57,8 @@
 		  yz = "yazi";
 		  vi = "nvim";
 		  vim = "nvim";
+		  python = "cd ~/Python && nix-shell --run /"python/"";
+		  jupyterlab = "cd ~/Python && nix-shell --run /"jupyter lab/"";
 		};
 		shellAbbrs = {
 		  nixos-test = "nixos-rebuild test --sudo --flake ~/.nixos#Lenovus";
