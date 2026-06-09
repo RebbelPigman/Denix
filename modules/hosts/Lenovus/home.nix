@@ -97,16 +97,15 @@
           map control+shift+c copy_to_clipboard
           map alt+j next_window
    		  map alt+k previous_window
-   		  map alt+t new_tab 
-   		  map alt+q close_tab
    		  map alt+h previous_tab 
    		  map alt+l next_tab 
-   		  map control+alt+h move_tab_backward
-   		  map control+alt+l move_tab_forward
+   		  map alt+control+h move_tab_backward
+   		  map alt+control+l move_tab_forward
+   		  map alt+control+j move_window forward
+		  map alt+control+k move_window backward
    		  map control+shift+t set_tab_title 
-   		  map alt+control+j move_window down
-   		  map alt+control+h move_window left
-   		  map alt+control+l move_window right
+   		  map alt+t new_tab 
+   		  map alt+q close_tab
    		  map alt+v launch --location=split
 		  map alt+y launch yazi
 		  map alt+b launch lynx
