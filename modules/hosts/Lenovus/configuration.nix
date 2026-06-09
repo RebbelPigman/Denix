@@ -29,7 +29,6 @@
 	  kernelParams = [ "resume_offset=PUT_THE_NUMBER_HERE" ];
       initrd.systemd.enable = true;
     };
-    systemd.sleep.extraConfig = ''HibernateDelaySec=50min'';
 
     time.timeZone = "Africa/Johannesburg";  # Required for network scync
 
