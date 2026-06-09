@@ -101,8 +101,8 @@
    		  map alt+l next_tab 
    		  map alt+control+h move_tab_backward
    		  map alt+control+l move_tab_forward
-   		  map alt+control+j move_window forward
-		  map alt+control+k move_window backward
+   		  map alt+control+j move_window_forward
+		  map alt+control+k move_window_backward
    		  map control+shift+t set_tab_title 
    		  map alt+t new_tab 
    		  map alt+q close_tab
