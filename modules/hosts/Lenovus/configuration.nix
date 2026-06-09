@@ -55,7 +55,7 @@
     services = {
 	  power-profiles-daemon.enable = true;
 	  upower.enable = true;
-      logind.lidSwitch = "suspend-then-hibernate";
+      logind.settings.Login.HandleLidSwitch = "suspend-then-hibernate";
     };
   };
 }  
