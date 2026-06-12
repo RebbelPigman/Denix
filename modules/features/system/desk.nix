@@ -16,12 +16,22 @@
 	  qalculate-gtk
 	  libreoffice
 	  pdfarranger
-	  texstudio
 	  adw-gtk3
       nwg-look
 	  zathura
 	  rmpc
 	  vlc
+	  # To be moved
+	  texstudio
+	  (texliveBasic.withPackages (ps: with ps; [
+        amsmath
+        amssymb
+        mathtools
+        physics
+        bm
+        cancel
+        latexmk
+      ]))
     ];
 	
   };
