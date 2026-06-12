@@ -23,13 +23,15 @@
 	  vlc
 	  # To be moved
 	  texstudio
-	  (texliveBasic.withPackages (ps: with ps; [
-        amsmath
-        mathtools
-        physics
-        cancel
-        latexmk
-      ]))
+	  texliveFull
+#	  (texliveBasic.withPackages (ps: with ps; [
+#        amsmath
+#        mathtools
+#        physics
+#		enumitem
+#        cancel
+#        latexmk
+#      ]))
     ];
 	
   };
