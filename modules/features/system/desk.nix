@@ -25,10 +25,8 @@
 	  texstudio
 	  (texliveBasic.withPackages (ps: with ps; [
         amsmath
-        amssymb
         mathtools
         physics
-        bm
         cancel
         latexmk
       ]))
