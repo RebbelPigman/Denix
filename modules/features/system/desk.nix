@@ -22,8 +22,8 @@
 	  rmpc
 	  vlc
 	  # To be moved
-	  texstudio
-	  texliveFull
+#	  texstudio
+#	  texliveFull
 #	  (texliveBasic.withPackages (ps: with ps; [
 #        amsmath
 #        mathtools
