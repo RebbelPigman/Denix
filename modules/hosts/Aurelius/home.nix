@@ -1,7 +1,21 @@
 { self, inputs, lib, ... }: {
 
   flake.homeConfigurations.rebbAurelius = inputs.home-manager.lib.homeManagerConfiguration {
-    pkgs = import inputs.nixpkgs { system = "x86_64-linux"; };
+    pkgs = import inputs.nixpkgs-unstable {
+      system = "x86_64-linux";
+      config.allowUnfree = true;
+    };
+    extraSpecialArgs = {
+      inherit inputs;
+      pkgs-unstable = import inputs.nixpkgs-unstable {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
+      pkgs-stable = import inputs.nixpkgs {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
+    };
     modules = [
       self.homeModules.aureliusHome
       {
