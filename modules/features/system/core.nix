@@ -93,9 +93,11 @@
 	  brightnessctl
     # Nice to Have GUIs
   	  ungoogled-chromium
+      mpv
+      imv
     ];
 
-  # Seting Chromium and vim as defaults system wide
+  # Seting Chromium, vim, imv and mpv as defaults system wide
 	xdg.mime.enable = true;
 	xdg.mime.defaultApplications = {
       # === Web / Default ===
@@ -106,33 +108,36 @@
       "x-scheme-handler/unknown" = "chromium-browser.desktop";
 
       # === Images ===
-      "image/jpeg" = "chromium-browser.desktop";
-      "image/png" = "chromium-browser.desktop";
-      "image/gif" = "chromium-browser.desktop";
-      "image/webp" = "chromium-browser.desktop";
-      "image/svg+xml" = "chromium-browser.desktop";
-      "image/bmp" = "chromium-browser.desktop";
-      "image/tiff" = "chromium-browser.desktop";
-      "image/avif" = "chromium-browser.desktop";
-      "image/heic" = "chromium-browser.desktop";
+      "image/jpeg" = "imv.desktop";
+      "image/png" = "imv.desktop";
+      "image/gif" = "imv.desktop";
+      "image/webp" = "imv.desktop";
+      "image/svg+xml" = "imv.desktop";
+      "image/bmp" = "imv.desktop";
+      "image/tiff" = "imv.desktop";
+      "image/avif" = "imv.desktop";
+      "image/heic" = "imv.desktop";
+      "image/*" = "imv.desktop";
 
       # === Audio ===
-      "audio/mpeg" = "chromium-browser.desktop";
-      "audio/ogg" = "chromium-browser.desktop";
-      "audio/wav" = "chromium-browser.desktop";
-      "audio/aac" = "chromium-browser.desktop";
-      "audio/flac" = "chromium-browser.desktop";
-      "audio/mp4" = "chromium-browser.desktop";
-      "audio/webm" = "chromium-browser.desktop";
+      "audio/mpeg" = "mpv.desktop";
+      "audio/ogg" = "mpv.desktop";
+      "audio/wav" = "mpv.desktop";
+      "audio/aac" = "mpv.desktop";
+      "audio/flac" = "mpv.desktop";
+      "audio/mp4" = "mpv.desktop";
+      "audio/webm" = "mpv.desktop";
+      "audio/*" = "mpv.desktop";
 
       # === Video ===
-      "video/mp4" = "chromium-browser.desktop";
-      "video/webm" = "chromium-browser.desktop";
-      "video/ogg" = "chromium-browser.desktop";
-      "video/x-matroska" = "chromium-browser.desktop";   # .mkv
-      "video/quicktime" = "chromium-browser.desktop";   # .mov
-      "video/x-msvideo" = "chromium-browser.desktop";   # .avi
-      "video/mp2t" = "chromium-browser.desktop";        # .ts
+      "video/mp4" = "mpv.desktop";
+      "video/webm" = "mpv.desktop";
+      "video/ogg" = "mpv.desktop";
+      "video/x-matroska" = "mpv.desktop";   # .mkv
+      "video/quicktime" = "mpv.desktop";   # .mov
+      "video/x-msvideo" = "mpv.desktop";   # .avi
+      "video/mp2t" = "mpv.desktop";        # .ts
+      "video/*" = "mpv.desktop";
 
       # === Text ===
 	  "text/plain" = "vim.desktop";
