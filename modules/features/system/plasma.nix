@@ -23,6 +23,10 @@
         flavour = [ "mocha" ];
         accents = [ "mauve" ];
       })
+      # Also listed in nixosModules.karousel. Kept here so a missing
+      # untracked karousel.nix cannot drop the packages off PATH.
+      kdePackages.karousel
+      kwin-script-geometry-change
     ];
 
     # Any HM user on a host that imports this module gets the rice.
@@ -36,7 +40,7 @@
 
   flake.homeModules.plasma = { pkgs, config, ... }: {
     imports = [
-      inputs.plasma-manager.homeManagerModules.plasma-manager
+      inputs.plasma-manager.homeModules.plasma-manager
     ];
 
     programs.plasma = {
@@ -48,7 +52,10 @@
         theme = "Scratchy";
         colorScheme = "CatppuccinMocha";
         iconTheme = "Tela-circle-purple-dark";
-        windowDecorations.theme = "Breeze";
+        windowDecorations = {
+          library = "org.kde.breeze";
+          theme = "Breeze";
+        };
         wallpaper = "${config.home.homeDirectory}/.wallpaper";
       };
 
