@@ -3,7 +3,6 @@
   flake.homeConfigurations.rebb = inputs.home-manager.lib.homeManagerConfiguration {
     pkgs = import inputs.nixpkgs-unstable {
       system = "x86_64-linux";
-      config.allowUnfree = true;
     };
     extraSpecialArgs = {
       inherit inputs;
@@ -11,121 +10,69 @@
         system = "x86_64-linux";
         config.allowUnfree = true;
       };
-      pkgs-stable = import inputs.nixpkgs {
-        system = "x86_64-linux";
-        config.allowUnfree = true;
-      };
     };
     modules = [
       self.homeModules.rebbModule
-#      self.homeModules.kitty
-#      self.homeModules.nemo
       {
         home = {
-		  username = "rebb";
+          username = "rebb";
           homeDirectory = "/home/rebb";
-		};
+        };
       }
     ];
   };
 
-  flake.homeModules.rebbModule = { pkgs, lib, ... }: {
+  flake.homeModules.rebbModule = { pkgs, pkgs-unstable, lib, ... }: {
+    imports = [ self.homeModules.catfish ];
+
     programs.bash.enable = true;
     home = {
       stateVersion = "26.05";
-      packages = with pkgs; [
-		brave neovim anki
-		dropbox obsidian google-chrome # non free
-		nemo-with-extensions
-	  ];
+      packages = (with pkgs; [
+        nemo-with-extensions
+      ]) ++ (with pkgs-unstable; [
+        neovim
+        anki
+        google-chrome
+        obsidian
+        dropbox
+        brave
+      ]);
     };
-	gtk = {
-      enable = true;
-#      colorScheme = "dark";
-	  iconTheme = {
-		name = "Tela-Circle";
-		package = pkgs.tela-circle-icon-theme;		
-	  };
-	};
 
-#nemo module
-	xdg = {
+    gtk = {
+      enable = true;
+      # colorScheme = "dark";
+      iconTheme = {
+        name = "Tela-Circle";
+        package = pkgs.tela-circle-icon-theme;
+      };
+    };
+
+    xdg = {
       desktopEntries.nemo = {
         name = "Nemo";
         exec = "${pkgs.nemo-with-extensions}/bin/nemo";
       };
-	  mimeApps = {
+      mimeApps = {
         enable = true;
         defaultApplications = {
-            "inode/directory" = [ "nemo.desktop" ];
-            "application/x-gnome-saved-search" = [ "nemo.desktop" ];
+          "inode/directory" = [ "nemo.desktop" ];
+          "application/x-gnome-saved-search" = [ "nemo.desktop" ];
         };
       };
-	};
-#kitty & fish module content +++ to be put in external file
-    programs = {
- 	  fish = {
-        enable = true;
-		shellAliases = {
-		  ff = "fastfetch";
-		  yz = "yazi";
-		  vi = "nvim";
-		  vim = "nvim";
-		  #python = "cd ~/Python && nix-shell -p python --run /"python/"";
-		  #jupyterlab = "cd ~/Python && nix-shell -p jupyter --run /"jupyter lab/"";
-		};
-		shellAbbrs = {
-		  nixos-test = "nixos-rebuild test --sudo --flake ~/.nixos#Lenovus";
-		  nixos-switch = "nixos-rebuild switch --sudo --flake ~/.nixos#Lenovus";
-		  git-acp = {
-            expansion = "git add -A && git commit -m \"%\" && git push";
-            setCursor = true;
-            position = "anywhere";
-          };
-		};
-        interactiveShellInit = ''
-          set fish_greeting # Disable greeting
-		  if status is-interactive && command -q fastfetch
-            fastfetch
-          end
-        '';
-        plugins = [
-          { name = "grc"; src = lib.getExe' pkgs.fishPlugins.grc.src "grc"; }
-        ];
-      };
-      kitty = {
-        enable = true;
- 	    settings = {
- 		  font_family = "BlexMono Nerd Font Mono";
- 		  bold_font = "auto";
-          italic_font = "auto";
-          clear_all_shortcuts = "yes";
-          confirm_os_window_close = 0;
-          shell_integration = "enabled";
- 		  shell = "fish";
-          enabled_layouts = "tall";
-        };
-   	    extraConfig = ''
-   		  include themes/noctalia.conf
-          map control+shift+v paste_from_clipboard
-          map control+shift+c copy_to_clipboard
-          map alt+j next_window
-   		  map alt+k previous_window
-   		  map alt+h previous_tab 
-   		  map alt+l next_tab 
-   		  map alt+control+h move_tab_backward
-   		  map alt+control+l move_tab_forward
-   		  map alt+control+j move_window_forward
-		  map alt+control+k move_window_backward
-   		  map control+shift+t set_tab_title 
-   		  map alt+t new_tab 
-   		  map alt+q close_tab
-   		  map alt+v launch --location=split
-		  map alt+y launch yazi
-		  map alt+b launch lynx
-		  map alt+return launch nvim
-        '';
-	  };
+    };
+
+    programs.fish = {
+      shellAbbrs.git-acp.position = "anywhere";
+      interactiveShellInit = ''
+        if status is-interactive && command -q fastfetch
+          fastfetch
+        end
+      '';
+      plugins = [
+        { name = "grc"; src = pkgs.fishPlugins.grc.src; }
+      ];
     };
   };
 }

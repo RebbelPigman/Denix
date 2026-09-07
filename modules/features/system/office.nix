@@ -11,27 +11,24 @@
       hunspellDicts.en-us
       pdfarranger
       texstudio
-      (texlive.combine {
-        inherit (texlive)
-          scheme-medium
-          latexmk
-          amsmath
-          mathtools
-          physics
-          enumitem
-          cancel
-          collection-fontsrecommended
-          biber
-          biblatex
-          csquotes
-          hyperref
-          geometry
-          xcolor
-          listings
-          booktabs
-          siunitx
-          ;
-      })
+      (texliveMedium.withPackages (ps: with ps; [
+        latexmk
+        amsmath
+        mathtools
+        physics
+        enumitem
+        cancel
+        collection-fontsrecommended
+        biber
+        biblatex
+        csquotes
+        hyperref
+        geometry
+        xcolor
+        listings
+        booktabs
+        siunitx
+      ]))
       ghostscript
       poppler-utils
       krita

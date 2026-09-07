@@ -9,6 +9,7 @@
       zathura
       rmpc
       vlc
+      qbittorrent
       mpv
       imv
       pavucontrol
