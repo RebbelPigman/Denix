@@ -1,15 +1,11 @@
 { self, inputs, lib, ... }: {
 
   flake.homeConfigurations.rebbAurelius = inputs.home-manager.lib.homeManagerConfiguration {
-    pkgs = import inputs.nixpkgs {
+    pkgs = import inputs.nixpkgs-unstable {
       system = "x86_64-linux";
     };
     extraSpecialArgs = {
       inherit inputs;
-      pkgs-unstable = import inputs.nixpkgs {
-        system = "x86_64-linux";
-        config.allowUnfree = true;
-      };
     };
     modules = [
       self.homeModules.aureliusHome
@@ -22,7 +18,13 @@
     ];
   };
 
-  flake.homeModules.aureliusHome = { pkgs, pkgs-unstable, lib, ... }: {
+  flake.homeModules.aureliusHome = { pkgs, inputs, lib, ... }:
+  let
+    pkgs-unstable = import inputs.nixpkgs-unstable {
+      inherit (pkgs) system;
+      config.allowUnfree = true;
+    };
+  in {
     imports = [
       self.homeModules.catfish
       self.homeModules.tela

@@ -1,15 +1,11 @@
 { self, inputs, lib, ... }: {
 
   flake.homeConfigurations.john = inputs.home-manager.lib.homeManagerConfiguration {
-    pkgs = import inputs.nixpkgs {
+    pkgs = import inputs.nixpkgs-unstable {
       system = "x86_64-linux";
     };
     extraSpecialArgs = {
       inherit inputs;
-      pkgs-unstable = import inputs.nixpkgs {
-        system = "x86_64-linux";
-        config.allowUnfree = true;
-      };
     };
     modules = [
       self.homeModules.johnModule # required

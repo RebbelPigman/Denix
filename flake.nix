@@ -2,9 +2,9 @@
   description = "Nix flake";
 
   inputs = {
-    # NixOS + system packages
+    # NixOS + system packages (desk, game, niri wrapper, …)
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
-    # Home Manager packages + HM modules
+    # Home Manager user packages (home.packages, programs.*)
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -14,11 +14,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Must match nixpkgs (nixos-26.05). Bare github:nix-community/home-manager
-    # tracks master, which is already 26.11 and pulls a second nixpkgs.
+    # Module API stays on the 26.05 release; package set is unstable.
+    # Bare github:nix-community/home-manager tracks master (26.11+).
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     plasma-manager = {
