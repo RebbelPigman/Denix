@@ -7,7 +7,7 @@
       self.nixosModules.core # must have
       self.nixosModules.aureliusHardware
       self.nixosModules.myHomeManager
-      self.nixosModules.desk
+      self.nixosModules.office
       self.nixosModules.game
     ];
 
@@ -42,7 +42,6 @@
     };
 
     services = {
-      desktopManager.plasma6.enable = true;
       printing.enable = true;
       pulseaudio.enable = false;
       power-profiles-daemon.enable = true;
