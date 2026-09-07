@@ -8,8 +8,9 @@
 
     environment.systemPackages = [ pkgs.tela-circle-icon-theme ];
 
-    # Standalone homeConfigurations also import homeModules.tela.
-    home-manager.sharedModules = [ self.homeModules.tela ];
+    # Do not also set home-manager.sharedModules to homeModules.tela.
+    # aureliusHome / rebbModule already import it; gtk.iconTheme.package
+    # is unique and a second attach fails the rebuild.
   };
   
   perSystem = { pkgs, lib, ... }: {
