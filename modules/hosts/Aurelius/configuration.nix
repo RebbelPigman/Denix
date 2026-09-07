@@ -7,7 +7,8 @@
       self.nixosModules.core # must have
       self.nixosModules.aureliusHardware
       self.nixosModules.myHomeManager
-      self.nixosModules.office
+      self.nixosModules.desk
+      self.nixosModules.niri
       self.nixosModules.game
     ];
 

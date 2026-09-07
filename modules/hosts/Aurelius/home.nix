@@ -25,8 +25,6 @@
   flake.homeModules.aureliusHome = { pkgs, pkgs-unstable, lib, ... }: {
     imports = [
       self.homeModules.catfish
-      self.homeModules.plasma
-      self.homeModules.karousel
     ];
 
     programs.bash.enable = true;
