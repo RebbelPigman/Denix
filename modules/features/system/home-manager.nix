@@ -6,14 +6,14 @@
     ];
 
     home-manager = {
-      # false: HM evaluates its own pkgs from nixpkgs-unstable
-      # true would pin every home.packages / programs.* package to NixOS stable
+      # false: HM evaluates its own pkgs from the home-manager input's nixpkgs
+      # true would pin every home.packages / programs.* package to the NixOS pkgs set
       useGlobalPkgs = false;
       useUserPackages = true;
       backupFileExtension = "backup";
       extraSpecialArgs = {
         inherit inputs;
-        pkgs-unstable = import inputs.nixpkgs-unstable {
+        pkgs-unstable = import inputs.nixpkgs {
           inherit (pkgs) system;
           config.allowUnfree = true;
         };

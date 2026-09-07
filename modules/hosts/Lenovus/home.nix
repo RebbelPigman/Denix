@@ -1,12 +1,12 @@
 { self, inputs, lib, ... }: {
 
   flake.homeConfigurations.rebb = inputs.home-manager.lib.homeManagerConfiguration {
-    pkgs = import inputs.nixpkgs-unstable {
+    pkgs = import inputs.nixpkgs {
       system = "x86_64-linux";
     };
     extraSpecialArgs = {
       inherit inputs;
-      pkgs-unstable = import inputs.nixpkgs-unstable {
+      pkgs-unstable = import inputs.nixpkgs {
         system = "x86_64-linux";
         config.allowUnfree = true;
       };
@@ -28,16 +28,14 @@
     programs.bash.enable = true;
     home = {
       stateVersion = "26.05";
-      packages = (with pkgs; [
-        nemo-with-extensions
-      ]) ++ (with pkgs-unstable; [
+      packages = with pkgs-unstable; [
         neovim
         anki
         google-chrome
         obsidian
         dropbox
         brave
-      ]);
+      ];
     };
 
     gtk = {
@@ -46,20 +44,6 @@
       iconTheme = {
         name = "Tela-Circle";
         package = pkgs.tela-circle-icon-theme;
-      };
-    };
-
-    xdg = {
-      desktopEntries.nemo = {
-        name = "Nemo";
-        exec = "${pkgs.nemo-with-extensions}/bin/nemo";
-      };
-      mimeApps = {
-        enable = true;
-        defaultApplications = {
-          "inode/directory" = [ "nemo.desktop" ];
-          "application/x-gnome-saved-search" = [ "nemo.desktop" ];
-        };
       };
     };
 
