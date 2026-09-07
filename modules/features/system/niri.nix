@@ -5,6 +5,11 @@
       enable = true;
 	  package = self.packages.${pkgs.stdenv.hostPlatform.system}.myNiri;
     };
+
+    environment.systemPackages = [ pkgs.tela-circle-icon-theme ];
+
+    # Standalone homeConfigurations also import homeModules.tela.
+    home-manager.sharedModules = [ self.homeModules.tela ];
   };
   
   perSystem = { pkgs, lib, ... }: {
@@ -14,10 +19,25 @@
 	    environment = {
           QT_QPA_PLATFORMTHEME = "qt6ct";
           QT_QPA_PLATFORM = "wayland;xcb";
+          QT_SCALE_FACTOR = "1";
+          QT_AUTO_SCREEN_SCALE_FACTOR = "0";
+          GDK_SCALE = "1";
+          GDK_DPI_SCALE = "1";
           GTK_THEME = "adw-gtk3-dark";
+          GTK_ICON_THEME = "Tela-circle";
           GTK_USE_PORTAL = "1";
       # QT_STYLE_OVERRIDE = "kvantum";
-		};	
+		};
+		# Unset scale lets niri guess from physical size (often 1.25–2 on laptops).
+		# Explicit 1.0 on the usual connectors; unused names are ignored.
+		outputs = {
+		  "eDP-1".scale = 1.0;
+		  "HDMI-A-1".scale = 1.0;
+		  "HDMI-A-2".scale = 1.0;
+		  "DP-1".scale = 1.0;
+		  "DP-2".scale = 1.0;
+		  "DP-3".scale = 1.0;
+		};
 		spawn-at-startup = [
           (lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.myNoctalia)
 		  "dropbox"

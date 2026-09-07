@@ -25,6 +25,7 @@
   flake.homeModules.aureliusHome = { pkgs, pkgs-unstable, lib, ... }: {
     imports = [
       self.homeModules.catfish
+      self.homeModules.tela
     ];
 
     programs.bash.enable = true;

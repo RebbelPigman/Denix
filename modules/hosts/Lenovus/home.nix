@@ -23,7 +23,10 @@
   };
 
   flake.homeModules.rebbModule = { pkgs, pkgs-unstable, lib, ... }: {
-    imports = [ self.homeModules.catfish ];
+    imports = [
+      self.homeModules.catfish
+      self.homeModules.tela
+    ];
 
     programs.bash.enable = true;
     home = {
@@ -36,15 +39,6 @@
         dropbox
         brave
       ];
-    };
-
-    gtk = {
-      enable = true;
-      # colorScheme = "dark";
-      iconTheme = {
-        name = "Tela-Circle";
-        package = pkgs.tela-circle-icon-theme;
-      };
     };
 
     programs.fish = {

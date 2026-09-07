@@ -12,7 +12,7 @@
       "capsuleColorKey": "none",
       "widgetSpacing": 6,
       "contentPadding": 0,
-      "fontScale": 1.1,
+      "fontScale": 1.0,
       "enableExclusionZoneInset": false,
       "backgroundOpacity": 0.93,
       "useSeparateOpacity": false,
