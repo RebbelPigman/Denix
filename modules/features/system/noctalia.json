@@ -12,7 +12,7 @@
       "capsuleColorKey": "none",
       "widgetSpacing": 6,
       "contentPadding": 0,
-      "fontScale": 1.0,
+      "fontScale": 1,
       "enableExclusionZoneInset": false,
       "backgroundOpacity": 0.93,
       "useSeparateOpacity": false,
@@ -110,15 +110,19 @@
             "pinned": []
           },
           {
+            "category": "utility",
             "defaultSettings": {
-              "autoStartBreaks": false,
-              "autoStartWork": false,
-              "longBreakDuration": 15,
-              "sessionsBeforeLongBreak": 4,
-              "shortBreakDuration": 5,
-              "workDuration": 25
+              "cliCommand": "",
+              "displayMode": "icon_and_status",
+              "dropboxFolder": "",
+              "hideWhenIdle": false,
+              "notifyOnChange": false,
+              "pollBusySeconds": 3,
+              "pollIdleSeconds": 8,
+              "showRecent": true
             },
-            "id": "plugin:pomodoro"
+            "icon": "cloud",
+            "id": "plugin:dropbox-status-v4"
           },
           {
             "hideWhenZero": false,
@@ -737,7 +741,7 @@
     "openedPanel": "",
     "lockScreenActive": false,
     "wallpapers": {
-      "eDP-1": "/home/rebb/Pictures/Wallpapers/flowers-14.jpg"
+      "eDP-1": "/home/rebb/Pictures/Wallpapers/blue-flowers.jpg"
     },
     "desktopWidgetsEditMode": false,
     "display": {
@@ -749,8 +753,8 @@
         "height": 1080,
         "x": 0,
         "y": 0,
-        "physical_width": 340,
-        "physical_height": 190,
+        "physical_width": 310,
+        "physical_height": 170,
         "refresh_rate": 60008,
         "vrr_supported": false,
         "vrr_enabled": false,
@@ -758,7 +762,7 @@
       }
     },
     "notificationsState": {
-      "lastSeenTs": 1780334076000
+      "lastSeenTs": 1788813727000
     },
     "changelogState": {
       "lastSeenVersion": "v4.7.6"
