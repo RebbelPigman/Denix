@@ -89,24 +89,18 @@
 		gestures.hot-corners.top-right = {};
 
 		workspaces = {
-#		  "¹󰄛" = {};
-#		  "²" = {};
-#		  "³󱌧" = {};
-#		  "⁴" = {};
-#		  "⁵" = {};
-#		  "⁶󰭟" = {};
+#		  "󰄛" = {};
+#		  "" = {};
+#		  "󱌧" = {};
+#		  "" = {};
+#		  "" = {};
+#		  "󰭟" = {};
 		  "1-Game" = {};
 		  "2-Web" = {};
-		  "3-Term" = {};
-		  "4-Work" = {};
+		  "3-Work" = {};
+		  "4-Term" = {};
 		  "5-Other" = {};
 		  "6-Stash" = {};
-#		  "01-Term" = { name = "󰄛"; };
-#		  "02-Web" = { name = ""; };
-#		  "03-Game" = { name = "󱌧"; };
-#		  "04-Work" = { name = ""; };
-#		  "05-Other" = { name = ""; };
-#		  "06-Stash" = { name = "󰭟"; };
 		};
 
 		window-rules = [ 
@@ -132,7 +126,7 @@
 		  {
 		    matches = [ { app-id = "^obsidian$"; } ];
 			open-maximized-to-edges = true;
-			open-on-workspace = "4-Work";
+			open-on-workspace = "3-Work";
 			opacity = 0.90 ;
 		  }
 		];
