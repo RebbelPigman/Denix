@@ -69,7 +69,7 @@
 #		  empty-workspace-above-first = {};
 		  always-center-single-column = {};
 		  center-focused-column = "on-overflow";
-		  default-column-width.proportion = 0.7;
+		  default-column-width.proportion = 0.5;
 		  focus-ring = {
 		    width = 3;
 			inactive-color = "#1e1e2e";
@@ -109,7 +109,11 @@
 			clip-to-geometry = true;
           }
 	      {
-            matches = [ { app-id = "^kitty$"; } ];
+            matches = [ 
+			  { app-id = "^kitty$"; }
+			  { app-id = "^nemo$"; }
+			  { app-id = "^anki$"; }
+			];
             open-floating = true;
 			opacity = 0.90;
             default-column-width.proportion = 0.60;
