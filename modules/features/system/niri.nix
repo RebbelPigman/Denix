@@ -67,6 +67,7 @@
 
 		layout = {
 #		  empty-workspace-above-first = {};
+		  background-color = "#181825";
 		  always-center-single-column = {};
 		  center-focused-column = "on-overflow";
 		  default-column-width.proportion = 0.5;
@@ -85,7 +86,7 @@
 
 		hotkey-overlay.skip-at-startup = {};
 		prefer-no-csd = {};
-		animations.slowdown = 0.5;
+		animations.slowdown = 0.7;
 		gestures.hot-corners.top-right = {};
 
 		workspaces = {
@@ -100,7 +101,6 @@
 		  "3-Work" = {};
 		  "4-Term" = {};
 		  "5-Other" = {};
-		  "6-Stash" = {};
 		};
 
 		window-rules = [ 
@@ -108,17 +108,37 @@
   		    geometry-corner-radius = 12;
 			clip-to-geometry = true;
           }
+	        # floating
+	      {
+            matches = [ 
+			  { app-id = "^mpv$"; }
+			  { app-id = "^imv$"; }
+			  { app-id = "^anki$"; }
+			];
+            open-floating = true;
+          } 
+		    # wide
+	      {
+            matches = [ 
+			  { app-id = "^vlc$"; }
+			];
+            default-column-width.proportion = 0.80;
+          } 
+		    # transparent floating
 	      {
             matches = [ 
 			  { app-id = "^kitty$"; }
 			  { app-id = "^nemo$"; }
 			  { app-id = "^anki$"; }
+			  { app-id = "^qalculate-gtk$"; }
 			];
             open-floating = true;
 			opacity = 0.90;
             default-column-width.proportion = 0.60;
             default-window-height.proportion = 0.80;
+			background-effect.xray = true;
           } 
+		    # browser
 		  {
 		    matches = [ 
 			  { app-id = "^brave-browser$"; }
@@ -127,16 +147,30 @@
             default-column-width.proportion = 0.80;
 			open-on-workspace = "2-Web";
 		  }
+		    # work
 		  {
-		    matches = [ { app-id = "^obsidian$"; } ];
+		    matches = [ 
+			  { app-id = "^md.Obsidian$"; } 
+			  { title = "^Grok$"; } 
+			];
 			open-maximized-to-edges = true;
 			open-on-workspace = "3-Work";
 			opacity = 0.90 ;
+		  }
+		    # background
+		  {
+		    matches = [
+			  { app-id = "^steam$"; }
+			  { app-id = "^vesktop$"; }
+			];
+            default-column-width.proportion = 0.70;
+			open-on-workspace = "5-Other";
 		  }
 		];
 		binds = {
 		  "Print".screenshot = {};
 		  "Mod+Return".spawn = lib.getExe pkgs.kitty;
+		  "Mod+Alt+Return".spawn = "qalculate-gtk";
 		  "Mod+D".spawn = lib.getExe pkgs.fuzzel;
 		  "Mod+Shift+D".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call launcher toggle";
           "Mod+S".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call controlCenter toggle";
