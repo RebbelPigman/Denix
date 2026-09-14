@@ -36,7 +36,8 @@
 
     users.users.rebb= {
       isNormalUser = true;
-      extraGroups = [ "wheel" "networkmanager" ]; 
+      extraGroups = [ "wheel" "networkmanager" ];
+      linger = true;
     };  # wheel for sudo usage networkmanager for network manager
 
     home-manager.users.rebb = self.homeModules.rebbModule;

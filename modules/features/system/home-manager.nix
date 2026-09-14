@@ -11,6 +11,8 @@
       useGlobalPkgs = false;
       useUserPackages = true;
       backupFileExtension = "backup";
+      # Replace an existing *.backup instead of failing activation
+      overwriteBackup = true;
       extraSpecialArgs = {
         inherit inputs;
       };

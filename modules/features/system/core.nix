@@ -57,7 +57,16 @@
 
     nixpkgs.config.allowUnfree = true;
 
-    nix.settings.experimental-features = [ "nix-command" "flakes"];
+    nix.settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      # Hermes Agent flake has no cache.nixos.org hits; CI pushes to this public cache.
+      extra-substituters = [ "https://hermes-agent.cachix.org" ];
+      extra-trusted-public-keys = [
+        "hermes-agent.cachix.org-1:jN3pjR50Mxi4SESKC/FIMNM6/LCosvPk2VUwzVvebzU="
+      ];
+      connect-timeout = 30;
+      stalled-download-timeout = 300;
+    };
 
     security.polkit.enable = true;
 
