@@ -124,7 +124,7 @@ flake.homeModules.rebbModule = { ... }: {
   imports = [
     self.homeModules.catfish
     self.homeModules.tela
-    self.homeModules.hermes          # Lenovus only today
+    self.homeModules.hermes
   ];
   # host-only packages / overlays below
 };
@@ -293,7 +293,7 @@ Hermes Agent + xAI proxy + Open WebUI as user systemd services.
 
 The **NixOS** user must set `users.users.<name>.linger = true`. Home Manager cannot enable linger; without it the units die at logout.
 
-Imported from `rebbModule` (Lenovus) only. Not on Aurelius.
+Imported from `rebbModule` (Lenovus) and `aureliusHome` (Aurelius).
 
 After the first switch, as that user:
 
@@ -312,7 +312,7 @@ See system `karousel` above. Plasma-only.
 | Host | System imports | Home imports | Notes |
 | --- | --- | --- | --- |
 | **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
-| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game | catfish, tela | systemd-boot, user `rebb` **without** linger, pipewire, printing. Home attr `aureliusHome` / `rebbAurelius` |
+| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes | systemd-boot, user `rebb` with linger, pipewire, printing. Home attr `aureliusHome` / `rebbAurelius` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
 Neither live host imports `office` / `plasma` / `karousel`.
@@ -389,7 +389,7 @@ If two modules set the same unique option (`gtk.iconTheme.package`, a single des
 - **Default hardware** is a stub. Generate and wrap it before using that host.
 - **Lenovus resume.** `boot.kernelParams` still has `resume_offset=PUT_THE_NUMBER_HERE`. Hibernate will not work until that offset is filled in.
 - **Plasma vs niri.** Plasma/karousel home modules stay off niri hosts. `tela` stays off plasma hosts (or at least off `sharedModules`).
-- **Hermes linger.** Only Lenovus sets `users.users.rebb.linger = true`. Copying `homeModules.hermes` onto Aurelius without linger will start units that vanish after logout.
+- **Hermes linger.** Lenovus and Aurelius set `users.users.rebb.linger = true`. A host that imports `homeModules.hermes` without linger will start units that vanish after logout.
 - **Evaluation sees git.** Untracked feature files are invisible to `self.nixosModules` / `self.homeModules`.
 
 ---
