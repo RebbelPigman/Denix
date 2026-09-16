@@ -66,7 +66,7 @@
 		};
 
 		layout = {
-#		  empty-workspace-above-first = {};
+		  empty-workspace-above-first = {};
 		  background-color = "#181825";
 		  always-center-single-column = {};
 		  center-focused-column = "on-overflow";
@@ -96,11 +96,10 @@
 #		  "" = {};
 #		  "" = {};
 #		  "󰭟" = {};
-		  "1-Game" = {};
-		  "2-Web" = {};
-		  "3-Work" = {};
-		  "4-Term" = {};
-		  "5-Other" = {};
+		  "Browser" = {};
+		  "Desk" = {};
+		  "Drawr" = {};
+		  "Side" = {};
 		};
 
 		window-rules = [ 
@@ -117,18 +116,18 @@
 			];
             open-floating = true;
           } 
-		    # wide
+		    # transparent 
 	      {
             matches = [ 
-			  { app-id = "^vlc$"; }
+			  { app-id = "^nemo$"; }
+			  { app-id = "^org.kde.kate$"; }
 			];
-            default-column-width.proportion = 0.80;
+			opacity = 0.90;
           } 
 		    # transparent floating
 	      {
             matches = [ 
 			  { app-id = "^kitty$"; }
-			  { app-id = "^nemo$"; }
 			  { app-id = "^anki$"; }
 			  { app-id = "^qalculate-gtk$"; }
 			];
@@ -138,6 +137,13 @@
             default-window-height.proportion = 0.80;
 			background-effect.xray = true;
           } 
+		    # wide
+	      {
+            matches = [ 
+			  { app-id = "^vlc$"; }
+			];
+            default-column-width.proportion = 0.80;
+          } 
 		    # browser
 		  {
 		    matches = [ 
@@ -145,31 +151,42 @@
 			  { app-id = "^google-chrome$"; }
 			];
             default-column-width.proportion = 0.80;
-			open-on-workspace = "2-Web";
+			open-on-workspace = "Browser";
 		  }
-		    # work
+		    # desk
 		  {
 		    matches = [ 
 			  { app-id = "^md.Obsidian$"; } 
-			  { title = "^Grok$"; } 
+			  { app-id = "^chromium-browser$"; } 
 			];
 			open-maximized-to-edges = true;
-			open-on-workspace = "3-Work";
+			open-on-workspace = "Desk";
 			opacity = 0.90 ;
 		  }
-		    # background
+		    # drawr
+		  {
+		    matches = [ 
+			  { app-id = "^kitty-drawr$"; } 
+			];
+			open-floating = false;
+			default-column-width.proportion = 0.80;
+			open-on-workspace = "Drawr";
+			opacity = 0.90 ;
+		  }
+		    # side
 		  {
 		    matches = [
 			  { app-id = "^steam$"; }
 			  { app-id = "^vesktop$"; }
 			];
             default-column-width.proportion = 0.70;
-			open-on-workspace = "5-Other";
+			open-on-workspace = "Side";
 		  }
 		];
 		binds = {
 		  "Print".screenshot = {};
 		  "Mod+Return".spawn = lib.getExe pkgs.kitty;
+		  "Mod+Shift+Return".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec ${lib.getExe pkgs.kitty} --class kitty-drawr'';
 		  "Mod+Alt+Return".spawn = "qalculate-gtk";
 		  "Mod+D".spawn = lib.getExe pkgs.fuzzel;
 		  "Mod+Shift+D".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call launcher toggle";
@@ -178,8 +195,19 @@
 		  "Mod+B".spawn = "brave";
 		  "Mod+Alt+B".spawn = "chromium";
 		  "Mod+Ctrl+B".spawn = "google-chrome";
-		  "Mod+E".spawn-sh = "kitty yazi";
-		  "Mod+Alt+E".spawn = "nemo";
+		  "Mod+F1".spawn-sh = "kitty python";
+		  "Mod+F2".spawn-sh = "kitty hermes";
+		  "Mod+F3".spawn-sh = "kitty yazi";
+		  "Mod+F4".spawn-sh = "kitty ";
+		  "Mod+F5".spawn-sh = "kitty ";
+		  "Mod+F6".spawn-sh = "kitty ";
+		  "Mod+F7".spawn-sh = "kitty ";
+		  "Mod+F8".spawn-sh = "kitty ";
+		  "Mod+F9".spawn-sh = "kitty ";
+		  "Mod+F10".spawn-sh = "kitty htop";
+		  "Mod+F11".spawn-sh = "kitty atop";
+		  "Mod+F12".spawn-sh = "kitty btop";
+		  "Mod+E".spawn = "nemo";
 		  "Mod+I".spawn = "obsidian";
 		  "Mod+Q".close-window = {};
 		  "Mod+Shift+Q".quit = {};
@@ -199,6 +227,9 @@
 		  "Mod+3".focus-workspace = 3;
 		  "Mod+4".focus-workspace = 4;
 		  "Mod+5".focus-workspace = 5;
+		  "Mod+6".focus-workspace = 6;
+		  "Mod+7".focus-workspace = 7;
+		  "Mod+8".focus-workspace = 8;
 		  "Mod+Space".toggle-window-floating = {};
 		  "Mod+Alt+Space".switch-focus-between-floating-and-tiling = {};
 		  "Mod+Minus".set-column-width = "-20%";

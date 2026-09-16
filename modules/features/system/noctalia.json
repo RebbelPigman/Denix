@@ -40,9 +40,9 @@
             "hideUnoccupied": true,
             "iconScale": 0.8,
             "id": "Workspace",
-            "labelMode": "name",
+            "labelMode": "none",
             "occupiedColor": "primary",
-            "pillSize": 0.6000000000000001,
+            "pillSize": 0.5,
             "showApplications": false,
             "showApplicationsHover": false,
             "showBadge": true,
@@ -582,8 +582,10 @@
       "enabled": true,
       "enableMarkdown": false,
       "density": "default",
-      "monitors": [],
-      "location": "top",
+      "monitors": [
+        "eDP-1"
+      ],
+      "location": "bottom_right",
       "overlayLayer": true,
       "backgroundOpacity": 1,
       "respectExpireTimeout": false,
@@ -741,7 +743,7 @@
     "openedPanel": "",
     "lockScreenActive": false,
     "wallpapers": {
-      "eDP-1": "/home/rebb/Pictures/Wallpapers/blue-flowers.jpg"
+      "eDP-1": "/home/rebb/Pictures/Wallpapers/jupiter.png"
     },
     "desktopWidgetsEditMode": false,
     "display": {
@@ -762,7 +764,7 @@
       }
     },
     "notificationsState": {
-      "lastSeenTs": 1788813727000
+      "lastSeenTs": 1789546985000
     },
     "changelogState": {
       "lastSeenVersion": "v4.7.6"
