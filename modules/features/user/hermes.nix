@@ -1,6 +1,6 @@
 { self, inputs, ... }: {
   # Hermes Agent + SuperGrok OAuth + Open WebUI as user services.
-  # Import once from a host home module:
+  # Import once from a host home module (rebbModule / aureliusHome):
   #   imports = [ self.homeModules.catfish self.homeModules.tela self.homeModules.hermes ];
   # Do not also add this to home-manager.sharedModules.
   #

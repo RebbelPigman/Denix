@@ -28,6 +28,7 @@
     imports = [
       self.homeModules.catfish
       self.homeModules.tela
+      self.homeModules.hermes
     ];
 
     programs.bash.enable = true;

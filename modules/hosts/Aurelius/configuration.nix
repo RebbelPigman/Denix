@@ -31,6 +31,7 @@
       isNormalUser = true;
       description = "rebb";
       extraGroups = [ "wheel" "networkmanager" ];
+      linger = true;
     };
 
     home-manager.users.rebb = self.homeModules.aureliusHome;
