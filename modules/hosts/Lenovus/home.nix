@@ -29,6 +29,7 @@
       self.homeModules.catfish
       self.homeModules.tela
       self.homeModules.hermes
+      self.homeModules.jupyter
     ];
 
     programs.bash.enable = true;
