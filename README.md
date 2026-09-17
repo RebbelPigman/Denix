@@ -65,6 +65,7 @@ modules/
       catfish.nix                    # fish + kitty
       tela.nix                       # GTK/Qt Tela-circle for niri hosts
       hermes.nix                     # Hermes Agent + Open WebUI
+      jupyter.nix                    # JupyterLab + Chromium desktop entry
       karousel.nix                   # Karousel shortcuts / kwinrc
   hosts/
     Default/   Lenovus/   Aurelius/
@@ -215,9 +216,9 @@ Wrapper settings (in the same file):
 - outputs `eDP-1` / `HDMI-A-1` / `HDMI-A-2` / `DP-1` / `DP-2` / `DP-3` scale `1.0` (unknown connectors are ignored)
 - spawn-at-startup: `myNoctalia`, `dropbox`
 - US kbd with caps↔escape, ralt compose, mac numpad; touchpad tap + natural scroll
-- Catppuccin-ish layout colors, named workspaces `1-Game` … `5-Other`
-- window rules (floating kitty/nemo, browsers on Web, Obsidian/Grok on Work, Steam/Vesktop on Other)
-- keybinds (kitty, fuzzel, noctalia IPC, browsers, yazi/nemo, volume/brightness)
+- Catppuccin-ish layout colors, named workspaces `Browser` / `Desk` / `Drawr` / `Side`
+- window rules (floating kitty, browsers on Browser, Obsidian/chromium on Desk, kitty-drawr on Drawr, Steam/Vesktop on Side)
+- keybinds (kitty, Drawr kitty, fuzzel, noctalia IPC, browsers, yazi/nemo, F-keys, volume/brightness)
 
 Do not also put `homeModules.tela` on `home-manager.sharedModules`.
 
@@ -289,6 +290,8 @@ Hermes Agent + xAI proxy + Open WebUI as user systemd services.
 - API server on `127.0.0.1:8642` (needs `API_SERVER_KEY` in `~/.hermes/secrets.env`)
 - `hermes-proxy` on `:8645`
 - Open WebUI on `:3000` pointed at the proxy
+- Hermes Web Dashboard unit on `:9119` (`hermes dashboard --no-open`)
+- Chromium desktop entries `Open WebUI` and `Hermes` (fuzzel / Noctalia / Plasma). Official Electron `programs.hermes-agent.desktop` stays off
 - activation creates `~/.hermes` and a placeholder secrets file
 
 The **NixOS** user must set `users.users.<name>.linger = true`. Home Manager cannot enable linger; without it the units die at logout.
@@ -301,6 +304,17 @@ After the first switch, as that user:
 hermes auth add xai-oauth
 ```
 
+#### `jupyter` → `homeModules.jupyter`
+
+JupyterLab in one `python3.withPackages` env (Lab + kernel packages together) plus a `.desktop` launcher.
+
+- packages: jupyterlab, ipykernel, ipywidgets, ipympl, numpy, pandas, polars, pyarrow, matplotlib, seaborn, plotly, scipy, statsmodels, sympy, scikit-learn, tqdm, rich, openpyxl, requests
+- wrapper `jupyter-lab-desktop` starts Lab on `127.0.0.1` with notebook dir `~/Notebooks` and opens `ungoogled-chromium --app=<token-url>`
+- `xdg.desktopEntries.jupyter-lab` → `~/.local/share/applications/jupyter-lab.desktop` (fuzzel, Noctalia, Plasma)
+- icon `jupyterlab.svg` under `xdg.dataFile` icons
+
+Import **once** from the host home module. Default/john does not import it.
+
 #### `karousel` (user) → `homeModules.karousel`
 
 See system `karousel` above. Plasma-only.
@@ -310,9 +324,9 @@ See system `karousel` above. Plasma-only.
 ## Current hosts (how they opt in)
 
 | Host | System imports | Home imports | Notes |
-| --- | --- | --- | --- |
-| **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
-| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes | systemd-boot, user `rebb` with linger, pipewire, printing. Home attr `aureliusHome` / `rebbAurelius` |
+| --- | --- | --- |
+| **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
+| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. Home attr `aureliusHome` / `rebbAurelius` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
 Neither live host imports `office` / `plasma` / `karousel`.
@@ -408,7 +422,8 @@ If two modules set the same unique option (`gtk.iconTheme.package`, a single des
 | Office / TeX / Krita | `features/system/office.nix` |
 | fish + kitty shared | `features/user/catfish.nix` |
 | GTK icons on niri | `features/user/tela.nix` |
-| Hermes / Open WebUI | `features/user/hermes.nix` |
+| Hermes / Open WebUI / dashboard launchers | `features/user/hermes.nix` |
+| JupyterLab + Chromium launcher | `features/user/jupyter.nix` |
 | Bootloader, users, hostname, linger | `hosts/<Host>/configuration.nix` |
 | Disks / initrd | `hosts/<Host>/hardware-configuration.nix` |
 | Per-user packages | `hosts/<Host>/home.nix` |
