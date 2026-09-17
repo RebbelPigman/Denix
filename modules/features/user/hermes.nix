@@ -11,6 +11,7 @@
   # After the first switch, as rebb:
   #   hermes auth add xai-oauth
   # Open WebUI: http://127.0.0.1:3000  (points at the Grok proxy on :8645)
+  # Dashboard:  http://127.0.0.1:9119  (hermes dashboard --no-open)
   # Agent API:  http://127.0.0.1:8642/v1  (needs API_SERVER_KEY in ~/.hermes/secrets.env)
   flake.homeModules.hermes = { pkgs, config, lib, inputs, ... }: 
   let
@@ -27,6 +28,50 @@
     apiPort = 8642;
     proxyPort = 8645;
     webuiPort = 3000;
+    dashPort = 9119;
+    chromium = lib.getExe pkgs.ungoogled-chromium;
+    waitForPort = port: ''
+      i=0
+      while [ "$i" -lt 50 ]; do
+        if (echo >/dev/tcp/127.0.0.1/${toString port}) >/dev/null 2>&1; then
+          break
+        fi
+        i=$((i + 1))
+        sleep 0.2
+      done
+    '';
+    openWebuiDesktop = pkgs.writeShellApplication {
+      name = "open-webui-desktop";
+      runtimeInputs = [ pkgs.ungoogled-chromium pkgs.systemd ];
+      text = ''
+        systemctl --user start open-webui.service || true
+        ${waitForPort webuiPort}
+        exec ${chromium} --new-window --app=http://127.0.0.1:${toString webuiPort}
+      '';
+    };
+    hermesDesktop = pkgs.writeShellApplication {
+      name = "hermes-dashboard-desktop";
+      runtimeInputs = [ pkgs.ungoogled-chromium pkgs.systemd ];
+      text = ''
+        systemctl --user start hermes-dashboard.service || true
+        ${waitForPort dashPort}
+        exec ${chromium} --new-window --app=http://127.0.0.1:${toString dashPort}
+      '';
+    };
+    webuiIcon = pkgs.writeText "open-webui.svg" ''
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+        <rect width="64" height="64" rx="12" fill="#343541"/>
+        <circle cx="32" cy="32" r="16" fill="none" stroke="#10A37F" stroke-width="4"/>
+        <circle cx="32" cy="32" r="6" fill="#10A37F"/>
+      </svg>
+    '';
+    hermesIcon = pkgs.writeText "hermes.svg" ''
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+        <rect width="64" height="64" rx="12" fill="#1B1B2F"/>
+        <path d="M16 44 L32 12 L48 44" fill="none" stroke="#C9A227" stroke-width="4" stroke-linejoin="round"/>
+        <circle cx="32" cy="48" r="5" fill="#C9A227"/>
+      </svg>
+    '';
   in {
     imports = [
       inputs.hermes-agent.homeManagerModules.default
@@ -37,6 +82,8 @@
     # Same env as the user unit. Bare `open-webui` starts the server;
     # extra args are passed through (`open-webui --version`, `open-webui serve …`).
     home.packages = [
+      openWebuiDesktop
+      hermesDesktop
       (pkgs.writeShellApplication {
         name = "open-webui";
         text = ''
@@ -70,7 +117,34 @@
     programs.hermes-agent = {
       enable = true;
       package = hermesPkg;
+      # Official Electron launcher stays off so fuzzel / Noctalia / Plasma
+      # only see the Chromium wrappers below.
       desktop.enable = false;
+    };
+
+    xdg.dataFile."icons/hicolor/scalable/apps/open-webui.svg".source = webuiIcon;
+    xdg.dataFile."icons/hicolor/scalable/apps/hermes.svg".source = hermesIcon;
+
+    xdg.desktopEntries.open-webui = {
+      name = "Open WebUI";
+      genericName = "Chat";
+      comment = "Open WebUI in Chromium (Grok via Hermes proxy)";
+      exec = lib.getExe openWebuiDesktop;
+      icon = "open-webui";
+      terminal = false;
+      categories = [ "Network" "Office" ];
+      startupNotify = true;
+    };
+
+    xdg.desktopEntries.hermes = {
+      name = "Hermes";
+      genericName = "Agent";
+      comment = "Hermes dashboard in Chromium";
+      exec = lib.getExe hermesDesktop;
+      icon = "hermes";
+      terminal = false;
+      categories = [ "Development" "Network" ];
+      startupNotify = true;
     };
 
     services.hermes-agent = {
@@ -100,6 +174,24 @@
         # Default provider is nous. Without --provider xai this unit exits 2
         # when the only login is `hermes auth add xai-oauth`.
         ExecStart = "${hermesPkg}/bin/hermes proxy start --provider xai --host 127.0.0.1 --port ${toString proxyPort}";
+        Restart = "on-failure";
+        RestartSec = "5s";
+        Environment = [ "HERMES_HOME=${hermesHome}" ];
+        WorkingDirectory = hermesHome;
+      };
+      Install.WantedBy = [ "default.target" ];
+    };
+
+    # `hermes dashboard` is a separate process from the gateway / API.
+    # Started on demand by the Hermes desktop entry (also WantedBy so a
+    # lingering session can keep it after the first launch).
+    systemd.user.services.hermes-dashboard = {
+      Unit = {
+        Description = "Hermes Web Dashboard";
+        After = [ "hermes-agent.service" ];
+      };
+      Service = {
+        ExecStart = "${hermesPkg}/bin/hermes dashboard --no-open --host 127.0.0.1 --port ${toString dashPort}";
         Restart = "on-failure";
         RestartSec = "5s";
         Environment = [ "HERMES_HOME=${hermesHome}" ];
