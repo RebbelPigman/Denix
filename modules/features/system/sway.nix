@@ -67,7 +67,8 @@
         "sway/workspaces": {
           "disable-scroll": true,
           "all-outputs": true,
-          "format": "{icon}",
+          "format": "<span font_size='28px'>{icon}</span>",
+          "markup": "pango",
           "tooltip-format": "{name}",
           "persistent-workspaces": {
             "Browser": [],
@@ -141,8 +142,12 @@
         color: #cdd6f4;
         border: 1px solid #cba6f7;
       }
-      #workspaces {
+      #workspaces,
+      #workspaces button,
+      #workspaces button label {
         font-size: 28px;
+        min-height: 28px;
+        min-width: 28px;
       }
       #workspaces button {
         padding: 8px 0;
