@@ -113,7 +113,7 @@
 
     layoutBin = pkgs.writers.writePython3Bin "sway-smart-layout" {
       libraries = [ pkgs.python3Packages.i3ipc ];
-      flakeIgnore = [ "E501" "E402" "W503" ];
+      flakeIgnore = [ "E501" "E402" "W503" "E302" "E305" ];
     } ''
       import i3ipc
       MARK = "_denix_stack"
