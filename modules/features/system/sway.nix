@@ -12,7 +12,6 @@
         "${self.packages.${pkgs.stdenv.hostPlatform.system}.mySwayConfig}"
       ];
       wrapperFeatures.gtk = true;
-      # Replaces the module default (foot, wmenu, pulseaudio, …).
       extraPackages = with pkgs; [
         slurp
         grim
@@ -37,19 +36,13 @@
       '';
     };
 
-    xdg.portal = {
-      enable = true;
-      extraPortals = with pkgs; [
-        xdg-desktop-portal-wlr
-        xdg-desktop-portal-gtk
-      ];
-      config.sway.default = [ "wlr" "gtk" ];
-    };
+    # programs.sway already enables the portal and sets
+    # config.sway.default = [ "gtk" ]. A second default is a conflict.
+    xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+    xdg.portal.config.sway.default = lib.mkForce [ "wlr" "gtk" ];
 
     environment.systemPackages = [ pkgs.tela-circle-icon-theme ];
 
-    # programs.sway.enable already adds this; keep it explicit if
-    # someone later points programs.sway.package at an unwrapped bin.
     security.pam.services.swaylock = {};
 
     # Do not also set home-manager.sharedModules to homeModules.tela.
@@ -73,8 +66,6 @@
     swaymsg = "${pkgs.sway}/bin/swaymsg";
 
     swayConfig = pkgs.writeText "sway-config" ''
-      # NixOS writes dbus / systemd bits here. Required because
-      # --config replaces /etc/sway/config instead of appending.
       include /etc/sway/config.d/*
 
       font pango:BlexMono Nerd Font Mono 10
@@ -136,10 +127,6 @@
       for_window [app_id="^kitty$"] floating enable
       for_window [app_id="^qalculate-gtk$"] floating enable
       for_window [app_id="^kitty-drawr$"] floating disable
-
-      # Keep the same chords as modules/features/system/niri.nix.
-      # Niri-only actions (overview, consume-or-expel, Noctalia IPC) map
-      # to the closest Sway/desk equivalent so the keys are not dead.
 
       bindsym $mod+Return exec $term
       bindsym $mod+Shift+Return workspace $ws3; exec $term --class kitty-drawr
