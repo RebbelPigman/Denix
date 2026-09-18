@@ -9,6 +9,7 @@
       self.nixosModules.myHomeManager
       self.nixosModules.desk
       self.nixosModules.niri
+      self.nixosModules.sway
       self.nixosModules.game
     ];
 
