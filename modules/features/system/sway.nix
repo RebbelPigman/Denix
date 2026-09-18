@@ -3,10 +3,6 @@
   flake.nixosModules.sway = { pkgs, lib, ... }: {
     programs.sway = {
       enable = true;
-      # Stock pkgs.sway keeps /share/wayland-sessions + providedSessions
-      # so ly can list the session. wrapPackage strips that passthru and
-      # fails: sessionPackages is not a 'package with providedSessions'.
-      # Baked binds still come from packages.mySwayConfig.
       extraOptions = [
         "--config"
         "${self.packages.${pkgs.stdenv.hostPlatform.system}.mySwayConfig}"
@@ -24,7 +20,7 @@
       ];
       extraSessionCommands = ''
         export QT_QPA_PLATFORMTHEME=qt6ct
-        export QT_QPA_PLATFORM=wayland;xcb
+        export QT_QPA_PLATFORM="wayland;xcb"
         export QT_SCALE_FACTOR=1
         export QT_AUTO_SCREEN_SCALE_FACTOR=0
         export GDK_SCALE=1
@@ -36,18 +32,12 @@
       '';
     };
 
-    # programs.sway already enables the portal and sets
-    # config.sway.default = [ "gtk" ]. A second default is a conflict.
     xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
     xdg.portal.config.sway.default = lib.mkForce [ "wlr" "gtk" ];
 
     environment.systemPackages = [ pkgs.tela-circle-icon-theme ];
 
     security.pam.services.swaylock = {};
-
-    # Do not also set home-manager.sharedModules to homeModules.tela.
-    # aureliusHome / rebbModule already import it; gtk.iconTheme.package
-    # is unique and a second attach fails the rebuild.
   };
 
   perSystem = { pkgs, lib, ... }:
