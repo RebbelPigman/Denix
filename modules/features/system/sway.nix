@@ -58,7 +58,7 @@
       {
         "layer": "top",
         "position": "right",
-        "width": 56,
+        "width": 72,
         "spacing": 4,
         "reload_style_on_change": true,
         "modules-left": ["sway/workspaces"],
@@ -142,7 +142,7 @@
         border: 1px solid #cba6f7;
       }
       #workspaces {
-        font-size: 26px;
+        font-size: 40px;
       }
       #workspaces button {
         padding: 8px 0;
