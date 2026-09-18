@@ -15,7 +15,7 @@
         swaybg
         swayidle
         swaylock
-        i3status
+        waybar
         kanshi
       ];
       extraSessionCommands = ''
@@ -36,7 +36,6 @@
     xdg.portal.config.sway.default = lib.mkForce [ "wlr" "gtk" ];
 
     environment.systemPackages = [ pkgs.tela-circle-icon-theme ];
-
     security.pam.services.swaylock = {};
   };
 
@@ -50,10 +49,125 @@
     swaybg = lib.getExe pkgs.swaybg;
     swayidle = lib.getExe pkgs.swayidle;
     swaylock = lib.getExe pkgs.swaylock;
-    i3status = lib.getExe pkgs.i3status;
+    waybar = lib.getExe pkgs.waybar;
     wpctl = "${pkgs.wireplumber}/bin/wpctl";
     brightnessctl = lib.getExe pkgs.brightnessctl;
     swaymsg = "${pkgs.sway}/bin/swaymsg";
+
+    waybarConfig = pkgs.writeText "waybar-config" ''
+      {
+        "layer": "top",
+        "position": "right",
+        "width": 42,
+        "spacing": 4,
+        "reload_style_on_change": true,
+        "modules-left": ["sway/workspaces"],
+        "modules-center": ["clock"],
+        "modules-right": ["pulseaudio", "network", "cpu", "memory", "battery", "tray"],
+        "sway/workspaces": {
+          "disable-scroll": true,
+          "format": "{icon}",
+          "tooltip-format": "{name}",
+          "format-icons": {
+            "Browser": "\\uf269",
+            "Desk": "\\uf108",
+            "Drawr": "\\uf1fc",
+            "Side": "\\uf086",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "default": "\\uf111"
+          }
+        },
+        "clock": {
+          "format": "{:%H\\n%M}",
+          "tooltip-format": "{:%Y-%m-%d %a}"
+        },
+        "cpu": {
+          "format": "\\uf2db\\n{usage}",
+          "interval": 2
+        },
+        "memory": {
+          "format": "\\uf538\\n{percentage}",
+          "interval": 5
+        },
+        "pulseaudio": {
+          "format": "{icon}",
+          "format-muted": "\\uf6a9",
+          "format-icons": {
+            "default": ["\\uf026", "\\uf027", "\\uf028"]
+          },
+          "on-click": "pavucontrol",
+          "tooltip-format": "{volume}%"
+        },
+        "network": {
+          "format-wifi": "\\uf1eb",
+          "format-ethernet": "\\uf6ff",
+          "format-disconnected": "\\uf127",
+          "tooltip-format": "{ifname} {essid} {ipaddr}"
+        },
+        "battery": {
+          "format": "{icon}",
+          "format-charging": "\\uf1e6",
+          "format-icons": ["\\uf244", "\\uf243", "\\uf242", "\\uf241", "\\uf240"],
+          "tooltip-format": "{capacity}%"
+        },
+        "tray": {
+          "icon-size": 16,
+          "spacing": 4
+        }
+      }
+    '';
+
+    waybarStyle = pkgs.writeText "waybar-style.css" ''
+      * {
+        font-family: "BlexMono Nerd Font Mono", "BlexMono Nerd Font", sans-serif;
+        font-size: 13px;
+        min-height: 0;
+      }
+      window#waybar {
+        background: #181825;
+        color: #cba6f7;
+        border-left: 2px solid #cba6f7;
+      }
+      tooltip {
+        background: #1e1e2e;
+        color: #cdd6f4;
+        border: 1px solid #cba6f7;
+      }
+      #workspaces button {
+        padding: 8px 0;
+        margin: 2px 4px;
+        color: #6c7086;
+        background: transparent;
+        border: none;
+        border-radius: 8px;
+      }
+      #workspaces button.focused,
+      #workspaces button.active {
+        color: #181825;
+        background: #cba6f7;
+      }
+      #workspaces button.urgent {
+        color: #181825;
+        background: #f38ba8;
+      }
+      #clock, #cpu, #memory, #pulseaudio, #network, #battery, #tray {
+        padding: 8px 0;
+        margin: 2px 4px;
+        color: #cba6f7;
+      }
+      #pulseaudio.muted, #network.disconnected, #battery.critical {
+        color: #f38ba8;
+      }
+    '';
+
+    waybarDir = pkgs.runCommand "my-waybar" { } ''
+      mkdir -p $out
+      cp ${waybarConfig} $out/config
+      cp ${waybarStyle} $out/style.css
+    '';
 
     swayConfig = pkgs.writeText "sway-config" ''
       include /etc/sway/config.d/*
@@ -191,29 +305,19 @@
       bindsym XF86MonBrightnessUp exec ${brightnessctl} --class=backlight set +5%
       bindsym XF86MonBrightnessDown exec ${brightnessctl} --class=backlight set 5%-
 
-      bar {
-        position top
-        status_command ${i3status}
-        font pango:BlexMono Nerd Font Mono 10
-        colors {
-          background $bg
-          statusline $accent
-          focused_workspace $accent $accent $bg
-          inactive_workspace $surface $surface $accent
-        }
-      }
-
+      exec ${waybar} -c ${waybarDir}/config -s ${waybarDir}/style.css
       exec ${mako}
       exec ${swaybg} -c '#181825'
       exec dropbox
-      exec ${swayidle} -w \
-        timeout 300 '${swaylock} -f -c 181825' \
-        timeout 600 '${swaymsg} "output * power off"' \
-        resume '${swaymsg} "output * power on"' \
+      exec ${swayidle} -w \\
+        timeout 300 '${swaylock} -f -c 181825' \\
+        timeout 600 '${swaymsg} "output * power off"' \\
+        resume '${swaymsg} "output * power on"' \\
         before-sleep '${swaylock} -f -c 181825'
     '';
   in {
     packages.mySwayConfig = swayConfig;
+    packages.myWaybar = waybarDir;
     packages.mySway = inputs.wrapper-modules.lib.wrapPackage {
       inherit pkgs;
       package = pkgs.sway;
