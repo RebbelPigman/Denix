@@ -3,7 +3,14 @@
   flake.nixosModules.sway = { pkgs, lib, ... }: {
     programs.sway = {
       enable = true;
-      package = self.packages.${pkgs.stdenv.hostPlatform.system}.mySway;
+      # Stock pkgs.sway keeps /share/wayland-sessions + providedSessions
+      # so ly can list the session. wrapPackage strips that passthru and
+      # fails: sessionPackages is not a 'package with providedSessions'.
+      # Baked binds still come from packages.mySwayConfig.
+      extraOptions = [
+        "--config"
+        "${self.packages.${pkgs.stdenv.hostPlatform.system}.mySwayConfig}"
+      ];
       wrapperFeatures.gtk = true;
       # Replaces the module default (foot, wmenu, pulseaudio, …).
       extraPackages = with pkgs; [
@@ -229,6 +236,7 @@
         before-sleep '${swaylock} -f -c 181825'
     '';
   in {
+    packages.mySwayConfig = swayConfig;
     packages.mySway = inputs.wrapper-modules.lib.wrapPackage {
       inherit pkgs;
       package = pkgs.sway;
