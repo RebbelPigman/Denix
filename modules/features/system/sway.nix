@@ -270,16 +270,18 @@
       bindsym $mod+Shift+q exec ${swaymsg} exit
       bindsym $mod+Shift+r reload
 
-      bindsym $mod+h focus left
-      bindsym $mod+j focus down
-      bindsym $mod+k focus up
-      bindsym $mod+l focus right
+      bindsym $mod+h focus prev
+      bindsym $mod+l focus next
+      bindsym $mod+j workspace next
+      bindsym $mod+k workspace prev
       bindsym $mod+Ctrl+h move left
-      bindsym $mod+Ctrl+j move down
-      bindsym $mod+Ctrl+k move up
       bindsym $mod+Ctrl+l move right
+      bindsym $mod+Ctrl+j move container to workspace next
+      bindsym $mod+Ctrl+k move container to workspace prev
       bindsym $mod+Shift+h move left
       bindsym $mod+Shift+l move right
+      bindsym $mod+Shift+j move container to workspace next
+      bindsym $mod+Shift+k move container to workspace prev
       bindsym $mod+space floating toggle
       bindsym $mod+Alt+space focus mode_toggle
       bindsym $mod+f resize set width 100 ppt height 100 ppt
