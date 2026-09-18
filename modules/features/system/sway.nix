@@ -69,48 +69,43 @@
           "format": "{icon}",
           "tooltip-format": "{name}",
           "format-icons": {
-            "Browser": "\\uf269",
-            "Desk": "\\uf108",
-            "Drawr": "\\uf1fc",
-            "Side": "\\uf086",
-            "5": "5",
-            "6": "6",
-            "7": "7",
-            "8": "8",
-            "default": "\\uf111"
+            "Browser": "󰅟",
+            "Desk": "󰨇",
+            "Drawr": "󰇅",
+            "Side": "",
           }
         },
         "clock": {
-          "format": "{:%H\\n%M}",
+          "format": "{:%H\n%M}",
           "tooltip-format": "{:%Y-%m-%d %a}"
         },
         "cpu": {
-          "format": "\\uf2db\\n{usage}",
+          "format": "\uf2db\n{usage}",
           "interval": 2
         },
         "memory": {
-          "format": "\\uf538\\n{percentage}",
+          "format": "\uf538\n{percentage}",
           "interval": 5
         },
         "pulseaudio": {
           "format": "{icon}",
-          "format-muted": "\\uf6a9",
+          "format-muted": "\uf6a9",
           "format-icons": {
-            "default": ["\\uf026", "\\uf027", "\\uf028"]
+            "default": ["\uf026", "\uf027", "\uf028"]
           },
           "on-click": "pavucontrol",
           "tooltip-format": "{volume}%"
         },
         "network": {
-          "format-wifi": "\\uf1eb",
-          "format-ethernet": "\\uf6ff",
-          "format-disconnected": "\\uf127",
+          "format-wifi": "\uf1eb",
+          "format-ethernet": "\uf6ff",
+          "format-disconnected": "\uf127",
           "tooltip-format": "{ifname} {essid} {ipaddr}"
         },
         "battery": {
           "format": "{icon}",
-          "format-charging": "\\uf1e6",
-          "format-icons": ["\\uf244", "\\uf243", "\\uf242", "\\uf241", "\\uf240"],
+          "format-charging": "\uf1e6",
+          "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"],
           "tooltip-format": "{capacity}%"
         },
         "tray": {
