@@ -26,7 +26,7 @@ Every other `.nix` file under `modules/` is itself a flake-parts module. It typi
 | `flake.nixosModules.<name>` | Shared system feature, imported by a host configuration |
 | `flake.homeModules.<name>` | Shared Home Manager feature, imported by a host home module |
 | `flake.homeConfigurations.<name>` | Standalone HM config (optional; used for `home-manager --flake`) |
-| `perSystem.packages.<name>` | Wrapped packages (`myNiri`, `myNoctalia`) |
+| `perSystem.packages.<name>` | Wrapped packages (`myNiri`, `mySway`, `myNoctalia`) |
 
 `import-tree` loads **git-tracked** files. A new module that is not `git add`ed does not exist as `self.nixosModules.*` / `self.homeModules.*` and evaluation fails with a missing attribute.
 
@@ -56,6 +56,7 @@ modules/
       game.nix
       home-manager.nix               # flake.nixosModules.myHomeManager
       niri.nix                       # nixosModules.niri + packages.myNiri
+      sway.nix                       # nixosModules.sway + packages.mySway
       noctalia.nix                   # packages.myNoctalia (not a nixosModule)
       noctalia.json                  # settings baked into myNoctalia
       plasma.nix                     # nixosModules.plasma + homeModules.plasma
@@ -103,6 +104,7 @@ imports = [
   self.nixosModules.myHomeManager   # required if the host has HM users
   self.nixosModules.desk
   self.nixosModules.niri
+  # self.nixosModules.sway         # lean wlroots session; do not pair with niri unless both should show in ly
   self.nixosModules.game
   # self.nixosModules.office        # pulls plasma + karousel + LO/TeX/…
 ];
@@ -148,9 +150,10 @@ So a host that imports `office` or `plasma` gets the rice for every HM user on t
 
 ### 4. Wrappers — not imported as modules
 
-`packages.myNiri` and `packages.myNoctalia` are `perSystem` outputs. `nixosModules.niri` points `programs.niri.package` at `myNiri`. `myNiri` starts `myNoctalia` at login. Edit:
+`packages.myNiri`, `packages.mySway`, and `packages.myNoctalia` are `perSystem` outputs. `nixosModules.niri` points `programs.niri.package` at `myNiri`. `nixosModules.sway` points `programs.sway.package` at `mySway`. `myNiri` starts `myNoctalia` at login. Edit:
 
 - niri binds / outputs / window rules → `modules/features/system/niri.nix`
+- sway binds / outputs / window rules → `modules/features/system/sway.nix`
 - noctalia bar / theme JSON → `modules/features/system/noctalia.json`
 
 ### 5. Hardware — `hosts/<Host>/hardware-configuration.nix`
@@ -180,7 +183,7 @@ The first rebuild that needs the Hermes cache must pass the same `--option extra
 
 #### `desk` → `nixosModules.desk`
 
-DE-agnostic GUI layer. Import on desktop hosts (niri or plasma).
+DE-agnostic GUI layer. Import on desktop hosts (niri, sway, or plasma).
 
 - gvfs
 - MIME: directories → Nemo, text → Kate (`mkForce` over core's vim maps), PDF/epub → zathura, torrents → qBittorrent
@@ -221,6 +224,29 @@ Wrapper settings (in the same file):
 - keybinds (kitty, Drawr kitty, fuzzel, noctalia IPC, browsers, yazi/nemo, F-keys, volume/brightness)
 
 Do not also put `homeModules.tela` on `home-manager.sharedModules`.
+
+#### `sway` → `nixosModules.sway` + `packages.mySway`
+
+Lean i3-compatible Wayland session. Import instead of `niri` (or next to it only if both sessions should appear in ly). Does not start Noctalia.
+
+- `programs.sway.enable`, package = wrapped `mySway`, `wrapperFeatures.gtk`
+- extraPackages (replaces the nixpkgs default foot/wmenu/pulseaudio set): slurp, grim, mako, swaybg, swayidle, swaylock, i3status, kanshi
+- toolkit env via `extraSessionCommands` (same QT/GDK/GTK pins as the niri wrapper)
+- `xdg.portal` with wlr + gtk
+- system `tela-circle-icon-theme`
+- PAM for swaylock
+
+Wrapper (`packages.mySway`) is `wrapper-modules.lib.wrapPackage` plus `--config`. There is no `wrappers.sway` in the locked wrapper-modules rev, so this is the same library niri uses, not `wrappers.niri.wrap`. Baked config:
+
+- include `/etc/sway/config.d/*` so NixOS session bits still apply
+- outputs `eDP-1` / `HDMI-A-1` / `HDMI-A-2` / `DP-1` / `DP-2` / `DP-3` scale `1`
+- US kbd with caps↔escape, ralt compose, mac numpad; touchpad tap + natural scroll
+- Catppuccin-ish colors, named workspaces `Browser` / `Desk` / `Drawr` / `Side`
+- window assigns + floating kitty/mpv/imv/anki/qalculate
+- keybinds match niri chords (kitty, Drawr kitty, fuzzel, browsers, yazi/nemo, F-keys, width presets, volume/brightness). Noctalia IPC keys fall back to fuzzel / pavucontrol / swaylock. No Mod+O overview (Sway has none)
+- built-in bar + i3status; exec mako, swaybg, dropbox, swayidle→swaylock
+
+Do not import `office` / `plasma` / `karousel` on a sway host. Do not also put `homeModules.tela` on `home-manager.sharedModules`. Hosts that use sway still enable pipewire + `power-profiles-daemon` + `upower` in the host configuration (volume binds use `wpctl`).
 
 #### `noctalia` → `packages.myNoctalia` only
 
@@ -326,10 +352,10 @@ See system `karousel` above. Plasma-only.
 | Host | System imports | Home imports | Notes |
 | --- | --- | --- |
 | **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
-| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. Home attr `aureliusHome` / `rebbAurelius` |
+| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, sway, game | catfish, tela, hermes, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway. Home attr `aureliusHome` / `rebbAurelius` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
-Neither live host imports `office` / `plasma` / `karousel`.
+Neither live host imports `office` / `plasma` / `karousel`. Aurelius imports both `niri` and `sway` (two ly sessions). Lenovus stays niri-only.
 
 ---
 
@@ -380,9 +406,10 @@ nixos-rebuild switch --sudo --flake .#Lenovus \
 Suggested stacks:
 
 - Niri laptop/desktop: `core` + `desk` + `niri` + optional `game`. Home: `catfish` + `tela`.
+- Sway laptop/desktop: `core` + `desk` + `sway` + optional `game`. Home: `catfish` + `tela`. Do not also import `niri` unless both sessions should show in ly.
 - Plasma workstation: `core` + `office` (brings plasma, desk, karousel, rice). Home: `catfish` only — plasma/karousel arrive via `sharedModules`. Do not import `tela` unless you drop Plasma's icon theme.
 
-Do not import both `niri` and `office` unless you want both sessions listed in ly.
+Do not import both `niri` and `office` unless you want both sessions listed in ly. Same for `sway` + `office` / `sway` + `niri`.
 
 ---
 
@@ -416,6 +443,7 @@ If two modules set the same unique option (`gtk.iconTheme.package`, a single des
 | File manager / MIME / extra GUI | `features/system/desk.nix` |
 | Steam / Heroic / Proton-GE | `features/system/game.nix` |
 | Niri binds, outputs, window rules | `features/system/niri.nix` |
+| Sway binds, outputs, window rules | `features/system/sway.nix` |
 | Noctalia bar / widgets | `features/system/noctalia.json` |
 | Plasma look, shortcuts, kwin rules | `features/system/plasma.nix` (`homeModules.plasma`) |
 | Karousel gaps / shortcuts | `features/user/karousel.nix` |
