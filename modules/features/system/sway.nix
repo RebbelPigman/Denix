@@ -58,7 +58,7 @@
       {
         "layer": "top",
         "position": "right",
-        "width": 72,
+        "width": 56,
         "spacing": 4,
         "reload_style_on_change": true,
         "modules-left": ["sway/workspaces"],
@@ -88,12 +88,12 @@
           "tooltip-format": "{:%Y-%m-%d %a}"
         },
         "cpu": {
-          "format": "<span font_size='26pt'>\uf2db</span>\n{usage}",
+          "format": "<span font_size='28px'>\uf2db</span>\n{usage}",
           "markup": "pango",
           "interval": 2
         },
         "memory": {
-          "format": "<span font_size='26pt'>\uf538</span>\n{percentage}",
+          "format": "<span font_size='28px'>\uf538</span>\n{percentage}",
           "markup": "pango",
           "interval": 5
         },
@@ -119,7 +119,7 @@
           "tooltip-format": "{capacity}%"
         },
         "tray": {
-          "icon-size": 32,
+          "icon-size": 28,
           "spacing": 4
         }
       }
@@ -142,7 +142,7 @@
         border: 1px solid #cba6f7;
       }
       #workspaces {
-        font-size: 40px;
+        font-size: 28px;
       }
       #workspaces button {
         padding: 8px 0;
@@ -156,7 +156,7 @@
         color: #cba6f7;
       }
       #pulseaudio, #network, #battery {
-        font-size: 26px;
+        font-size: 28px;
       }
       #clock, #cpu, #memory {
         font-size: 13px;
