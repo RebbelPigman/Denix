@@ -58,7 +58,7 @@
       {
         "layer": "top",
         "position": "right",
-        "width": 42,
+        "width": 56,
         "spacing": 4,
         "reload_style_on_change": true,
         "modules-left": ["sway/workspaces"],
@@ -66,13 +66,21 @@
         "modules-right": ["pulseaudio", "network", "cpu", "memory", "battery", "tray"],
         "sway/workspaces": {
           "disable-scroll": true,
+          "all-outputs": true,
           "format": "{icon}",
           "tooltip-format": "{name}",
+          "persistent-workspaces": {
+            "Browser": [],
+            "Desk": [],
+            "Drawr": [],
+            "Side": []
+          },
           "format-icons": {
             "Browser": "󰅟",
             "Desk": "󰨇",
             "Drawr": "󰇅",
             "Side": "",
+            "default": ""
           }
         },
         "clock": {
@@ -80,11 +88,13 @@
           "tooltip-format": "{:%Y-%m-%d %a}"
         },
         "cpu": {
-          "format": "\uf2db\n{usage}",
+          "format": "<span font_size='26pt'>\uf2db</span>\n{usage}",
+          "markup": "pango",
           "interval": 2
         },
         "memory": {
-          "format": "\uf538\n{percentage}",
+          "format": "<span font_size='26pt'>\uf538</span>\n{percentage}",
+          "markup": "pango",
           "interval": 5
         },
         "pulseaudio": {
@@ -109,7 +119,7 @@
           "tooltip-format": "{capacity}%"
         },
         "tray": {
-          "icon-size": 16,
+          "icon-size": 32,
           "spacing": 4
         }
       }
@@ -124,12 +134,15 @@
       window#waybar {
         background: #181825;
         color: #cba6f7;
-        border-left: 2px solid #cba6f7;
+        border: none;
       }
       tooltip {
         background: #1e1e2e;
         color: #cdd6f4;
         border: 1px solid #cba6f7;
+      }
+      #workspaces {
+        font-size: 26px;
       }
       #workspaces button {
         padding: 8px 0;
@@ -138,6 +151,15 @@
         background: transparent;
         border: none;
         border-radius: 8px;
+      }
+      #workspaces button.visible {
+        color: #cba6f7;
+      }
+      #pulseaudio, #network, #battery {
+        font-size: 26px;
+      }
+      #clock, #cpu, #memory {
+        font-size: 13px;
       }
       #workspaces button.focused,
       #workspaces button.active {
