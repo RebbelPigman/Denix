@@ -196,6 +196,18 @@ DE-agnostic GUI layer. Import on desktop hosts (niri, sway, or plasma).
 - gamescope + gamemode
 - Heroic overridden with gamescope + gamemode on its extraPkgs
 - vesktop, prismlauncher
+- Waydroid (`virtualisation.waydroid.enable`). nixpkgs installs the package, enables LXC, trusts `waydroid0`, sets `psi=1`. Does **not** fetch images or GApps.
+
+After the first switch that includes `game`, as root:
+
+```bash
+sudo waydroid init -s GAPPS
+sudo systemctl start waydroid-container
+waydroid session start
+waydroid show-full-ui
+```
+
+Play Protect then needs the container's Android ID registered. ARM-only Play games need `libhoudini` / `libndk` via waydroid-script (not packaged here). Waydroid needs Wayland (niri / sway). NVIDIA / some RX 6800 parts fall back to SwiftShader in `/var/lib/waydroid/waydroid_base.prop`. If the host uses nftables + a new kernel, set `virtualisation.waydroid.package = pkgs.waydroid-nftables` on that host — do not put it in this module unless every game host has nftables on.
 
 #### `myHomeManager` → `nixosModules.myHomeManager` (`home-manager.nix`)
 
@@ -441,7 +453,7 @@ If two modules set the same unique option (`gtk.iconTheme.package`, a single des
 | --- | --- |
 | Shared CLI, fonts, ly, nix settings | `features/system/core.nix` |
 | File manager / MIME / extra GUI | `features/system/desk.nix` |
-| Steam / Heroic / Proton-GE | `features/system/game.nix` |
+| Steam / Heroic / Proton-GE / Waydroid | `features/system/game.nix` |
 | Niri binds, outputs, window rules | `features/system/niri.nix` |
 | Sway binds, outputs, window rules | `features/system/sway.nix` |
 | Noctalia bar / widgets | `features/system/noctalia.json` |
