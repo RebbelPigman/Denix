@@ -51,9 +51,9 @@
           n=$(printf '%s\n' "$out" | grep -c '"id"' || true)
         fi
         if [ "$n" -gt 0 ]; then
-          printf '{"text":"\\uf0f3","class":"unread","alt":"unread","tooltip":"%s notification(s)"}\n' "$n"
+          printf '{"text":"\uf0f3","class":"unread","alt":"unread","tooltip":"%s notification(s)"}\n' "$n"
         else
-          printf '{"text":"\\uf0f3","class":"empty","alt":"empty","tooltip":"no notifications"}\n'
+          printf '{"text":"\uf0f3","class":"empty","alt":"empty","tooltip":"no notifications"}\n'
         fi
       '';
     };
@@ -80,25 +80,24 @@
             "Browse": [], "Desk": [], "Drawr": [], "Side": []
           },
           "format-icons": {
-            "Browse": "\\uf269",
-            "Desk": "\\uf108",
-            "Drawr": "\\uf1fc",
-            "Side": "\\uf233",
-            "default": "\\uf111"
+            "Browse": "\uf269",
+            "Desk": "\uf108",
+            "Drawr": "\uf1fc",
+            "Side": "\uf233",
           }
         },
         "cpu": {
-          "format": "<span font_size='28px'>\\uf2db</span>\\n{usage}",
+          "format": "<span font_size='28px'>\uf2db</span>\\n{usage}",
           "markup": "pango",
           "interval": 5
         },
         "memory": {
-          "format": "<span font_size='28px'>\\uf538</span>\\n{percentage}",
+          "format": "<span font_size='28px'>\uf538</span>\n{percentage}",
           "markup": "pango",
           "interval": 5
         },
         "clock": {
-          "format": "{:%H\\n%M}",
+          "format": "{:%H\n%M}",
           "tooltip-format": "{:%Y-%m-%d %a}"
         },
         "custom/notifications": {
@@ -110,22 +109,22 @@
           "format": "{text}"
         },
         "network": {
-          "format-wifi": "\\uf1eb",
-          "format-ethernet": "\\uf6ff",
-          "format-disconnected": "\\uf127",
+          "format-wifi": "\uf1eb",
+          "format-ethernet": "\uf6ff",
+          "format-disconnected": "\uf127",
           "tooltip-format": "{ifname} {essid} {ipaddr}"
         },
         "bluetooth": {
-          "format": "\\uf294",
-          "format-off": "\\uf294",
-          "format-disabled": "\\uf294",
-          "format-connected": "\\uf294",
+          "format": "\uf294",
+          "format-off": "\uf294",
+          "format-disabled": "\uf294",
+          "format-connected": "\uf294",
           "tooltip-format": "{status}"
         },
         "battery": {
           "format": "{icon}",
-          "format-charging": "\\uf1e6",
-          "format-icons": ["\\uf244", "\\uf243", "\\uf242", "\\uf241", "\\uf240"],
+          "format-charging": "\uf1e6",
+          "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"],
           "tooltip-format": "{capacity}%"
         }
       }
@@ -250,7 +249,7 @@
       bindsym $mod+j focus down
       bindsym $mod+k focus up
       bindsym $mod+l focus right
-      bindsym $mod+Ctrl+h move left
+      bindrym $mod+Ctrl+h move left
       bindsym $mod+Ctrl+j move down
       bindsym $mod+Ctrl+k move up
       bindsym $mod+Ctrl+l move right
