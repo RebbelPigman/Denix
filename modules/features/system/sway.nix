@@ -9,10 +9,7 @@
       ];
       wrapperFeatures.gtk = true;
       extraPackages = with pkgs; [
-        slurp
-        grim
-        waybar
-        mako
+        slurp grim waybar mako
       ];
       extraSessionCommands = ''
         export QT_QPA_PLATFORMTHEME=qt6ct
@@ -51,9 +48,9 @@
           n=$(printf '%s\n' "$out" | grep -c '"id"' || true)
         fi
         if [ "$n" -gt 0 ]; then
-          printf '{"text":"\uf0f3","class":"unread","alt":"unread","tooltip":"%s notification(s)"}\n' "$n"
+          printf '{"text":"","class":"unread","alt":"unread","tooltip":"%s notification(s)"}\n' "$n"
         else
-          printf '{"text":"\uf0f3","class":"empty","alt":"empty","tooltip":"no notifications"}\n'
+          printf '{"text":"","class":"empty","alt":"empty","tooltip":"no notifications"}\n'
         fi
       '';
     };
@@ -73,27 +70,28 @@
         "sway/workspaces": {
           "disable-scroll": true,
           "all-outputs": true,
-          "format": "<span font_size='28px'>{icon}</span>",
-          "markup": "pango",
+          "format": "{icon}",
           "tooltip-format": "{name}",
           "persistent-workspaces": {
-            "Browse": [], "Desk": [], "Drawr": [], "Side": []
+            "Browse": [],
+            "Desk": [],
+            "Drawr": [],
+            "Side": []
           },
           "format-icons": {
-            "Browse": "\uf269",
-            "Desk": "\uf108",
-            "Drawr": "\uf1fc",
-            "Side": "\uf233",
+            "Browse": "",
+            "Desk": "",
+            "Drawr": "",
+            "Side": "",
+            "default": ""
           }
         },
         "cpu": {
-          "format": "<span font_size='28px'>\uf2db</span>\\n{usage}",
-          "markup": "pango",
+          "format": "\n{usage}",
           "interval": 5
         },
         "memory": {
-          "format": "<span font_size='28px'>\uf538</span>\n{percentage}",
-          "markup": "pango",
+          "format": "\n{percentage}",
           "interval": 5
         },
         "clock": {
@@ -109,22 +107,22 @@
           "format": "{text}"
         },
         "network": {
-          "format-wifi": "\uf1eb",
-          "format-ethernet": "\uf6ff",
-          "format-disconnected": "\uf127",
+          "format-wifi": "",
+          "format-ethernet": "",
+          "format-disconnected": "",
           "tooltip-format": "{ifname} {essid} {ipaddr}"
         },
         "bluetooth": {
-          "format": "\uf294",
-          "format-off": "\uf294",
-          "format-disabled": "\uf294",
-          "format-connected": "\uf294",
+          "format": "",
+          "format-off": "",
+          "format-disabled": "",
+          "format-connected": "",
           "tooltip-format": "{status}"
         },
         "battery": {
           "format": "{icon}",
-          "format-charging": "\uf1e6",
-          "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"],
+          "format-charging": "",
+          "format-icons": ["", "", "", "", ""],
           "tooltip-format": "{capacity}%"
         }
       }
@@ -209,13 +207,13 @@
       set $wsK Drawr
       set $wsL Side
       workspace $wsH
-      layout tabbed
+      workspace_layout tabbed
       workspace $wsJ
-      layout tabbed
+      workspace_layout tabbed
       workspace $wsK
-      layout splith
+      workspace_layout default
       workspace $wsL
-      layout splith
+      workspace_layout default
       workspace $wsH
       assign [app_id="^brave-browser$"] $wsH
       assign [app_id="^google-chrome$"] $wsH
@@ -249,7 +247,7 @@
       bindsym $mod+j focus down
       bindsym $mod+k focus up
       bindsym $mod+l focus right
-      bindrym $mod+Ctrl+h move left
+      bindsym $mod+Ctrl+h move left
       bindsym $mod+Ctrl+j move down
       bindsym $mod+Ctrl+k move up
       bindsym $mod+Ctrl+l move right
