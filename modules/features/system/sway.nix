@@ -87,15 +87,17 @@
           }
         },
         "cpu": {
-          "format": "\n{usage}",
+          "format": "<span font_size='28px'></span>\\n<span font_size='11px'>{usage}</span>",
+          "markup": "pango",
           "interval": 5
         },
         "memory": {
-          "format": "\n{percentage}",
+          "format": "<span font_size='28px'>󰅛</span>\\n<span font_size='11px'>{percentage}</span>",
+          "markup": "pango",
           "interval": 5
         },
         "clock": {
-          "format": "{:%H\n%M}",
+          "format": "{:%H\\n%M}",
           "tooltip-format": "{:%Y-%m-%d %a}"
         },
         "custom/notifications": {
@@ -148,8 +150,8 @@
         color: #181825; background: #cba6f7;
       }
       #workspaces button.urgent { color: #181825; background: #f38ba8; }
-      #cpu, #memory, #network, #bluetooth, #battery, #custom-notifications { font-size: 28px; }
-      #clock { font-size: 13px; }
+      #network, #bluetooth, #battery, #custom-notifications { font-size: 28px; }
+      #cpu, #memory, #clock { font-size: 13px; }
       #clock, #cpu, #memory, #network, #bluetooth, #battery, #custom-notifications {
         padding: 8px 0; margin: 2px 4px; color: #cba6f7;
       }
