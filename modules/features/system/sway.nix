@@ -87,12 +87,12 @@
           }
         },
         "cpu": {
-          "format": "<span font_size='28px'></span>\\n<span font_size='11px'>{usage}</span>",
+          "format": "<span font_size='28px'></span>\\n<span font_size='14px'>{usage}</span>",
           "markup": "pango",
           "interval": 5
         },
         "memory": {
-          "format": "<span font_size='28px'>󰅛</span>\\n<span font_size='11px'>{percentage}</span>",
+          "format": "<span font_size='28px'>󰅛</span>\\n<span font_size='14px'>{percentage}</span>",
           "markup": "pango",
           "interval": 5
         },
@@ -133,7 +133,7 @@
     waybarStyle = pkgs.writeText "waybar-style.css" ''
       * {
         font-family: "BlexMono Nerd Font Mono", "BlexMono Nerd Font", sans-serif;
-        font-size: 13px;
+        font-size: 14px;
         min-height: 0;
       }
       window#waybar { background: #181825; color: #cba6f7; border: none; }
@@ -151,7 +151,7 @@
       }
       #workspaces button.urgent { color: #181825; background: #f38ba8; }
       #network, #bluetooth, #battery, #custom-notifications { font-size: 28px; }
-      #cpu, #memory, #clock { font-size: 13px; }
+      #cpu, #memory, #clock { font-size: 14px; }
       #clock, #cpu, #memory, #network, #bluetooth, #battery, #custom-notifications {
         padding: 8px 0; margin: 2px 4px; color: #cba6f7;
       }
