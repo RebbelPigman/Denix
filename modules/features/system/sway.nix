@@ -87,14 +87,26 @@
           }
         },
         "cpu": {
-          "format": "\\n{usage}",
+          "format": "",
           "interval": 5,
-          "tooltip-format": "CPU {usage}%"
+          "tooltip-format": "CPU {usage}%",
+          "states": {
+            "green": 20,
+            "yellow": 40,
+            "orange": 60,
+            "red": 80
+          }
         },
         "memory": {
-          "format": "\\n{percentage}",
+          "format": "",
           "interval": 5,
-          "tooltip-format": "RAM {percentage}%"
+          "tooltip-format": "RAM {percentage}%",
+          "states": {
+            "green": 20,
+            "yellow": 40,
+            "orange": 60,
+            "red": 80
+          }
         },
         "clock": {
           "format": "{:%H\\n%M}",
@@ -150,9 +162,14 @@
         color: #181825; background: #cba6f7;
       }
       #workspaces button.urgent { color: #181825; background: #f38ba8; }
-      #network, #bluetooth, #battery, #custom-notifications { font-size: 28px; }
-      #cpu, #memory, #clock { font-size: 14px; }
-      #clock, #cpu, #memory, #network, #bluetooth, #battery, #custom-notifications {
+      #cpu, #memory, #network, #bluetooth, #battery, #custom-notifications { font-size: 28px; }
+      #clock { font-size: 14px; }
+      #cpu, #memory { color: #89b4fa; padding: 8px 0; margin: 2px 4px; }
+      #cpu.green, #memory.green { color: #a6e3a1; }
+      #cpu.yellow, #memory.yellow { color: #f9e2af; }
+      #cpu.orange, #memory.orange { color: #fab387; }
+      #cpu.red, #memory.red { color: #f38ba8; }
+      #clock, #network, #bluetooth, #battery, #custom-notifications {
         padding: 8px 0; margin: 2px 4px; color: #cba6f7;
       }
       #network.disconnected, #battery.critical, #bluetooth.off, #bluetooth.disabled { color: #f38ba8; }
