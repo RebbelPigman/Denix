@@ -12,6 +12,7 @@
         slurp
         grim
         waybar
+        mako
       ];
       extraSessionCommands = ''
         export QT_QPA_PLATFORMTHEME=qt6ct
@@ -39,6 +40,23 @@
     grim = lib.getExe pkgs.grim;
     slurp = lib.getExe pkgs.slurp;
     waybar = lib.getExe pkgs.waybar;
+    mako = lib.getExe pkgs.mako;
+    makoctl = "${pkgs.mako}/bin/makoctl";
+    makoHint = pkgs.writeShellApplication {
+      name = "waybar-mako";
+      runtimeInputs = [ pkgs.mako pkgs.coreutils pkgs.gnugrep ];
+      text = ''
+        n=0
+        if out=$(makoctl list 2>/dev/null); then
+          n=$(printf '%s\n' "$out" | grep -c '"id"' || true)
+        fi
+        if [ "$n" -gt 0 ]; then
+          printf '{"text":"\\uf0f3","class":"unread","alt":"unread","tooltip":"%s notification(s)"}\n' "$n"
+        else
+          printf '{"text":"\\uf0f3","class":"empty","alt":"empty","tooltip":"no notifications"}\n'
+        fi
+      '';
+    };
     wpctl = "${pkgs.wireplumber}/bin/wpctl";
     brightnessctl = lib.getExe pkgs.brightnessctl;
     swaymsg = "${pkgs.sway}/bin/swaymsg";
@@ -84,8 +102,12 @@
           "tooltip-format": "{:%Y-%m-%d %a}"
         },
         "custom/notifications": {
-          "format": "\\uf0f3",
-          "tooltip-format": "no notification daemon"
+          "exec": "${makoHint}/bin/waybar-mako",
+          "interval": 2,
+          "return-type": "json",
+          "on-click": "${makoctl} dismiss -a",
+          "on-click-right": "${makoctl} restore",
+          "format": "{text}"
         },
         "network": {
           "format-wifi": "\\uf1eb",
@@ -135,6 +157,8 @@
         padding: 8px 0; margin: 2px 4px; color: #cba6f7;
       }
       #network.disconnected, #battery.critical, #bluetooth.off, #bluetooth.disabled { color: #f38ba8; }
+      #custom-notifications.empty { color: #6c7086; }
+      #custom-notifications.unread { color: #f9e2af; }
     '';
 
     waybarDir = pkgs.runCommand "my-waybar" { } ''
@@ -270,6 +294,7 @@
       bindsym XF86AudioMicMute exec ${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle
       bindsym XF86MonBrightnessUp exec ${brightnessctl} --class=backlight set +5%
       bindsym XF86MonBrightnessDown exec ${brightnessctl} --class=backlight set 5%-
+      exec ${mako}
       exec ${waybar} -c ${waybarDir}/config -s ${waybarDir}/style.css
     '';
   in {
