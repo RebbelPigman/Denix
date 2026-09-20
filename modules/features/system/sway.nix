@@ -87,14 +87,14 @@
           }
         },
         "cpu": {
-          "format": "<span font_size='28px'></span>\\n<span font_size='14px'>{usage}</span>",
-          "markup": "pango",
-          "interval": 5
+          "format": "\\n{usage}",
+          "interval": 5,
+          "tooltip-format": "CPU {usage}%"
         },
         "memory": {
-          "format": "<span font_size='28px'>󰅛</span>\\n<span font_size='14px'>{percentage}</span>",
-          "markup": "pango",
-          "interval": 5
+          "format": "\\n{percentage}",
+          "interval": 5,
+          "tooltip-format": "RAM {percentage}%"
         },
         "clock": {
           "format": "{:%H\\n%M}",
