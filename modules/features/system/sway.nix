@@ -109,7 +109,7 @@
           }
         },
         "clock": {
-          "format": "{:%H\\n%M}",
+          "format": "{:%H\n%M}",
           "tooltip-format": "{:%Y-%m-%d %a}"
         },
         "custom/notifications": {
