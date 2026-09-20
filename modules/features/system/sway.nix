@@ -162,13 +162,16 @@
         color: #181825; background: #cba6f7;
       }
       #workspaces button.urgent { color: #181825; background: #f38ba8; }
-      #cpu, #memory, #network, #bluetooth, #battery, #custom-notifications { font-size: 28px; }
+      #cpu, #cpu label, #memory, #memory label, #network, #bluetooth, #battery, #custom-notifications { font-size: 28px; }
       #clock { font-size: 14px; }
-      #cpu, #memory { color: #89b4fa; padding: 8px 0; margin: 2px 4px; }
-      #cpu.green, #memory.green { color: #a6e3a1; }
-      #cpu.yellow, #memory.yellow { color: #f9e2af; }
-      #cpu.orange, #memory.orange { color: #fab387; }
-      #cpu.red, #memory.red { color: #f38ba8; }
+      #cpu, #cpu label, #memory, #memory label {
+        font-size: 28px; min-height: 28px; min-width: 28px;
+        color: #89b4fa; padding: 8px 0; margin: 2px 4px;
+      }
+      #cpu.green, #cpu.green label, #memory.green, #memory.green label { color: #a6e3a1; }
+      #cpu.yellow, #cpu.yellow label, #memory.yellow, #memory.yellow label { color: #f9e2af; }
+      #cpu.orange, #cpu.orange label, #memory.orange, #memory.orange label { color: #fab387; }
+      #cpu.red, #cpu.red label, #memory.red, #memory.red label { color: #f38ba8; }
       #clock, #network, #bluetooth, #battery, #custom-notifications {
         padding: 8px 0; margin: 2px 4px; color: #cba6f7;
       }
