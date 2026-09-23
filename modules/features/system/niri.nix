@@ -64,7 +64,7 @@
 		};
 
 		layout = {
-		  empty-workspace-above-first = {};
+		  # empty-workspace-above-first = {};
 		  background-color = "#181825";
 		  always-center-single-column = {};
 		  center-focused-column = "on-overflow";
