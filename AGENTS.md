@@ -14,13 +14,15 @@ Resolve the flake attr from the machine, then only edit that host plus shared fe
 | `Aurelius` | `Aurelius` | `modules/hosts/Aurelius/` | `aureliusHome` |
 | `default` | `Default` | `modules/hosts/Default/` | `johnModule` |
 
-Command shape (replace `ATTR` with the table value, not the raw hostname when they differ):
+Command shape (replace `ATTR` with the table value, not the raw hostname when they differ). Call the system binary so passwordless sudo matches:
 
 ```bash
-nixos-rebuild test  --sudo --flake ~/Nixos#ATTR
-nixos-rebuild boot  --sudo --flake ~/Nixos#ATTR
-nixos-rebuild switch --sudo --flake ~/Nixos#ATTR
+/run/current-system/sw/bin/nixos-rebuild test  --sudo --flake ~/Nixos#ATTR
+/run/current-system/sw/bin/nixos-rebuild boot  --sudo --flake ~/Nixos#ATTR
+/run/current-system/sw/bin/nixos-rebuild switch --sudo --flake ~/Nixos#ATTR
 ```
+
+Do not prompt for a password. If sudo still asks, the host is missing `nixosModules.hermesRebuild` (or that generation is not active yet). Stop and say so — do not invent askpass or write a password.
 
 `Default` is the exception: hostname `default`, attr `Default`.
 
@@ -43,7 +45,7 @@ Free to do on any Denix request:
 4. Loop **test** until it succeeds or the cap is hit:
 
 ```bash
-nixos-rebuild test --sudo --flake ~/Nixos#ATTR
+/run/current-system/sw/bin/nixos-rebuild test --sudo --flake ~/Nixos#ATTR
 ```
 
 On failure: read the log, fix a file in `~/Nixos`, test again. Cap: **5** test attempts. Then stop and paste the last error.
@@ -51,7 +53,7 @@ On failure: read the log, fix a file in `~/Nixos`, test again. Cap: **5** test a
 Only when the user says **set changes** in this turn:
 
 ```bash
-nixos-rebuild boot --sudo --flake ~/Nixos#ATTR
+/run/current-system/sw/bin/nixos-rebuild boot --sudo --flake ~/Nixos#ATTR
 git push
 ```
 
@@ -60,7 +62,7 @@ git push
 Only when the user says **update** in this turn:
 
 ```bash
-nixos-rebuild switch --sudo --flake ~/Nixos#ATTR
+/run/current-system/sw/bin/nixos-rebuild switch --sudo --flake ~/Nixos#ATTR
 ```
 
 `update` here means switch the running generation. It does **not** mean `nix flake update`. Changing `flake.lock` needs its own explicit request.

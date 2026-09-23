@@ -10,6 +10,7 @@
       self.nixosModules.desk
       self.nixosModules.niri
       self.nixosModules.game
+      self.nixosModules.hermesRebuild
     ];
 
 # system specific configuration
