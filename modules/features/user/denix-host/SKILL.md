@@ -44,6 +44,7 @@ Fix the error in-tree and retry. After five failures, stop.
 - Open WebUI on `:8645` has no tools. Use Hermes CLI, dashboard, or `:8642`.
 - `update` is switch, not `nix flake update`.
 - Untracked feature files are invisible to `self.nixosModules` / `self.homeModules`.
+- If inner sudo asks for a password, do **not** tell the user to run `--sudo`. Tell them: `sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR` (no `--sudo`).
 
 ## Verification
 

@@ -26,6 +26,14 @@ Keep `--sudo` so the flake is evaluated as `rebb` (root must not own `~/Nixos`).
 
 Do not prompt for a password. If sudo still asks, that expanded generation is not active yet. Stop and say so — do not invent askpass or write a password.
 
+Bootstrap (human, real TTY only — never from this agent) is **not** the `--sudo` line. `--sudo` still calls `sudo nix-env` / `sudo systemd-run`, which have no NOPASSWD until the new generation is current. Land it with a single outer sudo:
+
+```bash
+sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR
+```
+
+After that, this agent uses the `--sudo` lines above.
+
 `Default` is the exception: hostname `default`, attr `Default`.
 
 ## What you may touch
