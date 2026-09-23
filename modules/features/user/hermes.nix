@@ -13,6 +13,10 @@
   # Open WebUI: http://127.0.0.1:3000  (points at the Grok proxy on :8645)
   # Dashboard:  http://127.0.0.1:9119  (hermes dashboard --no-open)
   # Agent API:  http://127.0.0.1:8642/v1  (needs API_SERVER_KEY in ~/.hermes/secrets.env)
+  #
+  # Denix edit policy lives in repo-root AGENTS.md. This module pins the
+  # agent write root and terminal cwd to ~/Nixos and installs the
+  # denix-host skill into HERMES_HOME.
   flake.homeModules.hermes = { pkgs, config, lib, inputs, ... }: 
   let
     system = pkgs.stdenv.hostPlatform.system;
@@ -36,7 +40,7 @@
         if (echo >/dev/tcp/127.0.0.1/${toString port}) >/dev/null 2>&1; then
           break
         fi
-        i=$((i + 1))
+        i=$((i + 1));
         sleep 0.2
       done
     '';
@@ -79,8 +83,6 @@
 
     nixpkgs.config.allowUnfree = true;
 
-    # Same env as the user unit. Bare `open-webui` starts the server;
-    # extra args are passed through (`open-webui --version`, `open-webui serve …`).
     home.packages = [
       openWebuiDesktop
       hermesDesktop
@@ -117,8 +119,6 @@
     programs.hermes-agent = {
       enable = true;
       package = hermesPkg;
-      # Official Electron launcher stays off so fuzzel / Noctalia / Plasma
-      # only see the Chromium wrappers below.
       desktop.enable = false;
     };
 
@@ -153,14 +153,29 @@
       hermesHome = hermesHome;
       gateway.enable = true;
       backend.mode = "none";
+      hermesHomeFiles = {
+        "skills/denix-host/SKILL.md" = ./denix-host/SKILL.md;
+      };
       settings = {
         model.provider = "xai-oauth";
         model.default = "grok-4.6";
+        terminal.backend = "local";
+        terminal.cwd = "${config.home.homeDirectory}/Nixos";
+        terminal.timeout = 600;
+        approvals.mode = "smart";
+        approvals.smart_policy = ''
+          Allow nixos-rebuild test --sudo --flake ${config.home.homeDirectory}/Nixos#* so the agent can loop a failing eval.
+          Require an explicit user phrase this turn before nixos-rebuild boot, nixos-rebuild switch, or git push.
+          Phrase "set changes" authorizes boot plus a non-force git push of this repo.
+          Phrase "update" authorizes switch only (not nix flake update).
+          Deny git push --force, git reset --hard, and any write outside ${config.home.homeDirectory}/Nixos.
+        '';
       };
       environment = {
         API_SERVER_ENABLED = "true";
         API_SERVER_HOST = "127.0.0.1";
         API_SERVER_PORT = toString apiPort;
+        HERMES_WRITE_SAFE_ROOT = "${config.home.homeDirectory}/Nixos";
       };
       environmentFiles = [ secretsEnv ];
     };
@@ -171,8 +186,6 @@
         After = [ "hermes-agent.service" ];
       };
       Service = {
-        # Default provider is nous. Without --provider xai this unit exits 2
-        # when the only login is `hermes auth add xai-oauth`.
         ExecStart = "${hermesPkg}/bin/hermes proxy start --provider xai --host 127.0.0.1 --port ${toString proxyPort}";
         Restart = "on-failure";
         RestartSec = "5s";
@@ -182,9 +195,6 @@
       Install.WantedBy = [ "default.target" ];
     };
 
-    # `hermes dashboard` is a separate process from the gateway / API.
-    # Started on demand by the Hermes desktop entry (also WantedBy so a
-    # lingering session can keep it after the first launch).
     systemd.user.services.hermes-dashboard = {
       Unit = {
         Description = "Hermes Web Dashboard";
@@ -204,8 +214,6 @@
       Unit = {
         Description = "Open WebUI";
         After = [ "hermes-agent.service" "hermes-proxy.service" ];
-        # 0.11.x first boot can fail mid-alembic. A 5s restart on a locked
-        # sqlite file loops (100+ times) and leaves `no such table: config`.
         StartLimitIntervalSec = 120;
         StartLimitBurst = 5;
       };
@@ -219,8 +227,6 @@
         Environment = [
           "HOME=${config.home.homeDirectory}"
           "DATA_DIR=${webuiHome}"
-          # Four slashes = absolute sqlite path. Alembic and the app must
-          # share one file; a relative URL plus HOME=DATA_DIR races.
           "DATABASE_URL=sqlite:////${webuiHome}/webui.db"
           "HF_HOME=${webuiHome}/hf"
           "SENTENCE_TRANSFORMERS_HOME=${webuiHome}/st"
