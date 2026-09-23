@@ -14,25 +14,17 @@ Resolve the flake attr from the machine, then only edit that host plus shared fe
 | `Aurelius` | `Aurelius` | `modules/hosts/Aurelius/` | `aureliusHome` |
 | `default` | `Default` | `modules/hosts/Default/` | `johnModule` |
 
-Command shape. The wrapper maps hostname → flake attr and always uses `~/Nixos`. Call the system binary so passwordless sudo matches:
+Command shape (replace `ATTR` with the table value, not the raw hostname when they differ). Outer sudo, never `--sudo` (`--sudo` wraps activation as `sudo env` and asks for a password). Call the system binary so NOPASSWD matches:
 
 ```bash
-sudo /run/current-system/sw/bin/denix-rebuild test
-sudo /run/current-system/sw/bin/denix-rebuild boot
-sudo /run/current-system/sw/bin/denix-rebuild switch
-```
-
-`denix-rebuild` builds the flake as `rebb` (root must not own `~/Nixos`) and activates as root. `hermesRebuild` grants NOPASSWD only for that binary.
-
-Do not prompt for a password. If sudo still asks, that generation is not active yet. Stop and say so — do not invent askpass or write a password.
-
-Bootstrap (human, real TTY only — never from this agent) lands the wrapper with a single outer sudo. Do **not** pass `--sudo` (that wraps activation as `sudo env`, which is not NOPASSWD):
-
-```bash
+sudo /run/current-system/sw/bin/nixos-rebuild test  --flake ~/Nixos#ATTR
+sudo /run/current-system/sw/bin/nixos-rebuild boot  --flake ~/Nixos#ATTR
 sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR
 ```
 
-After that, this agent uses the `denix-rebuild` lines above.
+`hermesRebuild` grants NOPASSWD for `nixos-rebuild` (always on the running system) and `denix-rebuild` (once that generation is current). `test` must work without waiting for boot/switch.
+
+Do not prompt for a password. If sudo still asks, stop — do not invent askpass or write a password. Run from `/tmp` so root does not drop a `result` symlink in `~/Nixos`.
 
 `Default` is the exception: hostname `default`, attr `Default`.
 
@@ -55,7 +47,7 @@ Free to do on any Denix request:
 4. Loop **test** until it succeeds or the cap is hit:
 
 ```bash
-sudo /run/current-system/sw/bin/denix-rebuild test
+sudo /run/current-system/sw/bin/nixos-rebuild test --flake ~/Nixos#ATTR
 ```
 
 On failure: read the log, fix a file in `~/Nixos`, test again. Cap: **5** test attempts. Then stop and paste the last error.
@@ -63,7 +55,7 @@ On failure: read the log, fix a file in `~/Nixos`, test again. Cap: **5** test a
 Only when the user says **set changes** in this turn:
 
 ```bash
-sudo /run/current-system/sw/bin/denix-rebuild boot
+sudo /run/current-system/sw/bin/nixos-rebuild boot --flake ~/Nixos#ATTR
 git push
 ```
 
@@ -72,7 +64,7 @@ git push
 Only when the user says **update** in this turn:
 
 ```bash
-sudo /run/current-system/sw/bin/denix-rebuild switch
+sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR
 ```
 
 `update` here means switch the running generation. It does **not** mean `nix flake update`. Changing `flake.lock` needs its own explicit request.
@@ -90,8 +82,8 @@ If the user did not say those phrases, refuse `boot`, `switch`, and `git push`. 
 
 ## Commands that stay off unless named
 
-- `denix-rebuild boot` / `switch` (phrase gates above)
+- `nixos-rebuild boot` / `switch` (phrase gates above)
 - `git push` / `git push --force` / `git reset --hard` / rebase
 - `nix flake update`
-- `nixos-rebuild` / `denix-rebuild` against any path other than `~/Nixos#ATTR`
-- `sudo` for anything except the `denix-rebuild` lines above
+- `nixos-rebuild` against any path other than `~/Nixos#ATTR`
+- `sudo` for anything except the `nixos-rebuild` lines above

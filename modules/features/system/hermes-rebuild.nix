@@ -3,11 +3,12 @@
   # Import from a host that already runs homeModules.hermes:
   #   self.nixosModules.hermesRebuild
   #
-  # nixos-rebuild --sudo wraps activation as `sudo env -i … systemd-run …`,
-  # so NOPASSWD on systemd-run / switch-to-configuration never matches.
-  # One wrapper is the only passwordless command: it builds as rebb, then
-  # activates as root. Hermes:
-  #   sudo /run/current-system/sw/bin/denix-rebuild {test|boot|switch}
+  # Never pass --sudo. That wraps activation as `sudo env -i … systemd-run …`,
+  # which does not match any NOPASSWD rule.
+  # Outer sudo on nixos-rebuild is already root, so test/boot/switch work on
+  # every running generation that includes this module (nixos-rebuild is
+  # always at /run/current-system/sw/bin). denix-rebuild is the same actions
+  # with the flake evaluated as rebb, once that generation is current.
   flake.nixosModules.hermesRebuild = { pkgs, ... }:
   let
     denixRebuild = pkgs.writeShellApplication {
@@ -100,6 +101,10 @@
       {
         users = [ "rebb" ];
         commands = [
+          {
+            command = "/run/current-system/sw/bin/nixos-rebuild";
+            options = [ "NOPASSWD" ];
+          }
           {
             command = "/run/current-system/sw/bin/denix-rebuild";
             options = [ "NOPASSWD" ];
