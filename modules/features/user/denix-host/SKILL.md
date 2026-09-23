@@ -29,14 +29,14 @@ Any request to change a Denix module, activate a feature on a host, rebuild, or 
 5. Loop up to five times:
 
 ```bash
-/run/current-system/sw/bin/nixos-rebuild test --sudo --flake ~/Nixos#ATTR
+sudo /run/current-system/sw/bin/denix-rebuild test
 ```
 
 Fix the error in-tree and retry. After five failures, stop.
 
-6. `/run/current-system/sw/bin/nixos-rebuild boot --sudo --flake ~/Nixos#ATTR` and `git push` only if this turn contains **set changes**.
-7. `/run/current-system/sw/bin/nixos-rebuild switch --sudo --flake ~/Nixos#ATTR` only if this turn contains **update**.
-   If sudo asks for a password, stop — `hermesRebuild` must cover nixos-rebuild plus nix-env / systemd-run / switch-to-configuration, and that generation must be active.
+6. `sudo /run/current-system/sw/bin/denix-rebuild boot` and `git push` only if this turn contains **set changes**.
+7. `sudo /run/current-system/sw/bin/denix-rebuild switch` only if this turn contains **update**.
+   If sudo asks for a password, stop — `hermesRebuild` must be in the running generation. Tell the human: `sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR` (no `--sudo`).
 
 ## Pitfalls
 
@@ -44,8 +44,8 @@ Fix the error in-tree and retry. After five failures, stop.
 - Open WebUI on `:8645` has no tools. Use Hermes CLI, dashboard, or `:8642`.
 - `update` is switch, not `nix flake update`.
 - Untracked feature files are invisible to `self.nixosModules` / `self.homeModules`.
-- If inner sudo asks for a password, do **not** tell the user to run `--sudo`. Tell them: `sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR` (no `--sudo`).
+- If sudo asks for a password, do **not** tell the user to run `--sudo`. Tell them: `sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR` (no `--sudo`).
 
 ## Verification
 
-A clean `nixos-rebuild test` for the resolved attr. Do not claim the running system changed unless `switch` was authorized and succeeded.
+A clean `denix-rebuild test`. Do not claim the running system changed unless `switch` was authorized and succeeded.
