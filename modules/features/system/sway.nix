@@ -75,14 +75,12 @@
           "persistent-workspaces": {
             "Browse": [],
             "Desk": [],
-            "Drawr": [],
-            "Side": []
+            "Drawr": []
           },
           "format-icons": {
             "Browse": "",
             "Desk": "",
             "Drawr": "",
-            "Side": "",
             "default": ""
           }
         },
@@ -227,14 +225,11 @@
       set $wsH Browse
       set $wsJ Desk
       set $wsK Drawr
-      set $wsL Side
       workspace $wsH
       workspace_layout tabbed
       workspace $wsJ
       workspace_layout tabbed
       workspace $wsK
-      workspace_layout default
-      workspace $wsL
       workspace_layout default
       workspace $wsH
       assign [app_id="^brave-browser$"] $wsH
@@ -242,6 +237,8 @@
       assign [app_id="^md.Obsidian$"] $wsJ
       assign [app_id="^chromium-browser$"] $wsJ
       assign [app_id="^kitty-drawr$"] $wsK
+      assign [app_id="^steam$"] $wsK
+      assign [app_id="^vesktop$"] $wsK
       for_window [app_id="^brave-browser$"] focus
       for_window [app_id="^google-chrome$"] focus
       for_window [app_id="^md.Obsidian$"] focus
@@ -276,11 +273,9 @@
       bindsym $mod+Alt+h workspace $wsH
       bindsym $mod+Alt+j workspace $wsJ
       bindsym $mod+Alt+k workspace $wsK
-      bindsym $mod+Alt+l workspace $wsL
       bindsym $mod+Ctrl+Alt+h move container to workspace $wsH
       bindsym $mod+Ctrl+Alt+j move container to workspace $wsJ
       bindsym $mod+Ctrl+Alt+k move container to workspace $wsK
-      bindsym $mod+Ctrl+Alt+l move container to workspace $wsL
       bindsym $mod+space floating toggle
       bindsym $mod+Alt+space focus mode_toggle
       bindsym $mod+f fullscreen toggle
@@ -289,11 +284,9 @@
       bindsym $mod+1 workspace $wsH
       bindsym $mod+2 workspace $wsJ
       bindsym $mod+3 workspace $wsK
-      bindsym $mod+4 workspace $wsL
       bindsym $mod+Shift+1 move container to workspace $wsH
       bindsym $mod+Shift+2 move container to workspace $wsJ
       bindsym $mod+Shift+3 move container to workspace $wsK
-      bindsym $mod+Shift+4 move container to workspace $wsL
       bindsym $mod+F1 exec $term python
       bindsym $mod+F2 exec $term hermes
       bindsym $mod+F3 exec $term yazi

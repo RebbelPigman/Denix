@@ -231,8 +231,8 @@ Wrapper settings (in the same file):
 - outputs `eDP-1` / `HDMI-A-1` / `HDMI-A-2` / `DP-1` / `DP-2` / `DP-3` scale `1.0` (unknown connectors are ignored)
 - spawn-at-startup: `myNoctalia`, `dropbox`
 - US kbd with caps↔escape, ralt compose, mac numpad; touchpad tap + natural scroll
-- Catppuccin-ish layout colors, named workspaces `Browser` / `Desk` / `Drawr` / `Side`
-- window rules (floating kitty, browsers on Browser, Obsidian/chromium on Desk, kitty-drawr on Drawr, Steam/Vesktop on Side)
+- Catppuccin-ish layout colors, named workspaces `Browser` / `Desk` / `Drawr`
+- window rules (floating kitty, browsers on Browser, Obsidian/chromium on Desk, kitty-drawr / Steam / Vesktop on Drawr)
 - keybinds (kitty, Drawr kitty, fuzzel, noctalia IPC, browsers, yazi/nemo, F-keys, volume/brightness)
 
 Do not also put `homeModules.tela` on `home-manager.sharedModules`.
@@ -253,7 +253,7 @@ Wrapper (`packages.mySway`) is `wrapper-modules.lib.wrapPackage` plus `--config`
 - include `/etc/sway/config.d/*` so NixOS session bits still apply
 - outputs `eDP-1` / `HDMI-A-1` / `HDMI-A-2` / `DP-1` / `DP-2` / `DP-3` scale `1`
 - US kbd with caps↔escape, ralt compose, mac numpad; touchpad tap + natural scroll
-- Catppuccin-ish colors, named workspaces `Browser` / `Desk` / `Drawr` / `Side`
+- Catppuccin-ish colors, named workspaces `Browser` / `Desk` / `Drawr`
 - window assigns + floating kitty/mpv/imv/anki/qalculate
 - keybinds match niri chords (kitty, Drawr kitty, fuzzel, browsers, yazi/nemo, F-keys, width presets, volume/brightness). Noctalia IPC keys fall back to fuzzel / pavucontrol / swaylock. No Mod+O overview (Sway has none)
 - built-in bar + i3status; exec mako, swaybg, dropbox, swayidle→swaylock

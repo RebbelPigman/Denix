@@ -91,7 +91,6 @@
 		  "Browser" = {};
 		  "Desk" = {};
 		  "Drawr" = {};
-		  "Side" = {};
 		};
 
 		window-rules = [ 
@@ -164,7 +163,7 @@
 			  { app-id = "^vesktop$"; }
 			];
             default-column-width.proportion = 0.70;
-			open-on-workspace = "Side";
+			open-on-workspace = "Drawr";
 		  }
 		];
 		binds = {
