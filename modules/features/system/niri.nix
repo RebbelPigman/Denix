@@ -29,8 +29,6 @@
           GTK_USE_PORTAL = "1";
       # QT_STYLE_OVERRIDE = "kvantum";
 		};
-		# Unset scale lets niri guess from physical size (often 1.25–2 on laptops).
-		# Explicit 1.0 on the usual connectors; unused names are ignored.
 		outputs = {
 		  "eDP-1".scale = 1.0;
 		  "HDMI-A-1".scale = 1.0;
@@ -90,12 +88,6 @@
 		gestures.hot-corners.top-right = {};
 
 		workspaces = {
-#		  "󰄛" = {};
-#		  "" = {};
-#		  "󱌧" = {};
-#		  "" = {};
-#		  "" = {};
-#		  "󰭟" = {};
 		  "Browser" = {};
 		  "Desk" = {};
 		  "Drawr" = {};
@@ -107,7 +99,6 @@
   		    geometry-corner-radius = 12;
 			clip-to-geometry = true;
           }
-	        # floating
 	      {
             matches = [ 
 			  { app-id = "^mpv$"; }
@@ -116,7 +107,6 @@
 			];
             open-floating = true;
           } 
-		    # transparent 
 	      {
             matches = [ 
 			  { app-id = "^nemo$"; }
@@ -124,7 +114,6 @@
 			];
 			opacity = 0.90;
           } 
-		    # transparent floating
 	      {
             matches = [ 
 			  { app-id = "^kitty$"; }
@@ -137,14 +126,12 @@
             default-window-height.proportion = 0.80;
 			background-effect.xray = true;
           } 
-		    # wide
 	      {
             matches = [ 
 			  { app-id = "^vlc$"; }
 			];
             default-column-width.proportion = 0.80;
           } 
-		    # browser
 		  {
 		    matches = [ 
 			  { app-id = "^brave-browser$"; }
@@ -153,7 +140,6 @@
             default-column-width.proportion = 0.80;
 			open-on-workspace = "Browser";
 		  }
-		    # desk
 		  {
 		    matches = [ 
 			  { app-id = "^md.Obsidian$"; } 
@@ -163,7 +149,6 @@
 			open-on-workspace = "Desk";
 			opacity = 0.90 ;
 		  }
-		    # drawr
 		  {
 		    matches = [ 
 			  { app-id = "^kitty-drawr$"; } 
@@ -173,7 +158,6 @@
 			open-on-workspace = "Drawr";
 			opacity = 0.90 ;
 		  }
-		    # side
 		  {
 		    matches = [
 			  { app-id = "^steam$"; }
@@ -199,7 +183,7 @@
 		  "Mod+F2".spawn-sh = "kitty hermes";
 		  "Mod+F3".spawn-sh = "kitty yazi";
 		  "Mod+F4".spawn-sh = "kitty ";
-		  "Mod+F5".spawn-sh = "kitty ";
+		  "Mod+F5".spawn-sh = "kitty --directory ~/Nixos hermes chat --toolsets terminal,file";
 		  "Mod+F6".spawn-sh = "kitty ";
 		  "Mod+F7".spawn-sh = "kitty ";
 		  "Mod+F8".spawn-sh = "kitty ";
@@ -253,4 +237,3 @@
     };
   };
 }
-

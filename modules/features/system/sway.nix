@@ -123,7 +123,7 @@
         "network": {
           "format-wifi": "",
           "format-ethernet": "",
-          "format-disconnected": "",
+          "format-disconnected": "",
           "tooltip-format": "{ifname} {essid} {ipaddr}"
         },
         "bluetooth": {
@@ -298,7 +298,7 @@
       bindsym $mod+F2 exec $term hermes
       bindsym $mod+F3 exec $term yazi
       bindsym $mod+F4 exec $term
-      bindsym $mod+F5 exec $term
+      bindsym $mod+F5 exec $term --directory ~/Nixos hermes chat --toolsets terminal,file
       bindsym $mod+F6 exec $term
       bindsym $mod+F7 exec $term
       bindsym $mod+F8 exec $term
