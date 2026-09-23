@@ -22,7 +22,9 @@ Command shape (replace `ATTR` with the table value, not the raw hostname when th
 /run/current-system/sw/bin/nixos-rebuild switch --sudo --flake ~/Nixos#ATTR
 ```
 
-Do not prompt for a password. If sudo still asks, the host is missing `nixosModules.hermesRebuild` (or that generation is not active yet). Stop and say so — do not invent askpass or write a password.
+Keep `--sudo` so the flake is evaluated as `rebb` (root must not own `~/Nixos`). `hermesRebuild` grants NOPASSWD for `nixos-rebuild` and the inner activation commands (`nix-env`, `nix-store`, `systemd-run`, `switch-to-configuration`).
+
+Do not prompt for a password. If sudo still asks, that expanded generation is not active yet. Stop and say so — do not invent askpass or write a password.
 
 `Default` is the exception: hostname `default`, attr `Default`.
 

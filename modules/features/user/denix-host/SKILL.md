@@ -36,7 +36,7 @@ Fix the error in-tree and retry. After five failures, stop.
 
 6. `/run/current-system/sw/bin/nixos-rebuild boot --sudo --flake ~/Nixos#ATTR` and `git push` only if this turn contains **set changes**.
 7. `/run/current-system/sw/bin/nixos-rebuild switch --sudo --flake ~/Nixos#ATTR` only if this turn contains **update**.
-   If sudo asks for a password, stop — the host needs `nixosModules.hermesRebuild` active.
+   If sudo asks for a password, stop — `hermesRebuild` must cover nixos-rebuild plus nix-env / systemd-run / switch-to-configuration, and that generation must be active.
 
 ## Pitfalls
 
