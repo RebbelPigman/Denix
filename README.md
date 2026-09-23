@@ -305,7 +305,7 @@ Use this for a Plasma workstation. Do not combine with `niri` on the same host u
 Shared fish + kitty.
 
 - fish aliases: `ff`, `yz`, `vi`/`vim` → nvim
-- abbrs: `nixos-test`, `nixos-switch` (`--flake ~/.nixos`), `git-acp`
+- abbrs: `nixos-test`, `nixos-switch` (`--flake ~/Nixos`), `git-acp`
 - kitty: BlexMono, fish, tall layout, noctalia theme include, split/tab maps
 
 Host homes import this and then overlay host-only fish/kitty bits (Lenovus: grc plugin + fastfetch greeting; Aurelius: python nix-shell alias + Catppuccin-Mocha themeFile).
@@ -373,7 +373,7 @@ Neither live host imports `office` / `plasma` / `karousel`. Aurelius imports bot
 
 ## Day-to-day use
 
-Clone / update, then from the flake root (this repo is often checked out as `~/.nixos`):
+Clone / update, then from the flake root (this repo is often checked out as `~/Nixos`):
 
 ```bash
 # evaluate / test a host
@@ -391,7 +391,7 @@ home-manager switch --flake .#rebb            # Lenovus home
 home-manager switch --flake .#rebbAurelius    # Aurelius home
 ```
 
-Fish abbrs on hosts that import `catfish` assume the flake lives at `~/.nixos`.
+Fish abbrs on hosts that import `catfish` assume the flake lives at `~/Nixos`.
 
 ### First rebuild that pulls Hermes
 
