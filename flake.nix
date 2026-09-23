@@ -2,10 +2,8 @@
   description = "Nix flake";
 
   inputs = {
-    # NixOS + system packages (desk, game, niri wrapper, …)
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
-    # Home Manager user packages (home.packages, programs.*)
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # NixOS + every package set (system, Home Manager, wrappers)
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
@@ -14,11 +12,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Module API stays on the 26.05 release; package set is unstable.
-    # Bare github:nix-community/home-manager tracks master (26.11+).
+    # Tracks nixos-unstable (master). release-26.05 cannot generate fish
+    # completions against fish 4.9 (create_manpage_completions.py moved).
     home-manager = {
-      url = "github:nix-community/home-manager/release-26.05";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     plasma-manager = {

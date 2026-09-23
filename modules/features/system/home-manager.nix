@@ -7,7 +7,7 @@
 
     home-manager = {
       # false: HM evaluates its own pkgs from the home-manager input's nixpkgs
-      # true would pin every home.packages / programs.* package to the NixOS pkgs set
+      # (same unstable channel as NixOS; still a separate eval so HM can set allowUnfree)
       useGlobalPkgs = false;
       useUserPackages = true;
       backupFileExtension = "backup";

@@ -34,9 +34,8 @@ Every other `.nix` file under `modules/` is itself a flake-parts module. It typi
 
 | Input | Role |
 | --- | --- |
-| `nixpkgs` (`nixos-26.05`) | NixOS system packages, niri / noctalia wrappers |
-| `nixpkgs-unstable` | Home Manager package set (`useGlobalPkgs = false`) |
-| `home-manager` (`release-26.05`) | Module API on 26.05; packages follow unstable |
+| `nixpkgs` (`nixos-unstable`) | NixOS + every package set (system, Home Manager, wrappers) |
+| `home-manager` (`master`) | Module API + packages follow `nixpkgs` |
 | `wrapper-modules` | niri + noctalia-shell wrappers |
 | `plasma-manager` | Plasma rice (`homeModules.plasma` / `homeModules.karousel`) |
 | `hermes-agent` | Hermes Agent HM module + package |
@@ -213,7 +212,7 @@ Play Protect then needs the container's Android ID registered. ARM-only Play gam
 
 Turns Home Manager on for the NixOS system.
 
-- `useGlobalPkgs = false` — HM evaluates packages from the home-manager input (unstable)
+- `useGlobalPkgs = false` — HM evaluates packages from the home-manager input (`nixpkgs` / unstable)
 - `useUserPackages = true`
 - `backupFileExtension = "backup"`, `overwriteBackup = true`
 - forwards `inputs` via `extraSpecialArgs`

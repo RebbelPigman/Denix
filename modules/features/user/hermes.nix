@@ -21,7 +21,7 @@
   let
     system = pkgs.stdenv.hostPlatform.system;
     hermesPkg = inputs.hermes-agent.packages.${system}.default;
-    pkgsUnfree = import inputs.nixpkgs-unstable {
+    pkgsUnfree = import inputs.nixpkgs {
       inherit system;
       config.allowUnfree = true;
     };
