@@ -234,6 +234,7 @@
       workspace $wsH
       assign [app_id="^brave-browser$"] $wsH
       assign [app_id="^google-chrome$"] $wsH
+      assign [app_id="^md.obsidian.Obsidian$"] $wsJ
       assign [app_id="^md.Obsidian$"] $wsJ
       assign [app_id="^chromium-browser$"] $wsJ
       assign [app_id="^kitty-drawr$"] $wsK
@@ -241,6 +242,7 @@
       assign [app_id="^vesktop$"] $wsK
       for_window [app_id="^brave-browser$"] focus
       for_window [app_id="^google-chrome$"] focus
+      for_window [app_id="^md.obsidian.Obsidian$"] focus
       for_window [app_id="^md.Obsidian$"] focus
       for_window [app_id="^chromium-browser$"] focus
       for_window [app_id="^kitty-drawr$"] floating disable, focus

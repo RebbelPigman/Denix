@@ -141,7 +141,8 @@
 		  }
 		  {
 		    matches = [ 
-			  { app-id = "^md.Obsidian$"; } 
+			  { app-id = "^md.obsidian.Obsidian$"; }
+			  { app-id = "^md.Obsidian$"; }
 			  { app-id = "^chromium-browser$"; } 
 			];
 			open-maximized-to-edges = true;
