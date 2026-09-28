@@ -14,9 +14,14 @@
   # Dashboard:  http://127.0.0.1:9119  (hermes dashboard --no-open)
   # Agent API:  http://127.0.0.1:8642/v1  (needs API_SERVER_KEY in ~/.hermes/secrets.env)
   #
-  # Denix edit policy lives in repo-root AGENTS.md. This module pins the
-  # agent write root and terminal cwd to ~/Nixos and installs the
-  # denix-host skill into HERMES_HOME.
+  # Denix edit policy lives in repo-root AGENTS.md. This module installs
+  # the denix-host skill into HERMES_HOME.
+  #
+  # The upstream HM module always writes terminal.cwd = workingDirectory
+  # (default: $HOME). An absolute cwd wins over the directory you launched
+  # `hermes` from. "." is the documented placeholder for "use launch dir"
+  # on the local CLI/TUI. systemd WorkingDirectory stays $HOME so the
+  # gateway unit still has an absolute path.
   flake.homeModules.hermes = { pkgs, config, lib, inputs, ... }: 
   let
     system = pkgs.stdenv.hostPlatform.system;
@@ -160,7 +165,7 @@
         model.provider = "xai-oauth";
         model.default = "grok-4.6";
         terminal.backend = "local";
-        terminal.cwd = "${config.home.homeDirectory}/Nixos";
+        terminal.cwd = ".";
         terminal.timeout = 600;
         approvals.mode = "smart";
         approvals.smart_policy = ''
@@ -175,7 +180,6 @@
         API_SERVER_ENABLED = "true";
         API_SERVER_HOST = "127.0.0.1";
         API_SERVER_PORT = toString apiPort;
-        HERMES_WRITE_SAFE_ROOT = "${config.home.homeDirectory}/Nixos";
       };
       environmentFiles = [ secretsEnv ];
     };

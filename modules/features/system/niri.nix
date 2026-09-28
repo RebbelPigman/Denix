@@ -108,6 +108,7 @@
           } 
 	      {
             matches = [ 
+			  { app-id = "^anki$"; }
 			  { app-id = "^nemo$"; }
 			  { app-id = "^org.kde.kate$"; }
 			];
@@ -116,7 +117,6 @@
 	      {
             matches = [ 
 			  { app-id = "^kitty$"; }
-			  { app-id = "^anki$"; }
 			  { app-id = "^qalculate-gtk$"; }
 			];
             open-floating = true;
