@@ -293,10 +293,10 @@
       bindsym $mod+F2 exec $term hermes
       bindsym $mod+F3 exec $term yazi
       bindsym $mod+F4 exec $term
-      bindsym $mod+F5 exec $term --directory ~/Nixos hermes chat --toolsets terminal,file
-      bindsym $mod+F6 exec $term
+      bindsym $mod+F5 exec $term --class hermes-sysman --directory ~/Nixos hermes chat --toolsets terminal,file
+      bindsym $mod+F6 exec $term --class hermes-programmer --directory ~/Dropbox/Projects hermes -p programmer chat --toolsets terminal,file
       bindsym $mod+F7 exec $term
-      bindsym $mod+F8 exec $term
+      bindsym $mod+F8 exec $term --class hermes-general hermes chat
       bindsym $mod+F9 exec $term
       bindsym $mod+F10 exec $term htop
       bindsym $mod+F11 exec $term atop

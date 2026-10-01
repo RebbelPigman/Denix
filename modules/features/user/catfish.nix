@@ -18,6 +18,9 @@
         # hostName matches the flake attr on both current hosts
         nixos-test = "nixos-rebuild test --sudo --flake ~/Nixos";
         nixos-switch = "nixos-rebuild switch --sudo --flake ~/Nixos";
+        nixos = "kitty --class hermes-sysman --directory ~/Nixos hermes chat --toolsets terminal,file";
+        program = "kitty --class hermes-programmer --directory ~/Dropbox/Projects hermes -p programmer chat --toolsets terminal,file";
+        hermes = "kitty --class hermes-general hermes chat";
         git-acp = {
           expansion = "git add -A && git commit -m \"%\" && git push";
           setCursor = true;
