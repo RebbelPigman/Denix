@@ -324,12 +324,12 @@ Import **once** from the host home module (`rebbModule`, `aureliusHome`). Unique
 Hermes Agent + xAI proxy + Open WebUI as user systemd services.
 
 - `programs.hermes-agent` / `services.hermes-agent` (gateway, `xai-oauth`, default model `grok-4.6`)
-- API server on `127.0.0.1:8642` (needs `API_SERVER_KEY` in `~/.hermes/secrets.env`)
+- API server on `127.0.0.1:8642` (needs `API_SERVER_KEY` in `~/Dropbox/Hermes/secrets.env`)
 - `hermes-proxy` on `:8645`
 - Open WebUI on `:3000` pointed at the proxy
 - Hermes Web Dashboard unit on `:9119` (`hermes dashboard --no-open`)
 - Chromium desktop entries `Open WebUI` and `Hermes` (fuzzel / Noctalia / Plasma). Official Electron `programs.hermes-agent.desktop` stays off
-- activation creates `~/.hermes` and a placeholder secrets file
+- activation creates `~/Dropbox/Hermes` and a placeholder secrets file
 
 The **NixOS** user must set `users.users.<name>.linger = true`. Home Manager cannot enable linger; without it the units die at logout.
 

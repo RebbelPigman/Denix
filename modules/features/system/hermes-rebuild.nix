@@ -109,6 +109,10 @@
             command = "/run/current-system/sw/bin/denix-rebuild";
             options = [ "NOPASSWD" ];
           }
+          {
+            command = "/run/current-system/sw/bin/nix-collect-garbage --delete-older-than 7d";
+            options = [ "NOPASSWD" ];
+          }
         ];
       }
     ];

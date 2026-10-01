@@ -22,7 +22,13 @@ sudo /run/current-system/sw/bin/nixos-rebuild boot  --flake ~/Nixos#ATTR
 sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR
 ```
 
-`hermesRebuild` grants NOPASSWD for `nixos-rebuild` (always on the running system) and `denix-rebuild` (once that generation is current). `test` must work without waiting for boot/switch.
+`hermesRebuild` grants NOPASSWD for `nixos-rebuild` (always on the running system), `denix-rebuild` (once that generation is current), and this exact GC argv (once that generation is current):
+
+```bash
+sudo /run/current-system/sw/bin/nix-collect-garbage --delete-older-than 7d
+```
+
+Do not pass other GC flags (`-d`, other durations). `test` must work without waiting for boot/switch.
 
 Do not prompt for a password. If sudo still asks, stop — do not invent askpass or write a password. Run from `/tmp` so root does not drop a `result` symlink in `~/Nixos`.
 
@@ -35,7 +41,7 @@ Do not prompt for a password. If sudo still asks, stop — do not invent askpass
 - Host wiring: that host’s `configuration.nix` / `home.nix` (and hardware only if the user named it).
 - Git in this repo: `status`, `diff`, `add`, `commit`, `fetch`, `pull --ff-only`.
 
-Do not edit, read-for-rewrite, or run destructive commands outside `~/Nixos`. Do not change `~/.hermes` secrets, `/etc`, or another host’s files in the same turn.
+Do not edit, read-for-rewrite, or run destructive commands outside `~/Nixos`. Do not change `~/Dropbox/Hermes` secrets, `/etc`, or another host’s files in the same turn.
 
 ## Phrase gates
 
@@ -86,4 +92,4 @@ If the user did not say those phrases, refuse `boot`, `switch`, and `git push`. 
 - `git push` / `git push --force` / `git reset --hard` / rebase
 - `nix flake update`
 - `nixos-rebuild` against any path other than `~/Nixos#ATTR`
-- `sudo` for anything except the `nixos-rebuild` lines above
+- `sudo` for anything except the `nixos-rebuild` lines above and the GC argv in the hermesRebuild paragraph

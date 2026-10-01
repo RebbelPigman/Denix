@@ -12,7 +12,7 @@
   #   hermes auth add xai-oauth
   # Open WebUI: http://127.0.0.1:3000  (points at the Grok proxy on :8645)
   # Dashboard:  http://127.0.0.1:9119  (hermes dashboard --no-open)
-  # Agent API:  http://127.0.0.1:8642/v1  (needs API_SERVER_KEY in ~/.hermes/secrets.env)
+  # Agent API:  http://127.0.0.1:8642/v1  (needs API_SERVER_KEY in ~/Dropbox/Hermes/secrets.env)
   #
   # Denix edit policy lives in repo-root AGENTS.md. This module installs
   # the denix-host skill into HERMES_HOME.
@@ -31,7 +31,7 @@
       config.allowUnfree = true;
     };
     webuiPkg = pkgsUnfree.open-webui;
-    hermesHome = "${config.home.homeDirectory}/.hermes";
+    hermesHome = "${config.home.homeDirectory}/Dropbox/Hermes";
     webuiHome = "${config.xdg.dataHome}/open-webui";
     secretsEnv = "${hermesHome}/secrets.env";
     apiPort = 8642;
@@ -121,6 +121,8 @@
       })
     ];
 
+    home.sessionVariables.HERMES_HOME = hermesHome;
+
     programs.hermes-agent = {
       enable = true;
       package = hermesPkg;
@@ -164,6 +166,8 @@
       settings = {
         model.provider = "xai-oauth";
         model.default = "grok-4.6";
+        # Nix pin vs a noisy upstream main; the commit-count banner is noise.
+        updates.check = false;
         terminal.backend = "local";
         terminal.cwd = ".";
         terminal.timeout = 600;
