@@ -295,7 +295,7 @@
       bindsym $mod+F4 exec $term
       bindsym $mod+F5 workspace $wsK; exec $term --class kitty-drawr --directory ~/Nixos hermes chat --toolsets terminal,file
       bindsym $mod+F6 workspace $wsK; exec $term --class kitty-drawr --directory ~/Dropbox/Projects hermes -p programmer chat --toolsets terminal,file
-      bindsym $mod+F7 exec $term --class hermes-obsidian --directory ~/Dropbox/Obsidian hermes -p obsidian chat --toolsets terminal,file
+      bindsym $mod+F7 workspace $wsK; exec $term --class kitty-drawr --directory ~/Dropbox/Obsidian hermes -p obsidian chat --toolsets terminal,file
       bindsym $mod+F8 workspace $wsK; exec $term --class kitty-drawr hermes chat
       bindsym $mod+F9 exec $term
       bindsym $mod+F10 exec $term htop
