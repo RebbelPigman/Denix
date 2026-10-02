@@ -20,6 +20,7 @@
         nixos-switch = "nixos-rebuild switch --sudo --flake ~/Nixos";
         nixos = "kitty --class kitty-drawr --directory ~/Nixos hermes chat --toolsets terminal,file";
         program = "kitty --class kitty-drawr --directory ~/Dropbox/Projects hermes -p programmer chat --toolsets terminal,file";
+        obsidian-hermes = "kitty --class hermes-obsidian --directory ~/Dropbox/Obsidian hermes -p obsidian chat --toolsets terminal,file";
         hermes = "kitty --class kitty-drawr hermes chat";
         git-acp = {
           expansion = "git add -A && git commit -m \"%\" && git push";

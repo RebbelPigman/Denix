@@ -185,7 +185,7 @@
 		  "Mod+F4".spawn-sh = "kitty ";
 		  "Mod+F5".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr --directory ~/Nixos hermes chat --toolsets terminal,file'';
 		  "Mod+F6".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr --directory ~/Dropbox/Projects hermes -p programmer chat --toolsets terminal,file'';
-		  "Mod+F7".spawn-sh = "kitty ";
+		  "Mod+F7".spawn-sh = "kitty --class hermes-obsidian --directory ~/Dropbox/Obsidian hermes -p obsidian chat --toolsets terminal,file";
 		  "Mod+F8".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr hermes chat'';
 		  "Mod+F9".spawn-sh = "kitty ";
 		  "Mod+F10".spawn-sh = "kitty htop";
