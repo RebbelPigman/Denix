@@ -113,6 +113,7 @@
 			  { app-id = "^org.kde.kate$"; }
 			];
 			opacity = 0.90;
+            open-floating = false;
           } 
 	      {
             matches = [ 
