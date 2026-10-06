@@ -22,13 +22,14 @@ sudo /run/current-system/sw/bin/nixos-rebuild boot  --flake ~/Nixos#ATTR
 sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR
 ```
 
-`hermesRebuild` grants NOPASSWD for `nixos-rebuild` (always on the running system), `denix-rebuild` (once that generation is current), and this exact GC argv (once that generation is current):
+`hermesRebuild` grants NOPASSWD for `nixos-rebuild` (always on the running system), `denix-rebuild` / `denix-gc` (once that generation is current), and this exact GC argv (once that generation is current):
 
 ```bash
+sudo /run/current-system/sw/bin/denix-gc
 sudo /run/current-system/sw/bin/nix-collect-garbage --delete-older-than 7d
 ```
 
-Do not pass other GC flags (`-d`, other durations). `test` must work without waiting for boot/switch.
+`nix-collect-garbage` only deletes profile generations and unreferenced store paths. It does not rewrite `/boot`. Use `denix-gc` when old boot menu entries should go too: same 7d GC, then `switch-to-configuration boot` on the current system profile (does not `nix-env --set` a new generation). Do not pass other GC flags (`-d`, other durations). `test` must work without waiting for boot/switch.
 
 Do not prompt for a password. If sudo still asks, stop — do not invent askpass or write a password. Run from `/tmp` so root does not drop a `result` symlink in `~/Nixos`.
 
@@ -92,4 +93,4 @@ If the user did not say those phrases, refuse `boot`, `switch`, and `git push`. 
 - `git push` / `git push --force` / `git reset --hard` / rebase
 - `nix flake update`
 - `nixos-rebuild` against any path other than `~/Nixos#ATTR`
-- `sudo` for anything except the `nixos-rebuild` lines above and the GC argv in the hermesRebuild paragraph
+- `sudo` for anything except the `nixos-rebuild` lines above, `denix-gc`, and the GC argv in the hermesRebuild paragraph
