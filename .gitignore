@@ -1,0 +1,27 @@
+# Open WebUI writes this in cwd when WEBUI_SECRET_KEY is unset.
+.webui_secret_key
+
+# Hermes / Open WebUI env files if they ever land in this tree.
+secrets.env
+.env
+.env.*
+
+# Private keys copied into the checkout by accident.
+*.pem
+*.p12
+*.key
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# nix-build / nixos-rebuild drop these in cwd.
+result
+result-*
+
+# Local tooling
+.direnv/
+.venv/
+__pycache__/
+*~
+*.swp
