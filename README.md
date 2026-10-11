@@ -314,7 +314,7 @@ Host homes import this and then overlay host-only fish/kitty bits (Lenovus: grc 
 GTK + Qt icon theme for **niri** hosts.
 
 - `gtk.iconTheme` = Tela-circle from `tela-circle-icon-theme`
-- qtct platform theme + `qt6ct.conf` icon_theme
+- qtct platform theme; seed a writable `qt6ct.conf` (Fusion + custom palette → noctalia's `qt6ct/colors/noctalia.conf` + Tela-circle) so qt6ct can Apply. Do not HM-manage the color file — noctalia's qt template writes it.
 - `GTK_ICON_THEME=Tela-circle`
 
 Import **once** from the host home module (`rebbModule`, `aureliusHome`). Unique option — a second attach fails the rebuild.
