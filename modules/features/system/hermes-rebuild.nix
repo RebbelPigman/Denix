@@ -52,6 +52,7 @@
         case "$host" in
           Lenovus) attr=Lenovus ;;
           Aurelius) attr=Aurelius ;;
+          Unison) attr=Unison ;;
           default) attr=Default ;;
           *)
             echo "denix-rebuild: unknown hostname $host" >&2

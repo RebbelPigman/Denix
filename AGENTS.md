@@ -12,6 +12,7 @@ Resolve the flake attr from the machine, then only edit that host plus shared fe
 | --- | --- | --- | --- |
 | `Lenovus` | `Lenovus` | `modules/hosts/Lenovus/` | `rebbModule` |
 | `Aurelius` | `Aurelius` | `modules/hosts/Aurelius/` | `aureliusHome` |
+| `Unison` | `Unison` | `modules/hosts/Unison/` | `unisonHome` |
 | `default` | `Default` | `modules/hosts/Default/` | `johnModule` |
 
 Command shape (replace `ATTR` with the table value, not the raw hostname when they differ). Outer sudo, never `--sudo` (`--sudo` wraps activation as `sudo env` and asks for a password). Call the system binary so NOPASSWD matches:
@@ -82,7 +83,7 @@ If the user did not say those phrases, refuse `boot`, `switch`, and `git push`. 
 
 - Activate system features from `hosts/<Host>/configuration.nix` `imports`. Activate user features from that host’s `home.nix` `imports`.
 - Do not put `tela` or `hermes` on `home-manager.sharedModules`.
-- Niri/sway hosts (Lenovus, Aurelius) do not import `plasma`, `karousel`, or `office`.
+- Niri/sway hosts (Lenovus, Aurelius) do not import `plasma`, `karousel`, or `office`. Unison is the office/plasma host.
 - Do not copy package lists into a host file when a feature module already has them.
 - New `flake.nixosModules.*` / `flake.homeModules.*` files must be git-added before they exist to the flake.
 - Read `README.md` for the current import table before adding a module.

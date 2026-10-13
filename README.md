@@ -68,7 +68,7 @@ modules/
       jupyter.nix                    # JupyterLab + Chromium desktop entry
       karousel.nix                   # Karousel shortcuts / kwinrc
   hosts/
-    Default/   Lenovus/   Aurelius/
+    Default/   Lenovus/   Aurelius/   Unison/
       default.nix                    # nixosConfigurations.<Host>
       configuration.nix              # nixosModules.*Configuration  ← activate system features here
       hardware-configuration.nix     # nixosModules.*Hardware
@@ -84,7 +84,7 @@ Convention for a host named `Lenovus`:
 | `hardware-configuration.nix` | `nixosModules.lenovusHardware` |
 | `home.nix` | `homeModules.rebbModule` and `homeConfigurations.rebb` |
 
-Aurelius uses `aureliusHome` / `homeConfigurations.rebbAurelius` so the two `rebb` homes do not collide. Default uses `johnModule` / `john`.
+Aurelius uses `aureliusHome` / `homeConfigurations.rebbAurelius` so the two `rebb` homes do not collide. Unison uses `unisonHome` / `rebbUnison`. Default uses `johnModule` / `john`.
 
 ---
 
@@ -145,7 +145,7 @@ home-manager.sharedModules = [
 ];
 ```
 
-So a host that imports `office` or `plasma` gets the rice for every HM user on that host. Niri hosts (Lenovus, Aurelius) must **not** import `plasma`, `karousel`, or `office`.
+So a host that imports `office` or `plasma` gets the rice for every HM user on that host. Niri hosts (Lenovus, Aurelius) must **not** import `plasma`, `karousel`, or `office`. Unison imports `office`.
 
 ### 4. Wrappers — not imported as modules
 
@@ -279,7 +279,7 @@ Home side (`homeModules.plasma`):
 - BlexMono fonts, four virtual desktops, focus-follows-mouse, shortcuts, kwinrules opacity for konsole/dolphin/okular/anki/kitty/obsidian
 - wallpaper path `~/.wallpaper`
 
-Office/plasma hosts only. Keep off Lenovus and Aurelius.
+Office/plasma hosts only (Unison). Keep off Lenovus and Aurelius.
 
 #### `karousel` → `nixosModules.karousel` (packages) + `homeModules.karousel` (rice)
 
@@ -333,7 +333,7 @@ Hermes Agent + xAI proxy + Open WebUI as user systemd services.
 
 The **NixOS** user must set `users.users.<name>.linger = true`. Home Manager cannot enable linger; without it the units die at logout.
 
-Imported from `rebbModule` (Lenovus) and `aureliusHome` (Aurelius).
+Imported from `rebbModule` (Lenovus), `aureliusHome` (Aurelius), and `unisonHome` (Unison).
 
 After the first switch, as that user:
 
@@ -364,9 +364,10 @@ See system `karousel` above. Plasma-only.
 | --- | --- | --- |
 | **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
 | **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, sway, game | catfish, tela, hermes, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway. Home attr `aureliusHome` / `rebbAurelius` |
+| **Unison** | core, unisonHardware, myHomeManager, office, game | catfish, tela, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (desk + karousel rice). Home attr `unisonHome` / `rebbUnison` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
-Neither live host imports `office` / `plasma` / `karousel`. Aurelius imports both `niri` and `sway` (two ly sessions). Lenovus stays niri-only.
+Lenovus and Aurelius do not import `office` / `plasma` / `karousel`. Unison does (Plasma workstation). Aurelius imports both `niri` and `sway` (two ly sessions). Lenovus stays niri-only.
 
 ---
 
@@ -381,6 +382,9 @@ nixos-rebuild switch --sudo --flake .#Lenovus
 
 nixos-rebuild test --sudo --flake .#Aurelius
 nixos-rebuild switch --sudo --flake .#Aurelius
+
+nixos-rebuild test --sudo --flake .#Unison
+nixos-rebuild switch --sudo --flake .#Unison
 ```
 
 Standalone Home Manager (same modules the NixOS system already attaches):
@@ -388,6 +392,7 @@ Standalone Home Manager (same modules the NixOS system already attaches):
 ```bash
 home-manager switch --flake .#rebb            # Lenovus home
 home-manager switch --flake .#rebbAurelius    # Aurelius home
+home-manager switch --flake .#rebbUnison      # Unison home
 ```
 
 Fish abbrs on hosts that import `catfish` assume the flake lives at `~/Nixos`.
@@ -401,6 +406,19 @@ nixos-rebuild switch --sudo --flake .#Lenovus \
   --option extra-substituters https://hermes-agent.cachix.org \
   --option extra-trusted-public-keys hermes-agent.cachix.org-1:jN3pjR50Mxi4SESKC/FIMNM6/LCosvPk2VUwzVvebzU=
 ```
+
+### First rebuild on Unison (stock installer)
+
+Hostname is still `nixos`, flakes and git are off. As `rebb`:
+
+```bash
+nix --extra-experimental-features 'nix-command flakes' run nixpkgs#curl -- \
+  -fsSL https://raw.githubusercontent.com/RebbelPigman/Denix/main/scripts/bootstrap-unison.sh \
+  -o /tmp/bootstrap-unison.sh
+bash /tmp/bootstrap-unison.sh
+```
+
+That clones `~/Nixos` (via `nix run nixpkgs#git` if git is missing) and `nixos-rebuild switch --flake ~/Nixos#Unison` with flakes + the Hermes cache flags.
 
 ---
 
@@ -440,8 +458,8 @@ If two modules set the same unique option (`gtk.iconTheme.package`, a single des
 - **Default configuration attr typo.** `hosts/Default/configuration.nix` currently defines `flake.nixosModules.deafaultConfiguration`, while `default.nix` imports `self.nixosModules.defaultConfiguration`. The Default host does not evaluate until those names match.
 - **Default hardware** is a stub. Generate and wrap it before using that host.
 - **Lenovus resume.** `boot.kernelParams` still has `resume_offset=PUT_THE_NUMBER_HERE`. Hibernate will not work until that offset is filled in.
-- **Plasma vs niri.** Plasma/karousel home modules stay off niri hosts. `tela` stays off plasma hosts (or at least off `sharedModules`).
-- **Hermes linger.** Lenovus and Aurelius set `users.users.rebb.linger = true`. A host that imports `homeModules.hermes` without linger will start units that vanish after logout.
+- **Plasma vs niri.** Plasma/karousel home modules stay off niri hosts. `tela` stays off `sharedModules`. Unison still imports `tela` from `unisonHome` (same user modules as Aurelius).
+- **Hermes linger.** Lenovus, Aurelius, and Unison set `users.users.rebb.linger = true`. A host that imports `homeModules.hermes` without linger will start units that vanish after logout.
 - **Evaluation sees git.** Untracked feature files are invisible to `self.nixosModules` / `self.homeModules`.
 
 ---
