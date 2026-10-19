@@ -290,10 +290,10 @@
       bindsym $mod+Shift+2 move container to workspace $wsJ
       bindsym $mod+Shift+3 move container to workspace $wsK
       bindsym $mod+F1 exec $term python
-      bindsym $mod+F2 workspace $wsK; exec env HERMES_HOME=$HOME/Dropbox/Hermes $term --class kitty-drawr hermes
+      bindsym $mod+F2 workspace $wsK; exec env HERMES_HOME=$HOME/Hermes $term --class kitty-drawr hermes
       bindsym $mod+F3 exec $term yazi
       bindsym $mod+F4 exec $term
-      bindsym $mod+F5 workspace $wsK; exec $term --class kitty-drawr --directory ~/Nixos hermes chat --toolsets terminal,file
+      bindsym $mod+F5 workspace $wsK; exec $term --class kitty-drawr --directory ~/Dropbox/Projects/Denix hermes chat --toolsets terminal,file
       bindsym $mod+F6 workspace $wsK; exec $term --class kitty-drawr --directory ~/Dropbox/Projects hermes -p programmer chat --toolsets terminal,file
       bindsym $mod+F7 workspace $wsK; exec $term --class kitty-drawr --directory ~/Dropbox/Obsidian hermes -p obsidian chat --toolsets terminal,file
       bindsym $mod+F8 workspace $wsK; exec $term --class kitty-drawr hermes chat

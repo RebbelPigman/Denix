@@ -28,7 +28,6 @@
   in {
     imports = [
       self.homeModules.catfish
-      self.homeModules.tela
       self.homeModules.hermes
       self.homeModules.jupyter
     ];

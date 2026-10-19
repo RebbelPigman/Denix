@@ -16,9 +16,9 @@
       };
       shellAbbrs = {
         # hostName matches the flake attr on both current hosts
-        nixos-test = "nixos-rebuild test --sudo --flake ~/Nixos";
-        nixos-switch = "nixos-rebuild switch --sudo --flake ~/Nixos";
-        nixos = "cd ~/Nixos && hermes chat --toolsets terminal,file";
+        nixos-test = "nixos-rebuild test --sudo --flake ~/Dropbox/Projects/Denix";
+        nixos-switch = "nixos-rebuild switch --sudo --flake ~/Dropbox/Projects/Denix";
+        nixos = "cd ~/Dropbox/Projects/Denix && hermes chat --toolsets terminal,file";
         program = "cd ~/Dropbox/Projects && hermes -p programmer chat --toolsets terminal,file";
         obsidian-hermes = "cd ~/Dropbox/Obsidian && hermes -p obsidian chat --toolsets terminal,file";
         hermes = "hermes chat";

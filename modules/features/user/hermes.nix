@@ -12,7 +12,7 @@
   #   hermes auth add xai-oauth
   # Open WebUI: http://127.0.0.1:3000  (points at the Grok proxy on :8645)
   # Dashboard:  http://127.0.0.1:9119  (hermes dashboard --no-open)
-  # Agent API:  http://127.0.0.1:8642/v1  (needs API_SERVER_KEY in ~/Dropbox/Hermes/secrets.env)
+  # Agent API:  http://127.0.0.1:8642/v1  (needs API_SERVER_KEY in ~/Hermes/secrets.env)
   #
   # Denix edit policy lives in repo-root AGENTS.md. This module installs
   # the denix-host skill into HERMES_HOME.
@@ -31,7 +31,7 @@
       config.allowUnfree = true;
     };
     webuiPkg = pkgsUnfree.open-webui;
-    hermesHome = "${config.home.homeDirectory}/Dropbox/Hermes";
+    hermesHome = "${config.home.homeDirectory}/Hermes";
     webuiHome = "${config.xdg.dataHome}/open-webui";
     secretsEnv = "${hermesHome}/secrets.env";
     apiPort = 8642;
@@ -173,11 +173,11 @@
         terminal.timeout = 600;
         approvals.mode = "smart";
         approvals.smart_policy = ''
-          Allow nixos-rebuild test --sudo --flake ${config.home.homeDirectory}/Nixos#* so the agent can loop a failing eval.
+          Allow nixos-rebuild test --sudo --flake ${config.home.homeDirectory}/Dropbox/Projects/Denix#* so the agent can loop a failing eval.
           Require an explicit user phrase this turn before nixos-rebuild boot, nixos-rebuild switch, or git push.
           Phrase "set changes" authorizes boot plus a non-force git push of this repo.
           Phrase "update" authorizes switch only (not nix flake update).
-          Deny git push --force, git reset --hard, and any write outside ${config.home.homeDirectory}/Nixos.
+          Deny git push --force, git reset --hard, and any write outside ${config.home.homeDirectory}/Dropbox/Projects/Denix.
         '';
       };
       environment = {

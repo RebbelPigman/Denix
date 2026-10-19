@@ -14,7 +14,7 @@ metadata:
 
 # Denix host skill
 
-Operate github.com/RebbelPigman/Denix checked out at `~/Nixos`. Load repo-root `AGENTS.md` and follow it. File writes stay under `~/Nixos`.
+Operate github.com/RebbelPigman/Denix checked out at `~/Dropbox/Projects/Denix`. Load repo-root `AGENTS.md` and follow it. File writes stay under `~/Dropbox/Projects/Denix`.
 
 ## When to use
 
@@ -23,19 +23,19 @@ Any request to change a Denix module, activate a feature on a host, rebuild, or 
 ## Procedure
 
 1. `hostnamectl --static` → flake attr from `AGENTS.md` host map. Stop if unknown.
-2. `cd ~/Nixos && git pull --ff-only`. Stop on a foreign dirty tree.
+2. `cd ~/Dropbox/Projects/Denix && git pull --ff-only`. Stop on a foreign dirty tree.
 3. Read `README.md`, then only that host’s files plus the feature being changed.
 4. Edit. `git add` new `.nix` files.
 5. Loop up to five times:
 
 ```bash
-sudo /run/current-system/sw/bin/nixos-rebuild test --flake ~/Nixos#ATTR
+sudo /run/current-system/sw/bin/nixos-rebuild test --flake ~/Dropbox/Projects/Denix#ATTR
 ```
 
 Fix the error in-tree and retry. After five failures, stop.
 
-6. `sudo /run/current-system/sw/bin/nixos-rebuild boot --flake ~/Nixos#ATTR` and `git push` only if this turn contains **set changes**.
-7. `sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR` only if this turn contains **update**.
+6. `sudo /run/current-system/sw/bin/nixos-rebuild boot --flake ~/Dropbox/Projects/Denix#ATTR` and `git push` only if this turn contains **set changes**.
+7. `sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Dropbox/Projects/Denix#ATTR` only if this turn contains **update**.
    Never pass `--sudo`. If sudo asks for a password, stop.
 
 ## Pitfalls

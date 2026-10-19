@@ -1,8 +1,10 @@
 # Denix agent rules
 
+Owned by **Eta** (Agent Garden system administrator). Other agents should not run rebuilds or edit this tree unless Eta, Alpha, or Rebb ordered it this turn. Eta's operating copy of these rules is `~/Dropbox/AgentGarden/Eta/skills/denix-sysadmin/SKILL.md`.
+
 This file is project context for Hermes (and any other agent) when the working directory is this flake. It is not imported by Nix.
 
-Flake root on the hosts: `~/Nixos` (github.com/RebbelPigman/Denix). Stay inside that tree.
+Flake root on the hosts: `~/Dropbox/Projects/Denix` (github.com/RebbelPigman/Denix). Stay inside that tree.
 
 ## Host map
 
@@ -18,9 +20,9 @@ Resolve the flake attr from the machine, then only edit that host plus shared fe
 Command shape (replace `ATTR` with the table value, not the raw hostname when they differ). Outer sudo, never `--sudo` (`--sudo` wraps activation as `sudo env` and asks for a password). Call the system binary so NOPASSWD matches:
 
 ```bash
-sudo /run/current-system/sw/bin/nixos-rebuild test  --flake ~/Nixos#ATTR
-sudo /run/current-system/sw/bin/nixos-rebuild boot  --flake ~/Nixos#ATTR
-sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR
+sudo /run/current-system/sw/bin/nixos-rebuild test  --flake ~/Dropbox/Projects/Denix#ATTR
+sudo /run/current-system/sw/bin/nixos-rebuild boot  --flake ~/Dropbox/Projects/Denix#ATTR
+sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Dropbox/Projects/Denix#ATTR
 ```
 
 `hermesRebuild` grants NOPASSWD for `nixos-rebuild` (always on the running system), `denix-rebuild` / `denix-gc` (once that generation is current), and this exact GC argv (once that generation is current):
@@ -32,18 +34,18 @@ sudo /run/current-system/sw/bin/nix-collect-garbage --delete-older-than 7d
 
 `nix-collect-garbage` only deletes profile generations and unreferenced store paths. It does not rewrite `/boot`. Use `denix-gc` when old boot menu entries should go too: same 7d GC, then `switch-to-configuration boot` on the current system profile (does not `nix-env --set` a new generation). Do not pass other GC flags (`-d`, other durations). `test` must work without waiting for boot/switch.
 
-Do not prompt for a password. If sudo still asks, stop — do not invent askpass or write a password. Run from `/tmp` so root does not drop a `result` symlink in `~/Nixos`.
+Do not prompt for a password. If sudo still asks, stop — do not invent askpass or write a password. Run from `/tmp` so root does not drop a `result` symlink in `~/Dropbox/Projects/Denix`.
 
 `Default` is the exception: hostname `default`, attr `Default`.
 
 ## What you may touch
 
-- Files under `~/Nixos` only.
+- Files under `~/Dropbox/Projects/Denix` only.
 - Shared features: `modules/features/system/*.nix`, `modules/features/user/*.nix`.
 - Host wiring: that host’s `configuration.nix` / `home.nix` (and hardware only if the user named it).
 - Git in this repo: `status`, `diff`, `add`, `commit`, `fetch`, `pull --ff-only`.
 
-Do not edit, read-for-rewrite, or run destructive commands outside `~/Nixos`. Do not change `~/Dropbox/Hermes` secrets, `/etc`, or another host’s files in the same turn.
+Do not edit, read-for-rewrite, or run destructive commands outside `~/Dropbox/Projects/Denix`. Do not change `~/Hermes` secrets, `/etc`, or another host’s files in the same turn.
 
 ## Phrase gates
 
@@ -55,15 +57,15 @@ Free to do on any Denix request:
 4. Loop **test** until it succeeds or the cap is hit:
 
 ```bash
-sudo /run/current-system/sw/bin/nixos-rebuild test --flake ~/Nixos#ATTR
+sudo /run/current-system/sw/bin/nixos-rebuild test --flake ~/Dropbox/Projects/Denix#ATTR
 ```
 
-On failure: read the log, fix a file in `~/Nixos`, test again. Cap: **5** test attempts. Then stop and paste the last error.
+On failure: read the log, fix a file in `~/Dropbox/Projects/Denix`, test again. Cap: **5** test attempts. Then stop and paste the last error.
 
 Only when the user says **set changes** in this turn:
 
 ```bash
-sudo /run/current-system/sw/bin/nixos-rebuild boot --flake ~/Nixos#ATTR
+sudo /run/current-system/sw/bin/nixos-rebuild boot --flake ~/Dropbox/Projects/Denix#ATTR
 git push
 ```
 
@@ -72,7 +74,7 @@ git push
 Only when the user says **update** in this turn:
 
 ```bash
-sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Nixos#ATTR
+sudo /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Dropbox/Projects/Denix#ATTR
 ```
 
 `update` here means switch the running generation. It does **not** mean `nix flake update`. Changing `flake.lock` needs its own explicit request.
@@ -93,5 +95,5 @@ If the user did not say those phrases, refuse `boot`, `switch`, and `git push`. 
 - `nixos-rebuild boot` / `switch` (phrase gates above)
 - `git push` / `git push --force` / `git reset --hard` / rebase
 - `nix flake update`
-- `nixos-rebuild` against any path other than `~/Nixos#ATTR`
+- `nixos-rebuild` against any path other than `~/Dropbox/Projects/Denix#ATTR`
 - `sudo` for anything except the `nixos-rebuild` lines above, `denix-gc`, and the GC argv in the hermesRebuild paragraph

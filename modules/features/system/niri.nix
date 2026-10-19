@@ -181,10 +181,10 @@
 		  "Mod+Alt+B".spawn = "chromium";
 		  "Mod+Ctrl+B".spawn = "google-chrome";
 		  "Mod+F1".spawn-sh = "kitty python";
-		  "Mod+F2".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec HERMES_HOME=$HOME/Dropbox/Hermes kitty --class kitty-drawr hermes'';
+		  "Mod+F2".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec HERMES_HOME=$HOME/Hermes kitty --class kitty-drawr hermes'';
 		  "Mod+F3".spawn-sh = "kitty yazi";
 		  "Mod+F4".spawn-sh = "kitty ";
-		  "Mod+F5".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr --directory ~/Nixos hermes chat --toolsets terminal,file'';
+		  "Mod+F5".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr --directory ~/Dropbox/Projects/Denix hermes chat --toolsets terminal,file'';
 		  "Mod+F6".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr --directory ~/Dropbox/Projects hermes -p programmer chat --toolsets terminal,file'';
 		  "Mod+F7".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr --directory ~/Dropbox/Obsidian hermes -p obsidian chat --toolsets terminal,file'';
 		  "Mod+F8".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr hermes chat'';

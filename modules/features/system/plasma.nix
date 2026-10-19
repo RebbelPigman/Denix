@@ -43,6 +43,13 @@
       inputs.plasma-manager.homeModules.plasma-manager
     ];
 
+    # Let Plasma own Qt. tela/qtct sets QT_QPA_PLATFORMTHEME=qt5ct and
+    # widgetStyle=qt5ct-style, which ignore kdeglobals colors.
+    qt = {
+      enable = true;
+      platformTheme.name = "kde";
+    };
+
     programs.plasma = {
       enable = true;
 
@@ -50,8 +57,9 @@
         # Store style already on the machine; package it if ~/.local/share
         # plasma/desktoptheme/Scratchy should survive a clean home.
         theme = "Scratchy";
-        colorScheme = "CatppuccinMocha";
+        colorScheme = "CatppuccinMochaMauve";
         iconTheme = "Tela-circle-purple-dark";
+        widgetStyle = "Breeze";
         windowDecorations = {
           library = "org.kde.breeze";
           theme = "Breeze";

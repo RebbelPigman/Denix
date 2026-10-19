@@ -60,7 +60,7 @@
             ;;
         esac
 
-        flake=/home/rebb/Nixos
+        flake=/home/rebb/Dropbox/Projects/Denix
         if [ ! -d "$flake" ]; then
           echo "denix-rebuild: missing flake $flake" >&2
           exit 1

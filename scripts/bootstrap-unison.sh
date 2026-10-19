@@ -9,7 +9,7 @@
 set -euo pipefail
 
 REPO="https://github.com/RebbelPigman/Denix.git"
-FLAKE="${HOME}/Nixos"
+FLAKE="${HOME}/Dropbox/Projects/Denix"
 ATTR="Unison"
 NIX_XTRA=(--extra-experimental-features "nix-command flakes")
 HERMES_SUB="https://hermes-agent.cachix.org"
