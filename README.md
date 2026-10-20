@@ -38,7 +38,8 @@ Every other `.nix` file under `modules/` is itself a flake-parts module. It typi
 | `home-manager` (`master`) | Module API + packages follow `nixpkgs` |
 | `wrapper-modules` | niri + noctalia-shell wrappers |
 | `plasma-manager` | Plasma rice (`homeModules.plasma` / `homeModules.karousel`) |
-| `hermes-agent` | Hermes Agent HM module + package |
+| `hermes-agent` | Hermes Agent HM module + package (denix-rebuild overrides to upstream HEAD) |
+| `grok-bot` | Grok Bot desktop agent (`jordangarrison/grok-bot-flake`) |
 
 ---
 
@@ -64,7 +65,7 @@ modules/
     user/                            # flake.homeModules.*
       catfish.nix                    # fish + kitty
       tela.nix                       # GTK/Qt Tela-circle for niri hosts
-      hermes.nix                     # Hermes Agent + Open WebUI
+      hermes.nix                     # Hermes Agent + Grok Bot
       jupyter.nix                    # JupyterLab + Chromium desktop entry
       karousel.nix                   # Karousel shortcuts / kwinrc
   hosts/
@@ -321,14 +322,15 @@ Import **once** from the host home module (`rebbModule`, `aureliusHome`). Unique
 
 #### `hermes` → `homeModules.hermes`
 
-Hermes Agent + xAI proxy + Open WebUI as user systemd services.
+Hermes Agent + xAI proxy + Grok Bot.
 
 - `programs.hermes-agent` / `services.hermes-agent` (gateway, `xai-oauth`, default model `grok-4.6`)
 - API server on `127.0.0.1:8642` (needs `API_SERVER_KEY` in `~/Hermes/secrets.env`)
 - `hermes-proxy` on `:8645`
-- Open WebUI on `:3000` pointed at the proxy
 - Hermes Web Dashboard unit on `:9119` (`hermes dashboard --no-open`)
-- Chromium desktop entries `Open WebUI` and `Hermes` (fuzzel / Noctalia / Plasma). Official Electron `programs.hermes-agent.desktop` stays off
+- Chromium desktop entry `Hermes` (fuzzel / Noctalia / Plasma). Official Electron `programs.hermes-agent.desktop` stays off
+- Grok Bot from `inputs.grok-bot` (`github:jordangarrison/grok-bot-flake`)
+- `denix-rebuild` passes `--override-input hermes-agent github:NousResearch/hermes-agent` so each system rebuild evaluates upstream HEAD
 - activation creates `~/Hermes` and a placeholder secrets file
 
 The **NixOS** user must set `users.users.<name>.linger = true`. Home Manager cannot enable linger; without it the units die at logout.

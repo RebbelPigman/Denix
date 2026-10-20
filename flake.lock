@@ -39,6 +39,26 @@
         "type": "github"
       }
     },
+    "grok-bot": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792310959,
+        "narHash": "sha256-uNBmDICr1sL/xqfNhIThtuet/1ZayckS4ZNvEDXuiTI=",
+        "owner": "jordangarrison",
+        "repo": "grok-bot-flake",
+        "rev": "747d0333cc9825267acaaaa3d6df94a0fb5aaa75",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jordangarrison",
+        "repo": "grok-bot-flake",
+        "type": "github"
+      }
+    },
     "hermes-agent": {
       "inputs": {
         "flake-parts": "flake-parts_2",
@@ -50,11 +70,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1789276881,
-        "narHash": "sha256-IK0fSqPEoUjtN5sLX8QhgZTxaAGFFnIRUf+q7P3lI7k=",
+        "lastModified": 1792448127,
+        "narHash": "sha256-6SZYH145pq4N4kClMxvAbghgzoGkOULLyBdHmRUossQ=",
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "b6b53c69a6ed49cb099cf1bfe76b5e6edd718e5a",
+        "rev": "9cb34e9e285dadd0c6d2463e9b094052530fc365",
         "type": "github"
       },
       "original": {
@@ -263,6 +283,7 @@
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
+        "grok-bot": "grok-bot",
         "hermes-agent": "hermes-agent",
         "home-manager": "home-manager_2",
         "import-tree": "import-tree",

@@ -73,7 +73,8 @@
         (
           cd "$workdir"
           runuser -u rebb -- env HOME=/home/rebb USER=rebb LOGNAME=rebb PATH="$PATH" \
-            nixos-rebuild build --flake "$flake#$attr"
+            nixos-rebuild build --flake "$flake#$attr" \
+            --override-input hermes-agent github:NousResearch/hermes-agent
         )
 
         result=$(readlink -f "$workdir/result")
