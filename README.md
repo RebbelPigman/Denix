@@ -63,6 +63,7 @@ modules/
       karousel.nix                   # nixosModules.karousel (packages only)
       office.nix                     # imports plasma
       lan-ssh.nix                    # nixosModules.lanSsh (Unison + Aurelius)
+      denix-weekly-switch.nix        # Sunday 22:00 switch (Unison orchestrator)
     user/                            # flake.homeModules.*
       catfish.nix                    # fish + kitty
       tela.nix                       # GTK/Qt Tela-circle for niri hosts
@@ -307,6 +308,19 @@ Unison <-> Aurelius SSH over the LAN. No private keys in this repo.
 
 Client `Host` stanzas live in `~/.ssh/config` on the machines, not here.
 
+Also grants `rebb` NOPASSWD for `/run/current-system/sw/bin/nixos-rebuild` so Unison can switch Aurelius unattended.
+
+#### `denixWeeklySwitch` → `nixosModules.denixWeeklySwitch`
+
+Sunday 22:00 (host TZ, SAST) `nixos-rebuild switch`. Import on Unison only.
+
+- git pull --ff-only as `rebb`
+- switch this host
+- SSH to Aurelius and Lenovus if they answer; skip otherwise
+- no `nix flake update`
+
+Hermes cron cannot run this (3-minute interrupt).
+
 ---
 
 ### User — `modules/features/user/`
@@ -377,7 +391,7 @@ See system `karousel` above. Plasma-only.
 | --- | --- | --- |
 | **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
 | **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, sway, game, lanSsh | catfish, tela, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway. Home attr `aureliusHome` / `rebbAurelius` |
-| **Unison** | core, unisonHardware, myHomeManager, office, game, lanSsh | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (desk + karousel rice). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` |
+| **Unison** | core, unisonHardware, myHomeManager, office, game, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (desk + karousel rice). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
 Lenovus and Aurelius do not import `office` / `plasma` / `karousel`. Unison does (Plasma workstation). Aurelius imports both `niri` and `sway` (two ly sessions). Lenovus stays niri-only.

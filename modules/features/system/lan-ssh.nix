@@ -25,5 +25,18 @@
     users.users.rebb.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGvCM2N/+T32dZhEn3A2NeoO7JiAnIU2QwB5vOsDFMvu rebb@lan"
     ];
+
+    # Unattended remote switch from Unison's weekly timer.
+    security.sudo.extraRules = [
+      {
+        users = [ "rebb" ];
+        commands = [
+          {
+            command = "/run/current-system/sw/bin/nixos-rebuild";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
   };
 }

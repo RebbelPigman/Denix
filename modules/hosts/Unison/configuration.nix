@@ -11,6 +11,7 @@
       self.nixosModules.game
       self.nixosModules.hermesRebuild
       self.nixosModules.lanSsh
+      self.nixosModules.denixWeeklySwitch
     ];
 
 # system specific configuration
