@@ -62,6 +62,7 @@ modules/
       plasma.nix                     # nixosModules.plasma + homeModules.plasma
       karousel.nix                   # nixosModules.karousel (packages only)
       office.nix                     # imports plasma
+      lan-ssh.nix                    # nixosModules.lanSsh (Unison + Aurelius)
     user/                            # flake.homeModules.*
       catfish.nix                    # fish + kitty
       tela.nix                       # GTK/Qt Tela-circle for niri hosts
@@ -296,6 +297,16 @@ Imports `plasma` (and therefore desk + karousel + plasma rice). Adds LibreOffice
 
 Use this for a Plasma workstation. Do not combine with `niri` on the same host unless you intentionally want both sessions in ly.
 
+#### `lanSsh` → `nixosModules.lanSsh`
+
+Unison <-> Aurelius SSH over the LAN. No private keys in this repo.
+
+- `services.openssh` (key-only)
+- Avahi mDNS so they resolve as `Unison.local` / `Aurelius.local`
+- `rebb` authorized key is the public half of `~/.ssh/id_ed25519_lan`
+
+Client `Host` stanzas live in `~/.ssh/config` on the machines, not here.
+
 ---
 
 ### User — `modules/features/user/`
@@ -335,7 +346,7 @@ Hermes Agent + xAI proxy + Grok Bot.
 
 The **NixOS** user must set `users.users.<name>.linger = true`. Home Manager cannot enable linger; without it the units die at logout.
 
-Imported from `rebbModule` (Lenovus), `aureliusHome` (Aurelius), and `unisonHome` (Unison).
+Imported from `rebbModule` (Lenovus) and `unisonHome` (Unison). Not on Aurelius.
 
 After the first switch, as that user:
 
@@ -365,8 +376,8 @@ See system `karousel` above. Plasma-only.
 | Host | System imports | Home imports | Notes |
 | --- | --- | --- |
 | **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
-| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, sway, game | catfish, tela, hermes, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway. Home attr `aureliusHome` / `rebbAurelius` |
-| **Unison** | core, unisonHardware, myHomeManager, office, game | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (desk + karousel rice). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` |
+| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, sway, game, lanSsh | catfish, tela, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway. Home attr `aureliusHome` / `rebbAurelius` |
+| **Unison** | core, unisonHardware, myHomeManager, office, game, lanSsh | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (desk + karousel rice). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
 Lenovus and Aurelius do not import `office` / `plasma` / `karousel`. Unison does (Plasma workstation). Aurelius imports both `niri` and `sway` (two ly sessions). Lenovus stays niri-only.

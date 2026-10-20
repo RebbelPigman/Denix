@@ -11,7 +11,7 @@
       self.nixosModules.niri
       self.nixosModules.sway
       self.nixosModules.game
-      self.nixosModules.hermesRebuild
+      self.nixosModules.lanSsh
     ];
 
 # system specific configuration

@@ -10,6 +10,7 @@
       self.nixosModules.office
       self.nixosModules.game
       self.nixosModules.hermesRebuild
+      self.nixosModules.lanSsh
     ];
 
 # system specific configuration
