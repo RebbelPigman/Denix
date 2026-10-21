@@ -105,6 +105,10 @@
         model.default = "grok-4.6";
         # Banner is noise while denix-rebuild tracks upstream HEAD.
         updates.check = false;
+        # Root ~/Hermes/config.yaml only. The HM module deep-merges settings
+        # and keeps every other key. Hand-set multiplex dies if this is absent
+        # and an activation rewrites the gateway section.
+        gateway.multiplex_profiles = true;
         terminal.backend = "local";
         terminal.cwd = ".";
         terminal.timeout = 600;

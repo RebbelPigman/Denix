@@ -349,7 +349,7 @@ Import **once** from the host home module (`rebbModule`, `aureliusHome`). Unique
 
 Hermes Agent + xAI proxy + Grok Bot.
 
-- `programs.hermes-agent` / `services.hermes-agent` (gateway, `xai-oauth`, default model `grok-4.6`)
+- `programs.hermes-agent` / `services.hermes-agent` (gateway, `xai-oauth`, default model `grok-4.6`, `gateway.multiplex_profiles`)
 - API server on `127.0.0.1:8642` (needs `API_SERVER_KEY` in `~/Hermes/secrets.env`)
 - `hermes-proxy` on `:8645`
 - Hermes Web Dashboard unit on `:9119` (`hermes dashboard --no-open`)
