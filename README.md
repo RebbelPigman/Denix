@@ -64,6 +64,7 @@ modules/
       office.nix                     # imports plasma
       lan-ssh.nix                    # nixosModules.lanSsh (Unison + Aurelius)
       denix-weekly-switch.nix        # Sunday 22:00 switch (Unison orchestrator)
+      windows.nix                    # VirtualBox + Windows 11 Pro VM
     user/                            # flake.homeModules.*
       catfish.nix                    # fish + kitty
       tela.nix                       # GTK/Qt Tela-circle for niri hosts
@@ -321,6 +322,20 @@ Sunday 22:00 (host TZ, SAST) `nixos-rebuild switch`. Import on Unison only.
 
 Hermes cron cannot run this (3-minute interrupt).
 
+#### `windows` → `nixosModules.windows`
+
+VirtualBox host and a Windows 11 Pro VM definition. Import on the host that should run it (Aurelius).
+
+- `virtualisation.virtualbox.host.enable` and `enableExtensionPack` (Oracle Extension Pack, PUEL, unfree). USB 2/3 passthrough needs the pack. TPM 2.0 and EFI are in the base package.
+- `rebb` in `vboxusers` (`denix.windows.user`).
+- `kvm.enable_virt_at_load=0`. nixpkgs only sets that param for kernels >= 6.12 and < 6.16. Kernels 6.16+ still default it to Y, which holds VT-x and blocks VirtualBox. Needs a reboot of that host before the guest can start.
+- State dir `/var/lib/denix-windows` (mode 700, owned by `rebb`). Not in git.
+- `denix-windows-vm ensure` registers `Windows11Pro`: EFI, TPM 2.0, Secure Boot, 4 CPU, 8192 MB, 100 GiB dynamic disk, NAT, pulse. A boot oneshot runs `ensure`.
+- ISO path `denix.windows.iso` (default `/var/lib/denix-windows/Win11.iso`). Not fetched.
+- Product key is `/var/lib/denix-windows/product-key` (one line, mode 600). Never a Nix option, never this repo.
+- `denix-windows-vm install` picks the Windows 11 Pro image index, reads that key file, writes a guest password to `/var/lib/denix-windows/password`, and starts an unattended install. Refuses to run twice (`install-started` stamp).
+- Guest defaults: 8192 MB RAM, 4 CPUs, 102400 MB disk. Aurelius has 14 GB RAM, so the 8 GB guest leaves little for the host.
+
 ---
 
 ### User — `modules/features/user/`
@@ -390,7 +405,7 @@ See system `karousel` above. Plasma-only.
 | Host | System imports | Home imports | Notes |
 | --- | --- | --- |
 | **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
-| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, sway, game, lanSsh | catfish, tela, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway. Home attr `aureliusHome` / `rebbAurelius` |
+| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, sway, game, lanSsh, windows | catfish, tela, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway. Home attr `aureliusHome` / `rebbAurelius`. `windows` is VirtualBox + Windows 11 Pro |
 | **Unison** | core, unisonHardware, myHomeManager, office, game, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (desk + karousel rice). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
@@ -508,6 +523,7 @@ If two modules set the same unique option (`gtk.iconTheme.package`, a single des
 | GTK icons on niri | `features/user/tela.nix` |
 | Hermes / Open WebUI / dashboard launchers | `features/user/hermes.nix` |
 | JupyterLab + Chromium launcher | `features/user/jupyter.nix` |
+| VirtualBox / Windows 11 Pro | `features/system/windows.nix` |
 | Bootloader, users, hostname, linger | `hosts/<Host>/configuration.nix` |
 | Disks / initrd | `hosts/<Host>/hardware-configuration.nix` |
 | Per-user packages | `hosts/<Host>/home.nix` |

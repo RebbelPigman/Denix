@@ -12,6 +12,7 @@
       self.nixosModules.sway
       self.nixosModules.game
       self.nixosModules.lanSsh
+      self.nixosModules.windows
     ];
 
 # system specific configuration
