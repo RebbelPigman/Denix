@@ -332,7 +332,7 @@ VirtualBox host and a Windows 11 Pro VM definition. Import on the host that shou
 - State dir `/var/lib/denix-windows` (mode 700, owned by `rebb`). Not in git.
 - `denix-windows-vm ensure` registers `Windows11Pro`: EFI, TPM 2.0, Secure Boot, 4 CPU, 8192 MB, 100 GiB dynamic disk, NAT, pulse. A boot oneshot runs `ensure`.
 - ISO path `denix.windows.iso` (default `/var/lib/denix-windows/Win11.iso`). Not fetched.
-- Product key is `/var/lib/denix-windows/product-key` (one line, mode 600). Never a Nix option, never this repo.
+- Product key is the host OEM `MSDM` table, copied to `/var/lib/denix-windows/MSDM.bin` (mode 600) and passed as VirtualBox `CustomTable0`. A `/var/lib/denix-windows/product-key` file is only the fallback. Never printed. Never this repo.
 - `denix-windows-vm install` picks the Windows 11 Pro image index, reads that key file, writes a guest password to `/var/lib/denix-windows/password`, and starts an unattended install. Refuses to run twice (`install-started` stamp).
 - Guest defaults: 8192 MB RAM, 4 CPUs, 102400 MB disk. Aurelius has 14 GB RAM, so the 8 GB guest leaves little for the host.
 
@@ -405,11 +405,11 @@ See system `karousel` above. Plasma-only.
 | Host | System imports | Home imports | Notes |
 | --- | --- | --- |
 | **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
-| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, sway, game, lanSsh, windows | catfish, tela, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway. Home attr `aureliusHome` / `rebbAurelius`. `windows` is VirtualBox + Windows 11 Pro |
-| **Unison** | core, unisonHardware, myHomeManager, office, game, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (desk + karousel rice). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` |
+| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game, lanSsh, windows | catfish, tela, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri. Home attr `aureliusHome` / `rebbAurelius`. `windows` is VirtualBox + Windows 11 Pro |
+| **Unison** | core, unisonHardware, myHomeManager, office, sway, game, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office`. ly lists plasma and sway. Sway uses KWallet, KDE Qt theme, and KDE portals except screencast/screenshot (wlr) and notifications (mako). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
-Lenovus and Aurelius do not import `office` / `plasma` / `karousel`. Unison does (Plasma workstation). Aurelius imports both `niri` and `sway` (two ly sessions). Lenovus stays niri-only.
+Lenovus and Aurelius do not import `office` / `plasma` / `karousel` or `sway`. Unison imports `office` and `sway` (both sessions in ly). Lenovus and Aurelius stay niri-only.
 
 ---
 

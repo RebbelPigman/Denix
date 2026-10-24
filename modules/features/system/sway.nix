@@ -1,6 +1,28 @@
 { self, inputs, ... }: {
 
-  flake.nixosModules.sway = { pkgs, lib, ... }: {
+  flake.nixosModules.sway = { pkgs, lib, config, ... }:
+  let
+    # Unison imports this next to plasma. Lean hosts keep qt6ct / gtk.
+    plasma = config.services.desktopManager.plasma6.enable;
+    ksecretd = lib.getExe' pkgs.kdePackages.kwallet "ksecretd";
+    kded6 = lib.getExe' pkgs.kdePackages.kded "kded6";
+    polkitAgent = "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1";
+    pamInit = "${pkgs.kdePackages.kwallet-pam}/libexec/pam_kwallet_init";
+    swaymsg = "${pkgs.sway}/bin/swaymsg";
+    plasmaHook = pkgs.writeShellScript "sway-plasma-hook" ''
+      # ksecretd owns org.freedesktop.secrets. Do not also start gnome-keyring.
+      ${ksecretd} &
+      # kded6 syncs kdeglobals (color, icons, gtk) without plasmashell.
+      ${kded6} &
+      ${polkitAgent} &
+      # Inherits PAM_KWALLET* from the ly/login session. systemd would drop them.
+      ${pamInit} &
+      if [ -f "$HOME/.wallpaper" ]; then
+        ${swaymsg} output '*' bg "$HOME/.wallpaper" fill
+      fi
+      wait
+    '';
+  in {
     programs.sway = {
       enable = true;
       extraOptions = [
@@ -11,23 +33,74 @@
       extraPackages = with pkgs; [
         slurp grim waybar mako
       ];
-      extraSessionCommands = ''
-        export QT_QPA_PLATFORMTHEME=qt6ct
-        export QT_QPA_PLATFORM="wayland;xcb"
-        export QT_SCALE_FACTOR=1
-        export QT_AUTO_SCREEN_SCALE_FACTOR=0
-        export GDK_SCALE=1
-        export GDK_DPI_SCALE=1
-        export GTK_THEME=adw-gtk3-dark
-        export GTK_ICON_THEME=Tela-circle
-        export GTK_USE_PORTAL=1
-        export NIXOS_OZONE_WL=1
-      '';
+      extraSessionCommands =
+        if plasma then ''
+          export QT_QPA_PLATFORMTHEME=kde
+          export QT_QPA_PLATFORM="wayland;xcb"
+          export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+          export QT_SCALE_FACTOR=1
+          export QT_AUTO_SCREEN_SCALE_FACTOR=0
+          export GDK_SCALE=1
+          export GDK_DPI_SCALE=1
+          export GTK_USE_PORTAL=1
+          export NIXOS_OZONE_WL=1
+          export XCURSOR_THEME=breeze_cursors
+          export XCURSOR_SIZE=48
+        '' else ''
+          export QT_QPA_PLATFORMTHEME=qt6ct
+          export QT_QPA_PLATFORM="wayland;xcb"
+          export QT_SCALE_FACTOR=1
+          export QT_AUTO_SCREEN_SCALE_FACTOR=0
+          export GDK_SCALE=1
+          export GDK_DPI_SCALE=1
+          export GTK_THEME=adw-gtk3-dark
+          export GTK_ICON_THEME=Tela-circle
+          export GTK_USE_PORTAL=1
+          export NIXOS_OZONE_WL=1
+        '';
     };
 
+    # kde portal Screenshot/ScreenCast/GlobalShortcuts need kwin. Pin those away.
     xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
-    xdg.portal.config.sway.default = lib.mkForce [ "wlr" "gtk" ];
+    xdg.portal.config.sway = lib.mkForce (
+      if plasma then {
+        default = [ "kde" "gtk" "wlr" ];
+        "org.freedesktop.impl.portal.Secret" = [ "kwallet" ];
+        "org.freedesktop.impl.portal.Settings" = [ "kde" ];
+        "org.freedesktop.impl.portal.FileChooser" = [ "kde" ];
+        "org.freedesktop.impl.portal.AppChooser" = [ "kde" ];
+        "org.freedesktop.impl.portal.Print" = [ "kde" ];
+        "org.freedesktop.impl.portal.Access" = [ "kde" ];
+        "org.freedesktop.impl.portal.Account" = [ "kde" ];
+        "org.freedesktop.impl.portal.Email" = [ "kde" ];
+        "org.freedesktop.impl.portal.Inhibit" = [ "kde" ];
+        "org.freedesktop.impl.portal.DynamicLauncher" = [ "kde" ];
+        "org.freedesktop.impl.portal.Background" = [ "kde" ];
+        "org.freedesktop.impl.portal.Clipboard" = [ "kde" ];
+        "org.freedesktop.impl.portal.Usb" = [ "kde" ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
+        "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
+        "org.freedesktop.impl.portal.Wallpaper" = [ "gtk" ];
+        "org.freedesktop.impl.portal.GlobalShortcuts" = [ "gtk" ];
+        "org.freedesktop.impl.portal.RemoteDesktop" = [ "wlr" ];
+        "org.freedesktop.impl.portal.InputCapture" = [ "wlr" ];
+      } else {
+        default = [ "wlr" "gtk" ];
+      }
+    );
     environment.systemPackages = [ pkgs.tela-circle-icon-theme ];
+
+    # gnome-keyring's dbus service owns org.freedesktop.secrets. KWallet cannot.
+    services.gnome.gnome-keyring.enable = lib.mkIf plasma (lib.mkForce false);
+    services.gnome.gcr-ssh-agent.enable = lib.mkIf plasma true;
+
+    systemd.packages = lib.mkIf plasma [ pkgs.kdePackages.kwallet-pam ];
+    environment.etc."sway/config.d/plasma.conf" = lib.mkIf plasma {
+      source = pkgs.writeText "sway-plasma.conf" ''
+        exec ${plasmaHook}
+      '';
+    };
   };
 
   perSystem = { pkgs, lib, ... }:
