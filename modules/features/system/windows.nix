@@ -51,11 +51,15 @@
               return json.load(fh)
 
       def vbox(args, check=True):
-          proc = subprocess.run(
-              ["VBoxManage", "--nologo", *args],
-              text=True,
-              capture_output=True,
-          )
+          try:
+              proc = subprocess.run(
+                  ["VBoxManage", "--nologo", *args],
+                  text=True,
+                  capture_output=True,
+                  timeout=30,
+              )
+          except subprocess.TimeoutExpired:
+              raise VmError("VBoxManage timed out. VM is probably running. Not printing args.")
           out = redact((proc.stdout or "") + (proc.stderr or ""))
           if check and proc.returncode != 0:
               sys.stderr.write(out)
@@ -75,6 +79,7 @@
               "vm_dir": os.path.join(state, "vms", vm),
               "disk": os.path.join(state, "vms", vm, vm + ".vdi"),
               "key": os.path.join(state, "product-key"),
+              "msdm": os.path.join(state, "MSDM.bin"),
               "password": os.path.join(state, "password"),
               "stamp": os.path.join(state, "install-started"),
           }
@@ -211,6 +216,7 @@
           ensure_dirs(p)
           ready = os.path.join(p["state"], "vm-ready")
           if os.path.isfile(ready) and vm_registered(cfg):
+              attach_msdm(cfg, p)
               log(cfg["vmName"] + " already prepared")
               return
           if not vm_registered(cfg):
@@ -226,10 +232,29 @@
           if not os.path.isfile(p["stamp"]):
               enroll_secure_boot(cfg)
           ensure_disk(cfg, p)
+          attach_msdm(cfg, p)
           fd = os.open(ready, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
           with os.fdopen(fd, "w") as fh:
               fh.write("ready\n")
           log("vm folder " + p["vm_dir"])
+
+      def attach_msdm(cfg, p):
+          blob = p["msdm"]
+          if not os.path.isfile(blob) or os.path.getsize(blob) < 36:
+              log("no host MSDM table. install still needs a key file.")
+              return False
+          if not vm_registered(cfg):
+              return False
+          if vm_state(cfg) not in ("", "poweroff", "aborted"):
+              log("VM is running. MSDM not attached.")
+              return False
+          vbox([
+              "setextradata", cfg["vmName"],
+              "VBoxInternal/Devices/acpi/0/Config/CustomTable0",
+              blob,
+          ])
+          log("attached host MSDM table. key not printed.")
+          return True
 
       def normalize_key(raw):
           compact = re.sub(r"[^A-Za-z0-9]", "", raw).upper()
@@ -318,19 +343,25 @@
           if not os.path.isfile(cfg["iso"]):
               raise VmError("missing ISO: " + cfg["iso"] + " (official Windows 11 ISO; this module does not download it)")
           ensure(cfg)
-          key = read_key(p)
+          use_msdm = os.path.isfile(p["msdm"]) and os.path.getsize(p["msdm"]) >= 36
+          key = None if use_msdm else read_key(p)
           ensure_password(p)
           index = pick_pro_index(cfg["iso"])
           start = "gui" if os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY") else "headless"
           if start == "headless":
               log("no display. starting headless. open VirtualBox to attach.")
-          vbox([
+          args = [
               "unattended", "install", cfg["vmName"],
               "--iso=" + cfg["iso"],
               "--user=" + cfg["guestUser"],
               "--password-file=" + p["password"],
               "--full-user-name=" + cfg["guestUser"],
-              "--key=" + key,
+          ]
+          if key:
+              args.append("--key=" + key)
+          else:
+              log("no --key. guest should read the host MSDM table.")
+          args.extend([
               "--install-additions",
               "--locale=" + cfg["locale"],
               "--country=" + cfg["country"],
@@ -340,6 +371,7 @@
               "--start-vm=" + start,
               "--auxiliary-base-path=" + os.path.join(p["state"], "unattended-"),
           ])
+          vbox(args)
           fd = os.open(p["stamp"], os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
           with os.fdopen(fd, "w") as fh:
               fh.write("started\n")
@@ -454,9 +486,27 @@
         "d /var/lib/denix-windows/vms 0700 ${cfg.user} vboxusers - -"
       ];
 
+      systemd.services.denix-windows-msdm = {
+        description = "Copy the host OEM MSDM ACPI table for the Windows VM";
+        wantedBy = [ "multi-user.target" ];
+        before = [ "denix-windows-vm.service" ];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+        script = ''
+          src=/sys/firmware/acpi/tables/MSDM
+          dst=/var/lib/denix-windows/MSDM.bin
+          install -d -m 0700 -o ${cfg.user} -g vboxusers /var/lib/denix-windows
+          if [ -f "$src" ]; then
+            install -m 0600 -o ${cfg.user} -g vboxusers "$src" "$dst"
+          fi
+        '';
+      };
+
       systemd.services.denix-windows-vm = {
         description = "Register the Windows 11 Pro VirtualBox VM";
-        after = [ "systemd-tmpfiles-setup.service" "systemd-modules-load.service" ];
+        after = [ "systemd-tmpfiles-setup.service" "systemd-modules-load.service" "denix-windows-msdm.service" ];
         wantedBy = [ "multi-user.target" ];
         environment = {
           DENIX_WINDOWS_SOFT = "1";
