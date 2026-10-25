@@ -42,6 +42,7 @@
           export QT_AUTO_SCREEN_SCALE_FACTOR=0
           export GDK_SCALE=1
           export GDK_DPI_SCALE=1
+          export GTK_THEME=Breeze
           export GTK_USE_PORTAL=1
           export NIXOS_OZONE_WL=1
           export XCURSOR_THEME=breeze_cursors

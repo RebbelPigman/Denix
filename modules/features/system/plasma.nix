@@ -50,6 +50,31 @@
       platformTheme.name = "kde";
     };
 
+    # Chromium / GTK theming on Plasma:
+    # Aurelius works because niri exports GTK_THEME=adw-gtk3-dark.
+    # Plasma's kde-gtk-config wrote empty gtk-theme into settings.ini AND
+    # dconf (/org/gnome/desktop/interface/gtk-theme=''). xdg-desktop-portal-gtk
+    # serves that empty value and overrides settings.ini, so GTK/Chromium keep
+    # Adwaita even after fixing settings.ini. Breeze matches gtk-2 gtkrc and
+    # lets ~/.config/gtk-3.0/colors.css (Catppuccin) apply.
+    home.sessionVariables.GTK_THEME = "Breeze";
+
+    dconf.settings."org/gnome/desktop/interface".gtk-theme = "Breeze";
+
+    # Keep settings.ini / xsettingsd in sync when Plasma leaves theme blank.
+    # Do not HM-manage the whole settings.ini — kde-gtk-config rewrites colors.
+    home.activation.plasmaGtkThemeName = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+      for f in "$HOME/.config/gtk-3.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"; do
+        if [ -f "$f" ] && grep -q '^gtk-theme-name=$' "$f"; then
+          run sed -i 's/^gtk-theme-name=$/gtk-theme-name=Breeze/' "$f"
+        fi
+      done
+      xs="$HOME/.config/xsettingsd/xsettingsd.conf"
+      if [ -f "$xs" ] && grep -q '^Net/ThemeName ""$' "$xs"; then
+        run sed -i 's|^Net/ThemeName ""$|Net/ThemeName "Breeze"|' "$xs"
+      fi
+    '';
+
     programs.plasma = {
       enable = true;
 
