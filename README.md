@@ -198,7 +198,7 @@ DE-agnostic GUI layer. Import on desktop hosts (niri, sway, or plasma).
 - Steam (`remotePlay` / dedicated server / LAN transfer firewall), `extraCompatPackages = [ proton-ge-bin ]`
 - gamescope + gamemode
 - Heroic overridden with gamescope + gamemode on its extraPkgs
-- vesktop, prismlauncher
+- vesktop, plus a hiPrio `vesktop.desktop` with `Name=Discord` so fuzzel finds it. Exec stays `vesktop`. prismlauncher
 - Waydroid (`virtualisation.waydroid.enable`). nixpkgs installs the package, enables LXC, trusts `waydroid0`, sets `psi=1`. Does **not** fetch images or GApps.
 
 After the first switch that includes `game`, as root:
