@@ -141,6 +141,18 @@
       border-radius=0
       icon-border-radius=0
       progress-color=over #cba6f7
+      # Apps often send expire=0. Ignore that and use these.
+      ignore-timeout=1
+      default-timeout=5000
+
+      [urgency=low]
+      default-timeout=3000
+
+      [urgency=normal]
+      default-timeout=5000
+
+      [urgency=critical]
+      default-timeout=15000
     '';
     grim = lib.getExe pkgs.grim;
     slurp = lib.getExe pkgs.slurp;
