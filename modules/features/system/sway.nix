@@ -108,6 +108,40 @@
   let
     kitty = lib.getExe pkgs.kitty;
     fuzzel = lib.getExe pkgs.fuzzel;
+    fuzzelIni = pkgs.writeText "fuzzel.ini" ''
+      font=BlexMono Nerd Font Mono:size=10
+      terminal=kitty
+      icon-theme=Tela-circle
+
+      [colors]
+      background=1e1e23ff
+      text=cdd6f4ff
+      message=cdd6f4ff
+      prompt=cba6f7ff
+      placeholder=6c7086ff
+      input=cdd6f4ff
+      match=cba6f7ff
+      selection=cba6f7ff
+      selection-text=1e1e23ff
+      selection-match=1e1e23ff
+      counter=6c7086ff
+      border=cba6f7ff
+
+      [border]
+      width=2
+      radius=0
+      selection-radius=0
+    '';
+    makoConfig = pkgs.writeText "mako-config" ''
+      font=BlexMono Nerd Font Mono 10
+      background-color=#1e1e23
+      text-color=#cdd6f4
+      border-color=#cba6f7
+      border-size=2
+      border-radius=0
+      icon-border-radius=0
+      progress-color=over #cba6f7
+    '';
     grim = lib.getExe pkgs.grim;
     slurp = lib.getExe pkgs.slurp;
     waybar = lib.getExe pkgs.waybar;
@@ -131,6 +165,32 @@
     wpctl = "${pkgs.wireplumber}/bin/wpctl";
     brightnessctl = lib.getExe pkgs.brightnessctl;
     swaymsg = "${pkgs.sway}/bin/swaymsg";
+    inhibit = "${pkgs.systemd}/bin/systemd-inhibit";
+    sleepBin = "${pkgs.coreutils}/bin/sleep";
+    dropboxSvg = pkgs.writeText "dropbox.svg" ''
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+        <rect width="64" height="64" fill="#1e1e23"/>
+        <rect x="1" y="1" width="62" height="62" fill="none" stroke="#cba6f7" stroke-width="2"/>
+        <g transform="translate(10.5,12) scale(1)" fill="#0061FF">
+          <path d="M12.5 0L0 8.1l8.6 6.9L21.5 7zM0 21.9l12.5 8.1L21.5 23l-8.9-6.9zM21.5 23l8.9 7 12.6-8.1-8.6-6.9zM43 8.1L30.4 0 21.5 7l8.9 6.9zM21.6 24.7l-9.1 7.3-3.4-2.2v2.4l12.5 7.5 12.5-7.5v-2.4l-3.4 2.2z"/>
+        </g>
+      </svg>
+    '';
+    dropboxIcon = pkgs.runCommand "dropbox-icon.png" {
+      nativeBuildInputs = [ pkgs.librsvg ];
+    } ''
+      ${pkgs.librsvg}/bin/rsvg-convert -w 256 -h 256 -o "$out" ${dropboxSvg}
+    '';
+    sessionApps = pkgs.writeShellScript "sway-session-apps" ''
+      export PATH="/etc/profiles/per-user/$USER/bin:$HOME/.nix-profile/bin:$PATH"
+      if command -v dropbox >/dev/null 2>&1; then
+        dropbox &
+      fi
+      if command -v grok-bot >/dev/null 2>&1; then
+        grok-bot &
+      fi
+      wait
+    '';
 
     waybarConfig = pkgs.writeText "waybar-config" ''
       {
@@ -140,7 +200,7 @@
         "spacing": 4,
         "modules-left": ["sway/workspaces", "cpu", "memory"],
         "modules-center": ["clock"],
-        "modules-right": ["custom/notifications", "network", "bluetooth", "battery"],
+        "modules-right": ["custom/dropbox", "custom/notifications", "network", "bluetooth", "battery"],
         "sway/workspaces": {
           "disable-scroll": true,
           "all-outputs": true,
@@ -210,6 +270,11 @@
           "format-charging": "",
           "format-icons": ["", "", "", "", ""],
           "tooltip-format": "{capacity}%"
+        },
+        "custom/dropbox": {
+          "format": "",
+          "tooltip": "Dropbox",
+          "on-click": "dropbox"
         }
       }
     '';
@@ -250,6 +315,18 @@
       #network.disconnected, #battery.critical, #bluetooth.off, #bluetooth.disabled { color: #f38ba8; }
       #custom-notifications.empty { color: #6c7086; }
       #custom-notifications.unread { color: #f9e2af; }
+      #custom-dropbox {
+        min-width: 36px;
+        min-height: 36px;
+        margin: 4px 0;
+        padding: 0;
+        background-image: url("${dropboxIcon}");
+        background-size: 32px 32px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: #1e1e23;
+        border-radius: 0;
+      }
     '';
 
     waybarDir = pkgs.runCommand "my-waybar" { } ''
@@ -272,7 +349,7 @@
       output * bg #181825 solid_color
       set $mod Mod4
       set $term ${kitty}
-      set $menu ${fuzzel}
+      set $menu ${fuzzel} --config=${fuzzelIni}
       set $bg #181825
       set $surface #1e1e2e
       set $accent #cba6f7
@@ -382,7 +459,10 @@
       bindsym XF86AudioMicMute exec ${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle
       bindsym XF86MonBrightnessUp exec ${brightnessctl} --class=backlight set +5%
       bindsym XF86MonBrightnessDown exec ${brightnessctl} --class=backlight set 5%-
-      exec ${mako}
+      # logind suspends on lid close. This inhibitor is sway-only. Plasma is unchanged.
+      exec ${inhibit} --what=handle-lid-switch --who=sway --why=lid --mode=block ${sleepBin} infinity
+      exec ${sessionApps}
+      exec ${mako} --config ${makoConfig}
       exec ${waybar} -c ${waybarDir}/config -s ${waybarDir}/style.css
     '';
   in {
