@@ -1,7 +1,8 @@
 { self, inputs, ... }: {
-  # Hermes Agent + SuperGrok OAuth + Grok Bot as user services/packages.
-  # Import once from a host home module (rebbModule / aureliusHome / unisonHome):
-  #   imports = [ self.homeModules.catfish self.homeModules.tela self.homeModules.hermes ];
+  # Hermes Agent + SuperGrok OAuth. Grok Bot is homeModules.grokbot, imported here.
+  # Import once from a host home module (unisonHome):
+  #   imports = [ self.homeModules.catfish self.homeModules.hermes ];
+  # Do not also import grokbot. This module already pulls it in.
   # Do not also add this to home-manager.sharedModules.
   #
   # Host NixOS module still needs:
@@ -25,7 +26,6 @@
   let
     system = pkgs.stdenv.hostPlatform.system;
     hermesPkg = inputs.hermes-agent.packages.${system}.default;
-    grokBotPkg = inputs.grok-bot.packages.${system}.default;
     hermesHome = "${config.home.homeDirectory}/Hermes";
     secretsEnv = "${hermesHome}/secrets.env";
     apiPort = 8642;
@@ -61,13 +61,13 @@
   in {
     imports = [
       inputs.hermes-agent.homeManagerModules.default
+      self.homeModules.grokbot
     ];
 
     nixpkgs.config.allowUnfree = true;
 
     home.packages = [
       hermesDesktop
-      grokBotPkg
     ];
 
     home.sessionVariables.HERMES_HOME = hermesHome;

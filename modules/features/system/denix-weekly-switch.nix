@@ -42,7 +42,6 @@
         case "$host" in
           Unison) local_attr=Unison ;;
           Aurelius) local_attr=Aurelius ;;
-          Lenovus) local_attr=Lenovus ;;
           *) log "unknown hostname $host"; exit 1 ;;
         esac
 
@@ -68,7 +67,6 @@
         }
 
         switch_remote Aurelius Aurelius
-        switch_remote Lenovus Lenovus
         switch_remote Unison Unison
         log "done"
       '';
@@ -76,7 +74,7 @@
   in {
     environment.systemPackages = [ script ];
     systemd.services.denix-weekly-switch = {
-      description = "Weekly Denix nixos-rebuild switch for Unison/Aurelius/Lenovus";
+      description = "Weekly Denix nixos-rebuild switch for Unison/Aurelius";
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${script}/bin/denix-weekly-switch";

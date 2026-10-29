@@ -68,27 +68,28 @@ modules/
     user/                            # flake.homeModules.*
       catfish.nix                    # fish + kitty
       tela.nix                       # GTK/Qt Tela-circle for niri hosts
-      hermes.nix                     # Hermes Agent + Grok Bot
+      hermes.nix                     # Hermes Agent (imports grokbot)
+      grokbot.nix                    # Grok Bot package
       jupyter.nix                    # JupyterLab + Chromium desktop entry
       karousel.nix                   # Karousel shortcuts / kwinrc
   hosts/
-    Default/   Lenovus/   Aurelius/   Unison/
+    Default/   Aurelius/   Unison/
       default.nix                    # nixosConfigurations.<Host>
       configuration.nix              # nixosModules.*Configuration  ← activate system features here
       hardware-configuration.nix     # nixosModules.*Hardware
       home.nix                       # homeModules + optional homeConfigurations  ← activate user features here
 ```
 
-Convention for a host named `Lenovus`:
+Convention for a host named `Aurelius`:
 
 | File | Exports |
 | --- | --- |
-| `default.nix` | `nixosConfigurations.Lenovus` → imports `nixosModules.lenovusConfiguration` |
-| `configuration.nix` | `nixosModules.lenovusConfiguration` |
-| `hardware-configuration.nix` | `nixosModules.lenovusHardware` |
-| `home.nix` | `homeModules.rebbModule` and `homeConfigurations.rebb` |
+| `default.nix` | `nixosConfigurations.Aurelius` → imports `nixosModules.aureliusConfiguration` |
+| `configuration.nix` | `nixosModules.aureliusConfiguration` |
+| `hardware-configuration.nix` | `nixosModules.aureliusHardware` |
+| `home.nix` | `homeModules.aureliusHome` and `homeConfigurations.rebbAurelius` |
 
-Aurelius uses `aureliusHome` / `homeConfigurations.rebbAurelius` so the two `rebb` homes do not collide. Unison uses `unisonHome` / `rebbUnison`. Default uses `johnModule` / `john`.
+Unison uses `unisonHome` / `rebbUnison`. Default uses `johnModule` / `john`. Home module names stay unique per host so two `rebb` homes do not collide.
 
 ---
 
@@ -103,7 +104,7 @@ Add the feature to `imports` on `nixosModules.<host>Configuration`:
 ```nix
 imports = [
   self.nixosModules.core            # baseline — every host
-  self.nixosModules.lenovusHardware # that host's hardware module
+  self.nixosModules.aureliusHardware # that host's hardware module
   self.nixosModules.myHomeManager   # required if the host has HM users
   self.nixosModules.desk
   self.nixosModules.niri
@@ -116,7 +117,7 @@ imports = [
 Then wire the user:
 
 ```nix
-home-manager.users.rebb = self.homeModules.rebbModule;
+home-manager.users.rebb = self.homeModules.aureliusHome;
 ```
 
 Host-only NixOS options (bootloader, hostname, users, linger, pipewire, bluetooth) stay in this same file. Do not copy shared package lists here — import the feature module instead.
@@ -126,11 +127,11 @@ Host-only NixOS options (bootloader, hostname, users, linger, pipewire, bluetoot
 Add the feature to `imports` on that host's `homeModules.*`:
 
 ```nix
-flake.homeModules.rebbModule = { ... }: {
+flake.homeModules.aureliusHome = { ... }: {
   imports = [
     self.homeModules.catfish
     self.homeModules.tela
-    self.homeModules.hermes
+    self.homeModules.jupyter
   ];
   # host-only packages / overlays below
 };
@@ -149,7 +150,7 @@ home-manager.sharedModules = [
 ];
 ```
 
-So a host that imports `office` or `plasma` gets the rice for every HM user on that host. Niri hosts (Lenovus, Aurelius) must **not** import `plasma`, `karousel`, or `office`. Unison imports `office`.
+So a host that imports `office` or `plasma` gets the rice for every HM user on that host. Niri hosts (Aurelius) must **not** import `plasma`, `karousel`, or `office`. Unison imports `office`.
 
 ### 4. Wrappers — not imported as modules
 
@@ -283,7 +284,7 @@ Home side (`homeModules.plasma`):
 - BlexMono fonts, four virtual desktops, focus-follows-mouse, shortcuts, kwinrules opacity for konsole/dolphin/okular/anki/kitty/obsidian
 - wallpaper path `~/.wallpaper`
 
-Office/plasma hosts only (Unison). Keep off Lenovus and Aurelius.
+Office/plasma hosts only (Unison). Keep off Aurelius.
 
 #### `karousel` → `nixosModules.karousel` (packages) + `homeModules.karousel` (rice)
 
@@ -317,7 +318,7 @@ Sunday 22:00 (host TZ, SAST) `nixos-rebuild switch`. Import on Unison only.
 
 - git pull --ff-only as `rebb`
 - switch this host
-- SSH to Aurelius and Lenovus if they answer; skip otherwise
+- SSH to Aurelius if it answers; skip otherwise
 - no `nix flake update`
 
 Hermes cron cannot run this (3-minute interrupt).
@@ -348,7 +349,7 @@ Shared fish + kitty.
 - abbrs: `nixos-test`, `nixos-switch` (`--flake ~/Dropbox/Projects/Denix`), `git-acp`
 - kitty: BlexMono, fish, tall layout, noctalia theme include, split/tab maps
 
-Host homes import this and then overlay host-only fish/kitty bits (Lenovus: grc plugin + fastfetch greeting; Aurelius: python nix-shell alias + Catppuccin-Mocha themeFile).
+Host homes import this and then overlay host-only fish/kitty bits (Aurelius: python nix-shell alias + Catppuccin-Mocha themeFile).
 
 #### `tela` → `homeModules.tela`
 
@@ -358,7 +359,7 @@ GTK + Qt icon theme for **niri** hosts.
 - qtct platform theme; seed a writable `qt6ct.conf` (Fusion + custom palette → noctalia's `qt6ct/colors/noctalia.conf` + Tela-circle) so qt6ct can Apply. Do not HM-manage the color file — noctalia's qt template writes it.
 - `GTK_ICON_THEME=Tela-circle`
 
-Import **once** from the host home module (`rebbModule`, `aureliusHome`). Unique option — a second attach fails the rebuild.
+Import **once** from the host home module (`aureliusHome`). Unique option — a second attach fails the rebuild.
 
 #### `hermes` → `homeModules.hermes`
 
@@ -369,13 +370,13 @@ Hermes Agent + xAI proxy + Grok Bot.
 - `hermes-proxy` on `:8645`
 - Hermes Web Dashboard unit on `:9119` (`hermes dashboard --no-open`)
 - Chromium desktop entry `Hermes` (fuzzel / Noctalia / Plasma). Official Electron `programs.hermes-agent.desktop` stays off
-- Grok Bot from `inputs.grok-bot` (`github:jordangarrison/grok-bot-flake`)
+- imports `homeModules.grokbot` (do not import grokbot again on that host)
 - `denix-rebuild` passes `--override-input hermes-agent github:NousResearch/hermes-agent` so each system rebuild evaluates upstream HEAD
 - activation creates `~/Hermes` and a placeholder secrets file
 
 The **NixOS** user must set `users.users.<name>.linger = true`. Home Manager cannot enable linger; without it the units die at logout.
 
-Imported from `rebbModule` (Lenovus) and `unisonHome` (Unison). Not on Aurelius.
+Imported from `unisonHome` (Unison). Not on Aurelius.
 
 After the first switch, as that user:
 
@@ -383,11 +384,18 @@ After the first switch, as that user:
 hermes auth add xai-oauth
 ```
 
+#### `grokbot` → `homeModules.grokbot`
+
+Grok Bot package from `inputs.grok-bot` (`github:jordangarrison/grok-bot-flake`). No unit of its own. Sway starts `grok-bot` when the bin is on PATH. Niri does not.
+
+`homeModules.hermes` imports this. `aureliusHome` imports it directly because Aurelius does not import hermes. A host that imports hermes must not also import grokbot.
+
 #### `jupyter` → `homeModules.jupyter`
 
 JupyterLab in one `python3.withPackages` env (Lab + kernel packages together) plus a `.desktop` launcher.
 
-- packages: jupyterlab, ipykernel, ipywidgets, ipympl, numpy, pandas, polars, pyarrow, matplotlib, seaborn, plotly, scipy, statsmodels, sympy, scikit-learn, tqdm, rich, openpyxl, requests
+- packages: jupyterlab, ipykernel, ipywidgets, ipympl, numpy, pandas, polars, pyarrow, matplotlib, seaborn, plotly, scipy, statsmodels, sympy, scikit-learn, tqdm, rich, openpyxl, requests, catppuccin-jupyterlab 0.2.5 (wheel; not in nixpkgs)
+- Lab UI is CSS. Qt/GTK only theme the Chromium frame. Default theme is Catppuccin Mocha, brand mauve (same flavor as Plasma). `JUPYTERLAB_DIR` carries `settings/overrides.json`. A theme already saved under `~/.jupyter/lab/user-settings` still wins
 - wrapper `jupyter-lab-desktop` starts Lab on `127.0.0.1` with notebook dir `~/Notebooks` and opens `ungoogled-chromium --app=<token-url>`
 - `xdg.desktopEntries.jupyter-lab` → `~/.local/share/applications/jupyter-lab.desktop` (fuzzel, Noctalia, Plasma)
 - icon `jupyterlab.svg` under `xdg.dataFile` icons
@@ -404,12 +412,11 @@ See system `karousel` above. Plasma-only.
 
 | Host | System imports | Home imports | Notes |
 | --- | --- | --- |
-| **Lenovus** | core, lenovusHardware, myHomeManager, desk, niri, game | catfish, tela, hermes, jupyter | GRUB + LUKS, user `rebb` with linger, swapfile, lid → suspend-then-hibernate |
-| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game, lanSsh, windows | catfish, tela, jupyter | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri. Home attr `aureliusHome` / `rebbAurelius`. `windows` is VirtualBox + Windows 11 Pro |
+| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game, lanSsh, windows | catfish, tela, jupyter, grokbot | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri. Home attr `aureliusHome` / `rebbAurelius`. `windows` is VirtualBox + Windows 11 Pro. Grok Bot is the package only; niri does not exec it |
 | **Unison** | core, unisonHardware, myHomeManager, office, sway, game, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office`. ly lists plasma and sway. Sway uses KWallet, KDE Qt theme, and KDE portals except screencast/screenshot (wlr) and notifications (mako). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
-Lenovus and Aurelius do not import `office` / `plasma` / `karousel` or `sway`. Unison imports `office` and `sway` (both sessions in ly). Lenovus and Aurelius stay niri-only.
+Aurelius does not import `office` / `plasma` / `karousel` or `sway`. Unison imports `office` and `sway` (both sessions in ly). Aurelius stays niri-only.
 
 ---
 
@@ -419,9 +426,6 @@ Clone / update, then from the flake root (this repo is often checked out as `~/D
 
 ```bash
 # evaluate / test a host
-nixos-rebuild test --sudo --flake .#Lenovus
-nixos-rebuild switch --sudo --flake .#Lenovus
-
 nixos-rebuild test --sudo --flake .#Aurelius
 nixos-rebuild switch --sudo --flake .#Aurelius
 
@@ -432,7 +436,6 @@ nixos-rebuild switch --sudo --flake .#Unison
 Standalone Home Manager (same modules the NixOS system already attaches):
 
 ```bash
-home-manager switch --flake .#rebb            # Lenovus home
 home-manager switch --flake .#rebbAurelius    # Aurelius home
 home-manager switch --flake .#rebbUnison      # Unison home
 ```
@@ -444,7 +447,7 @@ Fish abbrs on hosts that import `catfish` assume the flake lives at `~/Dropbox/P
 `nix.settings` in `core` is not active until a generation that contains those settings has switched successfully. Until then:
 
 ```bash
-nixos-rebuild switch --sudo --flake .#Lenovus \
+nixos-rebuild switch --sudo --flake .#Unison \
   --option extra-substituters https://hermes-agent.cachix.org \
   --option extra-trusted-public-keys hermes-agent.cachix.org-1:jN3pjR50Mxi4SESKC/FIMNM6/LCosvPk2VUwzVvebzU=
 ```
@@ -499,9 +502,8 @@ If two modules set the same unique option (`gtk.iconTheme.package`, a single des
 
 - **Default configuration attr typo.** `hosts/Default/configuration.nix` currently defines `flake.nixosModules.deafaultConfiguration`, while `default.nix` imports `self.nixosModules.defaultConfiguration`. The Default host does not evaluate until those names match.
 - **Default hardware** is a stub. Generate and wrap it before using that host.
-- **Lenovus resume.** `boot.kernelParams` still has `resume_offset=PUT_THE_NUMBER_HERE`. Hibernate will not work until that offset is filled in.
 - **Plasma vs niri.** Plasma/karousel home modules stay off niri hosts. `tela` stays off `sharedModules` and off Unison — qtct/Fusion fights Plasma's color scheme.
-- **Hermes linger.** Lenovus, Aurelius, and Unison set `users.users.rebb.linger = true`. A host that imports `homeModules.hermes` without linger will start units that vanish after logout.
+- **Hermes linger.** Aurelius and Unison set `users.users.rebb.linger = true`. A host that imports `homeModules.hermes` without linger will start units that vanish after logout.
 - **Evaluation sees git.** Untracked feature files are invisible to `self.nixosModules` / `self.homeModules`.
 
 ---
@@ -522,6 +524,7 @@ If two modules set the same unique option (`gtk.iconTheme.package`, a single des
 | fish + kitty shared | `features/user/catfish.nix` |
 | GTK icons on niri | `features/user/tela.nix` |
 | Hermes / Open WebUI / dashboard launchers | `features/user/hermes.nix` |
+| Grok Bot package | `features/user/grokbot.nix` |
 | JupyterLab + Chromium launcher | `features/user/jupyter.nix` |
 | VirtualBox / Windows 11 Pro | `features/system/windows.nix` |
 | Bootloader, users, hostname, linger | `hosts/<Host>/configuration.nix` |

@@ -50,7 +50,6 @@
 
         host=$(tr -d '[:space:]' </etc/hostname)
         case "$host" in
-          Lenovus) attr=Lenovus ;;
           Aurelius) attr=Aurelius ;;
           Unison) attr=Unison ;;
           default) attr=Default ;;

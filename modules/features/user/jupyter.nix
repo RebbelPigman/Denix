@@ -1,6 +1,6 @@
 { self, inputs, ... }: {
   # JupyterLab + common kernel packages, launched in Chromium.
-  # Import once from a host home module (rebbModule / aureliusHome):
+  # Import once from a host home module (aureliusHome / unisonHome):
   #   imports = [ self.homeModules.jupyter ];
   # Do not also add this to home-manager.sharedModules.
   #
@@ -8,8 +8,24 @@
   # Noctalia launcher, and Plasma's app menu all see "JupyterLab".
   # The Exec line calls a wrapper (no %s field codes) that starts Lab
   # bound to 127.0.0.1 and opens ungoogled-chromium --app=<token-url>.
+  #
+  # Lab UI is web CSS. Qt/GTK only paint the Chromium frame.
+  # catppuccin-jupyterlab is not in nixpkgs; the wheel is fetched directly.
+  # Default flavor matches Plasma: Mocha, brand mauve.
+  # ~/.jupyter/lab/user-settings still wins over overrides.json.
   flake.homeModules.jupyter = { pkgs, lib, ... }:
   let
+    catppuccin-jupyterlab = pkgs.python3Packages.buildPythonPackage rec {
+      pname = "catppuccin-jupyterlab";
+      version = "0.2.5";
+      format = "wheel";
+      src = pkgs.fetchurl {
+        url = "https://files.pythonhosted.org/packages/7e/33/445cd4ea73fbcd0d4d11f1a15d4cb77334675ffce5732586235bac81a8f0/catppuccin_jupyterlab-0.2.5-py3-none-any.whl";
+        hash = "sha256-d5uxZIf3AJ7AX9GEfWdb/+KMTi7xA3Df+SkZgVD6C6Y=";
+      };
+      doCheck = false;
+    };
+
     jupyterEnv = pkgs.python3.withPackages (ps: with ps; [
       jupyterlab
       ipykernel
@@ -30,11 +46,49 @@
       rich
       openpyxl
       requests
-    ]);
+    ] ++ [ catppuccin-jupyterlab ]);
+
+    labOverrides = pkgs.writeText "jupyterlab-overrides.json" ''
+      {
+        "@jupyterlab/apputils-extension:themes": {
+          "theme": "Catppuccin Mocha"
+        },
+        "catppuccin_jupyterlab:plugin": {
+          "brandColor": "mauve",
+          "accentColor": "green"
+        }
+      }
+    '';
+
+    # share/jupyter/lab in the withPackages env is a symlink into jupyterlab.
+    # A second file cannot be dropped beside it. JUPYTERLAB_DIR is a merged
+    # app dir: lab assets plus settings/overrides.json.
+    labAppDir = pkgs.runCommand "jupyterlab-appdir" { } ''
+      mkdir -p "$out"
+      ${pkgs.lndir}/bin/lndir -silent ${pkgs.python3Packages.jupyterlab}/share/jupyter/lab "$out"
+      mkdir -p "$out/settings"
+      cp ${labOverrides} "$out/settings/overrides.json"
+    '';
+
+    jupyterWrapped = pkgs.symlinkJoin {
+      name = "jupyter-env";
+      paths = [ jupyterEnv ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        for b in jupyter jupyter-lab; do
+          if [ -e "$out/bin/$b" ]; then
+            rm "$out/bin/$b"
+            makeWrapper ${jupyterEnv}/bin/$b "$out/bin/$b" \
+              --set JUPYTERLAB_DIR ${labAppDir}
+          fi
+        done
+      '';
+    };
+
     chromium = lib.getExe pkgs.ungoogled-chromium;
     jupyterLabDesktop = pkgs.writeShellApplication {
       name = "jupyter-lab-desktop";
-      runtimeInputs = [ jupyterEnv pkgs.ungoogled-chromium ];
+      runtimeInputs = [ jupyterWrapped pkgs.ungoogled-chromium ];
       text = ''
         mkdir -p "$HOME/Notebooks"
         cd "$HOME/Notebooks"
@@ -59,7 +113,7 @@
     '';
   in {
     home.packages = [
-      jupyterEnv
+      jupyterWrapped
       jupyterLabDesktop
     ];
 

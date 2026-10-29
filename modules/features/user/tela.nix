@@ -1,6 +1,6 @@
 { self, inputs, ... }: {
   # GTK + Qt icon theme for niri hosts.
-  # Import once from the host home module (aureliusHome / rebbModule).
+  # Import once from the host home module (aureliusHome).
   # Do not also add this to home-manager.sharedModules — gtk.iconTheme.package
   # is unique and a double attach fails the rebuild.
   flake.homeModules.tela = { pkgs, lib, config, ... }:

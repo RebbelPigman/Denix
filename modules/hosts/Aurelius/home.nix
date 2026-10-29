@@ -30,6 +30,7 @@
       self.homeModules.catfish
       self.homeModules.tela
       self.homeModules.jupyter
+      self.homeModules.grokbot
     ];
 
     programs.bash.enable = true;
