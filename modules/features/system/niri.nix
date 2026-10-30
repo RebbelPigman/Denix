@@ -153,6 +153,8 @@
 		  {
 		    matches = [ 
 			  { app-id = "^kitty-drawr$"; } 
+			  { app-id = "^vesktop$"; }
+			  { app-id = "^grok-bot$"; } 
 			];
 			open-floating = false;
 			default-column-width.proportion = 0.80;
@@ -162,9 +164,8 @@
 		  {
 		    matches = [
 			  { app-id = "^steam$"; }
-			  { app-id = "^vesktop$"; }
 			];
-            default-column-width.proportion = 0.70;
+            default-column-width.proportion = 0.80;
 			open-on-workspace = "Drawr";
 		  }
 		];
@@ -172,7 +173,6 @@
 		  "Print".screenshot = {};
 		  "Mod+Return".spawn = lib.getExe pkgs.kitty;
 		  "Mod+Shift+Return".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec ${lib.getExe pkgs.kitty} --class kitty-drawr'';
-		  "Mod+Alt+Return".spawn = "qalculate-gtk";
 		  "Mod+D".spawn = lib.getExe pkgs.fuzzel;
 		  "Mod+Shift+D".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call launcher toggle";
           "Mod+S".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call controlCenter toggle";
@@ -181,13 +181,13 @@
 		  "Mod+Alt+B".spawn = "chromium";
 		  "Mod+Ctrl+B".spawn = "google-chrome";
 		  "Mod+F1".spawn-sh = "kitty python";
-		  "Mod+F2".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec HERMES_HOME=$HOME/Hermes kitty --class kitty-drawr hermes'';
-		  "Mod+F3".spawn-sh = "kitty yazi";
-		  "Mod+F4".spawn-sh = "kitty ";
-		  "Mod+F5".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr --directory ~/Dropbox/Projects/Denix hermes chat --toolsets terminal,file'';
-		  "Mod+F6".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr --directory ~/Dropbox/Projects hermes -p programmer chat --toolsets terminal,file'';
-		  "Mod+F7".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr --directory ~/Dropbox/Obsidian hermes -p obsidian chat --toolsets terminal,file'';
-		  "Mod+F8".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec kitty --class kitty-drawr hermes chat'';
+		  "Mod+F2".spawn-sh = "kitty yazi";
+		  "Mod+F3".spawn = lib.getExe pkgs.qalculate-gtk;
+		  "Mod+F4".spawn = "grok-bot";
+		  "Mod+F5".spawn-sh = "kitty ";
+		  "Mod+F6".spawn-sh = "kitty ";
+		  "Mod+F7".spawn-sh = "kitty ";
+		  "Mod+F8".spawn-sh = "kitty ";
 		  "Mod+F9".spawn-sh = "kitty ";
 		  "Mod+F10".spawn-sh = "kitty htop";
 		  "Mod+F11".spawn-sh = "kitty atop";
@@ -197,16 +197,27 @@
 		  "Mod+Q".close-window = {};
 		  "Mod+Shift+Q".quit = {};
 		  "Mod+O".toggle-overview = {};
+		  "Mod+C".center-column = {};
 		  "Mod+H".focus-column-left = {};
 		  "Mod+L".focus-column-right = {};
+		  "Mod+Left".focus-column-left = {};
+		  "Mod+Right".focus-column-right = {};
 		  "Mod+Ctrl+H".move-column-left = {};
 		  "Mod+Ctrl+L".move-column-right = {};
+		  "Mod+Ctrl+Left".move-column-left = {};
+		  "Mod+Ctrl+Right".move-column-right = {};
 		  "Mod+Shift+H".consume-or-expel-window-left = {};
 		  "Mod+Shift+L".consume-or-expel-window-right = {};
+		  "Mod+Shift+Left".consume-or-expel-window-left = {};
+		  "Mod+Shift+Right".consume-or-expel-window-right = {};
 		  "Mod+K".focus-window-or-workspace-up = {};
 		  "Mod+J".focus-window-or-workspace-down = {};
+		  "Mod+Up".focus-window-or-workspace-up = {};
+		  "Mod+Down".focus-window-or-workspace-down = {};
           "Mod+Ctrl+K".move-window-up-or-to-workspace-up = {};
           "Mod+Ctrl+J".move-window-down-or-to-workspace-down = {};
+          "Mod+Ctrl+Up".move-window-up-or-to-workspace-up = {};
+          "Mod+Ctrl+Down".move-window-down-or-to-workspace-down = {};
 		  "Mod+1".focus-workspace = 1;
 		  "Mod+2".focus-workspace = 2;
 		  "Mod+3".focus-workspace = 3;
@@ -215,6 +226,8 @@
 		  "Mod+6".focus-workspace = 6;
 		  "Mod+7".focus-workspace = 7;
 		  "Mod+8".focus-workspace = 8;
+		  "Mod+9".focus-workspace = 9;
+		  "Mod+0".focus-workspace = 10;
 		  "Mod+Space".toggle-window-floating = {};
 		  "Mod+Alt+Space".switch-focus-between-floating-and-tiling = {};
 		  "Mod+Minus".set-column-width = "-20%";
