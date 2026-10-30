@@ -160,6 +160,7 @@
 			default-column-width.proportion = 0.80;
 			open-on-workspace = "Drawr";
 			opacity = 0.90 ;
+			draw-border-with-background = false;
 		  }
 		  {
 		    matches = [
