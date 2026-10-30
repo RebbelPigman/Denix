@@ -98,10 +98,10 @@
       name = "jupyter-lab-desktop";
       runtimeInputs = [ jupyterWrapped pkgs.ungoogled-chromium ];
       text = ''
-        mkdir -p "$HOME/Notebooks"
-        cd "$HOME/Notebooks"
+        mkdir -p "$HOME/Dropbox/Projects"
+        cd "$HOME/Dropbox/Projects"
         exec jupyter-lab \
-          --notebook-dir="$HOME/Notebooks" \
+          --notebook-dir="$HOME/Dropbox/Projects" \
           --ServerApp.ip=127.0.0.1 \
           --ServerApp.open_browser=True \
           --ServerApp.browser="${chromium} --new-window --app=%s"

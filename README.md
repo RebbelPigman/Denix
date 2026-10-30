@@ -398,7 +398,7 @@ JupyterLab in one `python3.withPackages` env (Lab + kernel packages together) pl
 - packages: jupyterlab, ipykernel, ipywidgets, ipympl, numpy, pandas, polars, pyarrow, matplotlib, seaborn, plotly, scipy, statsmodels, sympy, scikit-learn, tqdm, rich, openpyxl, requests, jupyterlab-vim, catppuccin-jupyterlab 0.2.5 (wheel; not in nixpkgs)
 - `jupyterlab-vim` is vi inside the cell (normal / insert / visual). Not notebook command mode. Esc from insert enters normal. Esc from normal leaves the cell. A saved setting under `~/.jupyter/lab/user-settings` still wins
 - Lab UI is CSS. Qt/GTK only theme the Chromium frame. Default theme is Catppuccin Mocha, brand mauve (same flavor as Plasma). `JUPYTERLAB_DIR` carries `settings/overrides.json`. A theme already saved under `~/.jupyter/lab/user-settings` still wins
-- wrapper `jupyter-lab-desktop` starts Lab on `127.0.0.1` with notebook dir `~/Notebooks` and opens `ungoogled-chromium --app=<token-url>`
+- wrapper `jupyter-lab-desktop` starts Lab on `127.0.0.1` with notebook dir `~/Dropbox/Projects` and opens `ungoogled-chromium --app=<token-url>`
 - `xdg.desktopEntries.jupyter-lab` → `~/.local/share/applications/jupyter-lab.desktop` (fuzzel, Noctalia, Plasma)
 - icon `jupyterlab.svg` under `xdg.dataFile` icons
 
