@@ -346,6 +346,7 @@ VirtualBox host and a Windows 11 Pro VM definition. Import on the host that shou
 Shared fish + kitty.
 
 - fish aliases: `ff`, `yz`, `vi`/`vim` → nvim
+- `home.packages` includes `neovim`. Activation clones or fast-forwards https://github.com/RebbelPigman/nvim into `~/.config/nvim`. A different checkout is left alone.
 - abbrs: `nixos-test`, `nixos-switch` (`--flake ~/Dropbox/Projects/Denix`), `git-acp`
 - kitty: BlexMono, fish, tall layout, noctalia theme include, split/tab maps
 
@@ -394,7 +395,8 @@ Grok Bot package from `inputs.grok-bot` (`github:jordangarrison/grok-bot-flake`)
 
 JupyterLab in one `python3.withPackages` env (Lab + kernel packages together) plus a `.desktop` launcher.
 
-- packages: jupyterlab, ipykernel, ipywidgets, ipympl, numpy, pandas, polars, pyarrow, matplotlib, seaborn, plotly, scipy, statsmodels, sympy, scikit-learn, tqdm, rich, openpyxl, requests, catppuccin-jupyterlab 0.2.5 (wheel; not in nixpkgs)
+- packages: jupyterlab, ipykernel, ipywidgets, ipympl, numpy, pandas, polars, pyarrow, matplotlib, seaborn, plotly, scipy, statsmodels, sympy, scikit-learn, tqdm, rich, openpyxl, requests, jupyterlab-vim, catppuccin-jupyterlab 0.2.5 (wheel; not in nixpkgs)
+- `jupyterlab-vim` is vi inside the cell (normal / insert / visual). Not notebook command mode. Esc from insert enters normal. Esc from normal leaves the cell. A saved setting under `~/.jupyter/lab/user-settings` still wins
 - Lab UI is CSS. Qt/GTK only theme the Chromium frame. Default theme is Catppuccin Mocha, brand mauve (same flavor as Plasma). `JUPYTERLAB_DIR` carries `settings/overrides.json`. A theme already saved under `~/.jupyter/lab/user-settings` still wins
 - wrapper `jupyter-lab-desktop` starts Lab on `127.0.0.1` with notebook dir `~/Notebooks` and opens `ungoogled-chromium --app=<token-url>`
 - `xdg.desktopEntries.jupyter-lab` → `~/.local/share/applications/jupyter-lab.desktop` (fuzzel, Noctalia, Plasma)

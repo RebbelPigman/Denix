@@ -13,6 +13,9 @@
   # catppuccin-jupyterlab is not in nixpkgs; the wheel is fetched directly.
   # Default flavor matches Plasma: Mocha, brand mauve.
   # ~/.jupyter/lab/user-settings still wins over overrides.json.
+  # jupyterlab-vim is in-cell vi (normal/insert/visual). Esc from insert
+  # enters normal. Esc from normal leaves the cell (extension default).
+  # Shift-Esc also enters Jupyter command mode.
   flake.homeModules.jupyter = { pkgs, lib, ... }:
   let
     catppuccin-jupyterlab = pkgs.python3Packages.buildPythonPackage rec {
@@ -46,6 +49,7 @@
       rich
       openpyxl
       requests
+      jupyterlab-vim
     ] ++ [ catppuccin-jupyterlab ]);
 
     labOverrides = pkgs.writeText "jupyterlab-overrides.json" ''
@@ -56,6 +60,10 @@
         "catppuccin_jupyterlab:plugin": {
           "brandColor": "mauve",
           "accentColor": "green"
+        },
+        "@axlair/jupyterlab_vim:plugin": {
+          "enabled": true,
+          "enabledInEditors": true
         }
       }
     '';

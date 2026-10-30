@@ -5,7 +5,7 @@
   #     imports = [ self.homeModules.catfish ];
   #     # host-only overlays below
   #   };
-  flake.homeModules.catfish = { pkgs, lib, ... }: {
+  flake.homeModules.catfish = { pkgs, lib, config, ... }: {
     programs.fish = {
       enable = true;
       shellAliases = {
@@ -65,5 +65,32 @@
         map alt+return launch nvim
       '';
     };
+
+    home.packages = [ pkgs.neovim ];
+
+    # Mutable checkout so a later push to that repo lands on the next activation.
+    # Do not clobber a checkout whose origin is not this repo.
+    home.activation.pullNvim = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+      url=https://github.com/RebbelPigman/nvim
+      dest="$HOME/.config/nvim"
+      git=${pkgs.git}/bin/git
+      export GIT_TERMINAL_PROMPT=0
+      run mkdir -p "$HOME/.config"
+      if [ ! -e "$dest" ]; then
+        run $git clone "$url" "$dest"
+      elif [ -d "$dest/.git" ]; then
+        origin=$($git -C "$dest" remote get-url origin 2>/dev/null || true)
+        case "$origin" in
+          *RebbelPigman/nvim*)
+            run $git -C "$dest" pull --ff-only
+            ;;
+          *)
+            echo "pullNvim: left $dest (origin is not RebbelPigman/nvim)" >&2
+            ;;
+        esac
+      else
+        echo "pullNvim: left $dest (not a git checkout)" >&2
+      fi
+    '';
   };
 }

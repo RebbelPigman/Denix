@@ -36,7 +36,6 @@
     home = {
       stateVersion = "26.05";
       packages = with pkgs-unstable; [
-        neovim
         anki
         google-chrome
         obsidian
