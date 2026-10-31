@@ -10,6 +10,7 @@
       self.nixosModules.desk
       self.nixosModules.niri
       self.nixosModules.game
+      self.nixosModules.waydroid
       self.nixosModules.lanSsh
       self.nixosModules.windows
     ];
@@ -50,14 +51,9 @@
       pulseaudio.enable = false;
       power-profiles-daemon.enable = true;
       upower.enable = true;
-      xserver.xkb = {
-        layout = "us";
-        variant = "";
-      };
       pipewire = {
         enable = true;
         alsa.enable = true;
-        alsa.support32Bit = true;
         pulse.enable = true;
       };
     };

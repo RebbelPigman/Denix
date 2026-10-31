@@ -1,5 +1,5 @@
 { ... }: {
-  # Sunday 22:00 SAST rebuild-switch for reachable Denix hosts.
+  # Sunday 20:00 SAST rebuild-switch for reachable Denix hosts.
   # Import once, on the orchestrator (Unison):
   #   self.nixosModules.denixWeeklySwitch
   # Hermes cron cannot run this: 3-minute interrupt.
@@ -36,8 +36,14 @@
           exit 1
         fi
 
+        # System ssh_config Includes a nix-store file owned by nobody.
+        # OpenSSH rejects it. -F skips that include. Origin is SSH.
+        git_ssh="ssh -F /home/rebb/.ssh/config -o BatchMode=yes -o IdentitiesOnly=yes"
         log "git pull --ff-only"
-        runuser -u rebb -- git -C "$flake" pull --ff-only
+        runuser -u rebb -- env \
+          HOME=/home/rebb \
+          GIT_SSH_COMMAND="$git_ssh" \
+          git -C "$flake" pull --ff-only
 
         case "$host" in
           Unison) local_attr=Unison ;;
@@ -54,16 +60,17 @@
             return 0
           fi
           log "probe $name"
-          if ! runuser -u rebb -- ssh -o BatchMode=yes -o ConnectTimeout=15 "$name" true; then
+          if ! runuser -u rebb -- ssh -F /home/rebb/.ssh/config -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=15 "$name" true; then
             log "skip $name (ssh failed)"
             return 0
           fi
           log "switch $name"
-          runuser -u rebb -- ssh -o BatchMode=yes -o ConnectTimeout=15 "$name" \
+          runuser -u rebb -- ssh -F /home/rebb/.ssh/config -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=15 "$name" \
             "export PATH=/run/wrappers/bin:/run/current-system/sw/bin:\$PATH
+             export GIT_SSH_COMMAND='ssh -F /home/rebb/.ssh/config -o BatchMode=yes -o IdentitiesOnly=yes'
              cd /tmp
              git -C $flake pull --ff-only
-             sudo /run/current-system/sw/bin/nixos-rebuild switch --flake $flake#$attr"
+             /run/wrappers/bin/sudo -n /run/current-system/sw/bin/nixos-rebuild switch --flake $flake#$attr"
         }
 
         switch_remote Aurelius Aurelius
@@ -81,10 +88,10 @@
       };
     };
     systemd.timers.denix-weekly-switch = {
-      description = "Sunday 22:00 SAST Denix rebuild-switch";
+      description = "Sunday 20:00 SAST Denix rebuild-switch";
       wantedBy = [ "timers.target" ];
       timerConfig = {
-        OnCalendar = "Sun 22:00:00";
+        OnCalendar = "Sun 20:00:00";
         Persistent = true;
         Unit = "denix-weekly-switch.service";
       };

@@ -64,8 +64,6 @@
       self.homeModules.grokbot
     ];
 
-    nixpkgs.config.allowUnfree = true;
-
     home.packages = [
       hermesDesktop
     ];
@@ -102,7 +100,9 @@
       };
       settings = {
         model.provider = "xai-oauth";
-        model.default = "grok-4.6";
+        # Root ~/Hermes/config.yaml only. Profile files pin their own model.
+        # Was grok-4.6, and activation kept writing that over the root file.
+        model.default = "grok-4.7";
         # Banner is noise while denix-rebuild tracks upstream HEAD.
         updates.check = false;
         # Root ~/Hermes/config.yaml only. The HM module deep-merges settings
@@ -114,7 +114,7 @@
         terminal.timeout = 600;
         approvals.mode = "smart";
         approvals.smart_policy = ''
-          Allow nixos-rebuild test --sudo --flake ${config.home.homeDirectory}/Dropbox/Projects/Denix#* so the agent can loop a failing eval.
+          Allow /run/wrappers/bin/sudo -n /run/current-system/sw/bin/nixos-rebuild test --flake ${config.home.homeDirectory}/Dropbox/Projects/Denix#* so the agent can loop a failing eval. Never pass --sudo.
           Require an explicit user phrase this turn before nixos-rebuild boot, nixos-rebuild switch, or git push.
           Phrase "set changes" authorizes boot plus a non-force git push of this repo.
           Phrase "update" authorizes switch only (not nix flake update).

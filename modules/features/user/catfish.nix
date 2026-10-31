@@ -16,14 +16,14 @@
       };
       shellAbbrs = {
         # hostName matches the flake attr on both current hosts
-        nixos-test = "nixos-rebuild test --sudo --flake ~/Dropbox/Projects/Denix";
-        nixos-switch = "nixos-rebuild switch --sudo --flake ~/Dropbox/Projects/Denix";
+        nixos-test = "/run/wrappers/bin/sudo -n /run/current-system/sw/bin/nixos-rebuild test --flake ~/Dropbox/Projects/Denix";
+        nixos-switch = "/run/wrappers/bin/sudo -n /run/current-system/sw/bin/nixos-rebuild switch --flake ~/Dropbox/Projects/Denix";
         nixos = "cd ~/Dropbox/Projects/Denix && hermes chat --toolsets terminal,file";
         program = "cd ~/Dropbox/Projects && hermes -p programmer chat --toolsets terminal,file";
         obsidian-hermes = "cd ~/Dropbox/Obsidian && hermes -p obsidian chat --toolsets terminal,file";
         hermes = "hermes chat";
         git-acp = {
-          expansion = "git add -A && git commit -m \"%\" && git push";
+          expansion = "git add -A && git commit -m \"%\" && env GIT_SSH_COMMAND='ssh -F ~/.ssh/config -o BatchMode=yes -o IdentitiesOnly=yes' git push";
           setCursor = true;
         };
       };
@@ -77,12 +77,16 @@
       export GIT_TERMINAL_PROMPT=0
       run mkdir -p "$HOME/.config"
       if [ ! -e "$dest" ]; then
-        run $git clone "$url" "$dest"
+        if ! $git clone "$url" "$dest"; then
+          echo "pullNvim: clone failed, left $dest absent" >&2
+        fi
       elif [ -d "$dest/.git" ]; then
         origin=$($git -C "$dest" remote get-url origin 2>/dev/null || true)
         case "$origin" in
           *RebbelPigman/nvim*)
-            run $git -C "$dest" pull --ff-only
+            if ! $git -C "$dest" pull --ff-only; then
+              echo "pullNvim: pull failed, left $dest as-is" >&2
+            fi
             ;;
           *)
             echo "pullNvim: left $dest (origin is not RebbelPigman/nvim)" >&2

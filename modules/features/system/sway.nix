@@ -2,7 +2,8 @@
 
   flake.nixosModules.sway = { pkgs, lib, config, ... }:
   let
-    # Unison imports this next to plasma. Lean hosts keep qt6ct / gtk.
+    # core imports this. Do not also import it from a host.
+    # Unison has plasma next to it. Lean hosts keep qt6ct / gtk.
     plasma = config.services.desktopManager.plasma6.enable;
     ksecretd = lib.getExe' pkgs.kdePackages.kwallet "ksecretd";
     kded6 = lib.getExe' pkgs.kdePackages.kded "kded6";

@@ -8,7 +8,6 @@
       self.nixosModules.unisonHardware
       self.nixosModules.myHomeManager
       self.nixosModules.office
-      self.nixosModules.sway
       self.nixosModules.game
       self.nixosModules.hermesRebuild
       self.nixosModules.lanSsh
@@ -51,14 +50,9 @@
       pulseaudio.enable = false;
       power-profiles-daemon.enable = true;
       upower.enable = true;
-      xserver.xkb = {
-        layout = "us";
-        variant = "";
-      };
       pipewire = {
         enable = true;
         alsa.enable = true;
-        alsa.support32Bit = true;
         pulse.enable = true;
       };
     };

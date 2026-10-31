@@ -10,6 +10,11 @@
 
     services.desktopManager.plasma6.enable = true;
 
+    # Session is Plasma (Wayland). startplasma-x11 is not offered:
+    # core sets ly.x11Support = false and points xsessions at an empty dir.
+    # programs.xwayland stays on. plasma6 sets it unconditionally.
+    # That is XWayland, not the Xorg server. Steam and other X11 clients need it.
+
     programs.kdeconnect.enable = true;
 
     environment.systemPackages = with pkgs; [

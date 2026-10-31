@@ -16,7 +16,7 @@
   # jupyterlab-vim is in-cell vi (normal/insert/visual). Esc from insert
   # enters normal. Esc from normal leaves the cell (extension default).
   # Shift-Esc also enters Jupyter command mode.
-  flake.homeModules.jupyter = { pkgs, lib, ... }:
+  flake.homeModules.jupyter = { pkgs, lib, config, ... }:
   let
     catppuccin-jupyterlab = pkgs.python3Packages.buildPythonPackage rec {
       pname = "catppuccin-jupyterlab";
@@ -36,21 +36,23 @@
       ipympl
       numpy
       pandas
-      polars
-      pyarrow
       matplotlib
-      seaborn
-      plotly
-      scipy
-      statsmodels
-      sympy
-      scikit-learn
       tqdm
       rich
       openpyxl
       requests
       jupyterlab-vim
-    ] ++ [ catppuccin-jupyterlab ]);
+    ] ++ [ catppuccin-jupyterlab ]
+      ++ lib.optionals config.denix.jupyter.science (with ps; [
+        polars
+        pyarrow
+        seaborn
+        plotly
+        scipy
+        statsmodels
+        sympy
+        scikit-learn
+      ]));
 
     labOverrides = pkgs.writeText "jupyterlab-overrides.json" ''
       {
@@ -120,24 +122,28 @@
       </svg>
     '';
   in {
-    home.packages = [
-      jupyterWrapped
-      jupyterLabDesktop
-    ];
+    options.denix.jupyter.science = lib.mkEnableOption "scipy, scikit-learn, statsmodels, sympy, polars";
 
-    # Named icon so desktop files can use Icon=jupyterlab.
-    xdg.dataFile."icons/hicolor/scalable/apps/jupyterlab.svg".source = labIcon;
+    config = {
+      home.packages = [
+        jupyterWrapped
+        jupyterLabDesktop
+      ];
 
-    xdg.desktopEntries.jupyter-lab = {
-      name = "JupyterLab";
-      genericName = "Notebook";
-      comment = "JupyterLab in Chromium";
-      exec = lib.getExe jupyterLabDesktop;
-      icon = "jupyterlab";
-      terminal = false;
-      categories = [ "Development" "Education" "Science" ];
-      mimeType = [ "application/x-ipynb+json" ];
-      startupNotify = true;
+      # Named icon so desktop files can use Icon=jupyterlab.
+      xdg.dataFile."icons/hicolor/scalable/apps/jupyterlab.svg".source = labIcon;
+
+      xdg.desktopEntries.jupyter-lab = {
+        name = "JupyterLab";
+        genericName = "Notebook";
+        comment = "JupyterLab in Chromium";
+        exec = lib.getExe jupyterLabDesktop;
+        icon = "jupyterlab";
+        terminal = false;
+        categories = [ "Development" "Education" "Science" ];
+        mimeType = [ "application/x-ipynb+json" ];
+        startupNotify = true;
+      };
     };
   };
 }

@@ -6,9 +6,9 @@
     ];
 
     home-manager = {
-      # false: HM evaluates its own pkgs from the home-manager input's nixpkgs
-      # (same unstable channel as NixOS; still a separate eval so HM can set allowUnfree)
-      useGlobalPkgs = false;
+      # true: HM uses the NixOS pkgs. core already sets allowUnfree.
+      # A second import of the same nixpkgs input is a second eval.
+      useGlobalPkgs = true;
       useUserPackages = true;
       backupFileExtension = "backup";
       # Replace an existing *.backup instead of failing activation

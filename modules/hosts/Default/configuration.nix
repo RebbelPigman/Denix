@@ -1,6 +1,6 @@
 { self, inputs, ... }: {
 
-  flake.nixosModules.deafaultConfiguration = { pkgs, lib, ... }: {
+  flake.nixosModules.defaultConfiguration = { pkgs, lib, ... }: {
     
 # system module imports
     imports = [
@@ -12,15 +12,10 @@
 # system specific configuration
    boot = {
       loader = {
-        grub = {
-          device = "nodev";
-          enable = true;
-          useOSProber = true;
-          efiSupport = true;
-        };
+        systemd-boot.enable = true;
         efi.canTouchEfiVariables = true;
       };
-  	  kernelPackages = pkgs.linuxPackages_latest;
+      kernelPackages = pkgs.linuxPackages_latest;
     };
    
     time.timeZone = "Africa/Johannesburg";
@@ -34,18 +29,18 @@
 
     home-manager.users.john = self.homeModules.johnModule;
   
-    system.stateVersion = "25.11"; # first nixos version
+    system.stateVersion = "26.05";
 
     # Bluetooth (noctalia)
-	hardware.bluetooth = {
+    hardware.bluetooth = {
       enable = true;
-	  powerOnBoot = true;
+      powerOnBoot = true;
     };
 
-	# power management (noctalia)
+    # power management (noctalia)
     services = {
-	  power-profiles-daemon.enable = true;
-	  upower.enable = true;
+      power-profiles-daemon.enable = true;
+      upower.enable = true;
     };
   };
-}  
+}

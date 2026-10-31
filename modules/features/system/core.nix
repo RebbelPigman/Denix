@@ -1,57 +1,25 @@
 { self, inputs, ... }: {
   flake.nixosModules.core = { pkgs, ... }: {
-    services = {
-      displayManager.ly.enable = true;
-      gnome.gnome-keyring.enable = true;
-      xserver = {
-        enable = true;
-        windowManager.i3 = {
-		  enable = true;
-		  extraPackages = with pkgs; [
-            rofi
-		  ];
-		  configFile = pkgs.writeText "i3-config" ''
-		    font pango:BlexMono Nerd Font Mono 10
-			set $mod Mod4
-			bindsym $mod+Return exec st
-			bindsym $mod+q kill
-			bindsym $mod+d exec --no-startup-id rofi -show drun
-			bindsym $mod+b exec chromium
-			bindsym $mod+h focus left
-			bindsym $mod+j focus down
-			bindsym $mod+k focus up
-			bindsym $mod+l focus right
-			bindsym $mod+Shift+h move left
-			bindsym $mod+Shift+j move down
-			bindsym $mod+Shift+k move up
-			bindsym $mod+Shift+l move right
-			bindsym $mod+c split h
-			bindsym $mod+v split v
-			bindsym $mod+f fullscreen
-			bindsym $mod+space floating toggle
-			bindsym $mod+1 workspace 1
-			bindsym $mod+2 workspace 2
-			bindsym $mod+3 workspace 3
-			bindsym $mod+4 workspace 4
-			bindsym $mod+Shift+1 move container to workspace 1
-			bindsym $mod+Shift+2 move container to workspace 2
-			bindsym $mod+Shift+3 move container to workspace 3
-			bindsym $mod+Shift+4 move container to workspace 4
-			bindsym $mod+Shift+r restart
-			bindsym $mod+Shift+q exit
-			mode "resize" {
-              bindsym h resize shrink width 10 px or 10 ppt
-		      bindsym j resize grow height 10 px or 10 ppt
-              bindsym k resize shrink height 10 px or 10 ppt
-              bindsym l resize grow width 10 px or 10 ppt
-			  bindsym Return mode "default"
-			  bindsym Escape mode "default"
-		    }
-		    bindsym $mod+r mode "resize"
-		  '';
-        };
+    imports = [
+      self.nixosModules.sway
+    ];
+
+    # No Xorg. ly must not start or list an X session.
+    # plasmax11.desktop still exists in the plasma session package;
+    # an empty xsessions dir keeps it out of ly.
+    services.displayManager.ly = {
+      enable = true;
+      x11Support = false;
+      settings = {
+        x_cmd = "";
+        xauth_cmd = "";
+        xsessions = "${pkgs.runCommand "no-xsessions" { } ''
+          mkdir -p $out
+        ''}";
       };
     };
+    services.gnome.gnome-keyring.enable = true;
+    services.xserver.enable = false;
 
     networking.networkmanager.enable = true;
 
@@ -93,7 +61,7 @@
 
     environment.systemPackages = with pkgs; [
     # Critical packages for system Function
-	  st  vim
+	  kitty  vim
 	  git  wget
       yazi  lynx
     # Nice to Have Terminal Utilities
@@ -173,13 +141,13 @@
   
 		  # === Media ===
             open = [{
-		      run = ''${pkgs.chromium}/bin/chromium --new-window "$@"'';
+		      run = ''${pkgs.ungoogled-chromium}/bin/chromium --new-window "$@"'';
 			  desc = "Open in Chromium";
 			  orphan = true;
 			}];
             play = [{
-		      run = ''${pkgs.chromium}/bin/chromium --new-window "$@"'';
-			  desc = "Play in Chromium";
+		      run = ''${pkgs.mpv}/bin/mpv "$@"'';
+			  desc = "Play in mpv";
 			  orphan = true; }
             ];
           };
@@ -187,7 +155,7 @@
       };
     };
 	environment.sessionVariables = {
-      TERMINAL = "st";
+      TERMINAL = "kitty";
       EDITOR = "vim";
       VISUAL = "vim";
     };

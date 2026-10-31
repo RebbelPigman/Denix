@@ -52,6 +52,9 @@ modules/
   features/
     system/                          # flake.nixosModules.*  (+ perSystem wrappers)
       core.nix
+      tiny.nix                       # nixosModules.tiny — old X+i3 core, not imported
+      tex.nix                        # nixosModules.tex — not imported
+      waydroid.nix                   # nixosModules.waydroid — Aurelius only
       desk.nix
       game.nix
       home-manager.nix               # flake.nixosModules.myHomeManager
@@ -63,7 +66,7 @@ modules/
       karousel.nix                   # nixosModules.karousel (packages only)
       office.nix                     # imports plasma
       lan-ssh.nix                    # nixosModules.lanSsh (Unison + Aurelius)
-      denix-weekly-switch.nix        # Sunday 22:00 switch (Unison orchestrator)
+      denix-weekly-switch.nix        # Sunday 20:00 switch (Unison orchestrator)
       windows.nix                    # VirtualBox + Windows 11 Pro VM
     user/                            # flake.homeModules.*
       catfish.nix                    # fish + kitty
@@ -71,6 +74,7 @@ modules/
       hermes.nix                     # Hermes Agent (imports grokbot)
       grokbot.nix                    # Grok Bot package
       jupyter.nix                    # JupyterLab + Chromium desktop entry
+      jupyter-science.nix            # homeModules.jupyterScience — not imported
       karousel.nix                   # Karousel shortcuts / kwinrc
   hosts/
     Default/   Aurelius/   Unison/
@@ -174,7 +178,7 @@ Generated-style filesystem / initrd / CPU bits live here as `nixosModules.<host>
 
 Baseline that every host should import.
 
-- ly display manager, gnome-keyring, X + i3 (minimal config: st, rofi, chromium binds)
+- ly display manager (no X11), gnome-keyring, sway (imported here; do not import `sway` again on a host)
 - NetworkManager, polkit, `allowUnfree`
 - flakes + nix-command
 - Hermes Agent cachix substituter (`https://hermes-agent.cachix.org`)
@@ -196,13 +200,14 @@ DE-agnostic GUI layer. Import on desktop hosts (niri, sway, or plasma).
 
 #### `game` → `nixosModules.game`
 
-- Steam (`remotePlay` / dedicated server / LAN transfer firewall), `extraCompatPackages = [ proton-ge-bin ]`
+- Steam (`remotePlay` and LAN transfer firewall open, dedicated server closed), `extraCompatPackages = [ proton-ge-bin ]`
 - gamescope + gamemode
 - Heroic overridden with gamescope + gamemode on its extraPkgs
 - vesktop, plus a hiPrio `vesktop.desktop` with `Name=Discord` so fuzzel finds it. Exec stays `vesktop`. prismlauncher
-- Waydroid (`virtualisation.waydroid.enable`). nixpkgs installs the package, enables LXC, trusts `waydroid0`, sets `psi=1`. Does **not** fetch images or GApps.
+- `services.pipewire.alsa.support32Bit` for Steam. Hosts still enable pipewire.
+- Waydroid is `nixosModules.waydroid`, not this module. Import only on the host that has images (Aurelius).
 
-After the first switch that includes `game`, as root:
+After the first switch that includes `waydroid`, as root:
 
 ```bash
 sudo waydroid init -s GAPPS
@@ -243,7 +248,7 @@ Do not also put `homeModules.tela` on `home-manager.sharedModules`.
 
 #### `sway` → `nixosModules.sway` + `packages.mySway`
 
-Lean i3-compatible Wayland session. Import instead of `niri` (or next to it only if both sessions should appear in ly). Does not start Noctalia.
+Lean Wayland session. `core` imports this. Do not import it again from a host. A niri host therefore lists both niri and sway in ly. Does not start Noctalia.
 
 - `programs.sway.enable`, package = wrapped `mySway`, `wrapperFeatures.gtk`
 - extraPackages (replaces the nixpkgs default foot/wmenu/pulseaudio set): slurp, grim, mako, swaybg, swayidle, swaylock, i3status, kanshi
@@ -296,7 +301,7 @@ Imported automatically by `nixosModules.plasma`. Do not import the home module o
 
 #### `office` → `nixosModules.office`
 
-Imports `plasma` (and therefore desk + karousel + plasma rice). Adds LibreOffice-qt6, hunspell en-GB/en-US, pdfarranger, TeXstudio + texliveMedium extras, ghostscript, poppler-utils, krita, gimp, kdenlive.
+Imports `plasma` (and therefore desk + karousel + plasma rice). Adds LibreOffice-qt6, hunspell en-GB/en-US, pdfarranger, ghostscript, poppler-utils, krita, gimp, kdenlive. TeX is `nixosModules.tex` and is not imported.
 
 Use this for a Plasma workstation. Do not combine with `niri` on the same host unless you intentionally want both sessions in ly.
 
@@ -314,7 +319,7 @@ Also grants `rebb` NOPASSWD for `/run/current-system/sw/bin/nixos-rebuild` so Un
 
 #### `denixWeeklySwitch` → `nixosModules.denixWeeklySwitch`
 
-Sunday 22:00 (host TZ, SAST) `nixos-rebuild switch`. Import on Unison only.
+Sunday 20:00 (host TZ, SAST) `nixos-rebuild switch`. Import on Unison only.
 
 - git pull --ff-only as `rebb`
 - switch this host
@@ -414,11 +419,11 @@ See system `karousel` above. Plasma-only.
 
 | Host | System imports | Home imports | Notes |
 | --- | --- | --- |
-| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game, lanSsh, windows | catfish, tela, jupyter, grokbot | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri. Home attr `aureliusHome` / `rebbAurelius`. `windows` is VirtualBox + Windows 11 Pro. Grok Bot is the package only; niri does not exec it |
-| **Unison** | core, unisonHardware, myHomeManager, office, sway, game, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office`. ly lists plasma and sway. Sway uses KWallet, KDE Qt theme, and KDE portals except screencast/screenshot (wlr) and notifications (mako). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` |
+| **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game, lanSsh, windows | catfish, tela, jupyter, grokbot | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway (sway comes from core). No Xorg. Home attr `aureliusHome` / `rebbAurelius`. `windows` is VirtualBox + Windows 11 Pro. Grok Bot is the package only; niri does not exec it |
+| **Unison** | core, unisonHardware, myHomeManager, office, game, hermesRebuild, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (Wayland session only). sway comes from core. ly lists plasma and sway, not Plasma (X11). Sway uses KWallet, KDE Qt theme, and KDE portals except screencast/screenshot (wlr) and notifications (mako). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` or `sway` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
-Aurelius does not import `office` / `plasma` / `karousel` or `sway`. Unison imports `office` and `sway` (both sessions in ly). Aurelius stays niri-only.
+Aurelius does not import `office` / `plasma` / `karousel`. sway is already in `core`, so ly lists niri and sway. Unison imports `office` and gets sway from `core`. Do not import `sway` again.
 
 ---
 
@@ -502,8 +507,7 @@ If two modules set the same unique option (`gtk.iconTheme.package`, a single des
 
 ## Caveats
 
-- **Default configuration attr typo.** `hosts/Default/configuration.nix` currently defines `flake.nixosModules.deafaultConfiguration`, while `default.nix` imports `self.nixosModules.defaultConfiguration`. The Default host does not evaluate until those names match.
-- **Default hardware** is a stub. Generate and wrap it before using that host.
+- **Default hardware** is a stub. `nixpkgs.hostPlatform` is `x86_64-linux` so the attr evaluates. Filesystems are not set. Generate and wrap a real hardware file before installing that host. Boot is systemd-boot. `stateVersion` is 26.05. The configuration attr is `defaultConfiguration`.
 - **Plasma vs niri.** Plasma/karousel home modules stay off niri hosts. `tela` stays off `sharedModules` and off Unison — qtct/Fusion fights Plasma's color scheme.
 - **Hermes linger.** Aurelius and Unison set `users.users.rebb.linger = true`. A host that imports `homeModules.hermes` without linger will start units that vanish after logout.
 - **Evaluation sees git.** Untracked feature files are invisible to `self.nixosModules` / `self.homeModules`.

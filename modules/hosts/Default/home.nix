@@ -2,7 +2,8 @@
 
   flake.homeConfigurations.john = inputs.home-manager.lib.homeManagerConfiguration {
     pkgs = import inputs.nixpkgs {
-      system = "x86_64-linux";
+      # legacy `system` is rewritten to localSystem. Do not pass `system`.
+      localSystem = "x86_64-linux";
     };
     extraSpecialArgs = {
       inherit inputs;

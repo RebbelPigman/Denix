@@ -2,7 +2,8 @@
 
   flake.homeConfigurations.rebbUnison = inputs.home-manager.lib.homeManagerConfiguration {
     pkgs = import inputs.nixpkgs {
-      system = "x86_64-linux";
+      # legacy `system` is rewritten to localSystem. Do not pass `system`.
+      localSystem = "x86_64-linux";
       config.allowUnfree = true;
     };
     extraSpecialArgs = {
@@ -19,13 +20,7 @@
     ];
   };
 
-  flake.homeModules.unisonHome = { pkgs, inputs, lib, ... }:
-  let
-    pkgs-unstable = import inputs.nixpkgs {
-      inherit (pkgs) system;
-      config.allowUnfree = true;
-    };
-  in {
+  flake.homeModules.unisonHome = { pkgs, inputs, lib, ... }: {
     imports = [
       self.homeModules.catfish
       self.homeModules.hermes
@@ -35,7 +30,7 @@
     programs.bash.enable = true;
     home = {
       stateVersion = "26.05";
-      packages = with pkgs-unstable; [
+      packages = with pkgs; [
         anki
         google-chrome
         obsidian

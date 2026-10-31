@@ -175,9 +175,9 @@
 		  "Mod+Return".spawn = lib.getExe pkgs.kitty;
 		  "Mod+Shift+Return".spawn-sh = ''niri msg action focus-workspace "Drawr"; exec ${lib.getExe pkgs.kitty} --class kitty-drawr'';
 		  "Mod+D".spawn = lib.getExe pkgs.fuzzel;
-		  "Mod+Shift+D".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call launcher toggle";
-          "Mod+S".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call controlCenter toggle";
-          "Mod+Alt+L".spawn-sh = "nix run nixpkgs#noctalia-shell ipc call lockScreen lock";
+		  "Mod+Shift+D".spawn-sh = "${lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.myNoctalia} ipc call launcher toggle";
+          "Mod+S".spawn-sh = "${lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.myNoctalia} ipc call controlCenter toggle";
+          "Mod+Alt+L".spawn-sh = "${lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.myNoctalia} ipc call lockScreen lock";
 		  "Mod+B".spawn = "brave";
 		  "Mod+Alt+B".spawn = "chromium";
 		  "Mod+Ctrl+B".spawn = "google-chrome";
@@ -185,11 +185,6 @@
 		  "Mod+F2".spawn-sh = "kitty yazi";
 		  "Mod+F3".spawn = lib.getExe pkgs.qalculate-gtk;
 		  "Mod+F4".spawn = "grok-bot";
-		  "Mod+F5".spawn-sh = "kitty ";
-		  "Mod+F6".spawn-sh = "kitty ";
-		  "Mod+F7".spawn-sh = "kitty ";
-		  "Mod+F8".spawn-sh = "kitty ";
-		  "Mod+F9".spawn-sh = "kitty ";
 		  "Mod+F10".spawn-sh = "kitty htop";
 		  "Mod+F11".spawn-sh = "kitty atop";
 		  "Mod+F12".spawn-sh = "kitty btop";
@@ -236,7 +231,7 @@
 		  "Mod+Alt+V".set-column-width = "30%";
 		  "Mod+V".set-column-width = "50%";
 		  "Mod+Shift+V".set-column-width = "60%";
-		  "Mod+Shift+ALt+V".set-column-width = "70";
+		  "Mod+Shift+Alt+V".set-column-width = "70%";
 		  "Mod+Ctrl+V".set-column-width = "80%";
 		  "Mod+Alt+F".set-column-width = "100%";
 		  "Mod+F".maximize-window-to-edges = {};
