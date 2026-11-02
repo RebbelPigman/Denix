@@ -40,9 +40,6 @@
       ];
     };
 
-    programs.fish.shellAliases.python =
-      "cd ~/Python && nix-shell --run \"python\"";
-
     programs.kitty.themeFile = "Catppuccin-Mocha";
   };
 }
