@@ -16,7 +16,7 @@
   # jupyterlab-vim is in-cell vi (normal/insert/visual). Esc from insert
   # enters normal. Esc from normal leaves the cell (extension default).
   # Shift-Esc also enters Jupyter command mode.
-  flake.homeModules.jupyter = { pkgs, lib, config, ... }:
+  flake.homeModules.jupyter = { pkgs, lib, ... }:
   let
     catppuccin-jupyterlab = pkgs.python3Packages.buildPythonPackage rec {
       pname = "catppuccin-jupyterlab";
@@ -42,17 +42,15 @@
       openpyxl
       requests
       jupyterlab-vim
-    ] ++ [ catppuccin-jupyterlab ]
-      ++ lib.optionals config.denix.jupyter.science (with ps; [
-        polars
-        pyarrow
-        seaborn
-        plotly
-        scipy
-        statsmodels
-        sympy
-        scikit-learn
-      ]));
+      polars
+      pyarrow
+      seaborn
+      plotly
+      scipy
+      statsmodels
+      sympy
+      scikit-learn
+    ] ++ [ catppuccin-jupyterlab ]);
 
     labOverrides = pkgs.writeText "jupyterlab-overrides.json" ''
       {
@@ -122,10 +120,7 @@
       </svg>
     '';
   in {
-    options.denix.jupyter.science = lib.mkEnableOption "scipy, scikit-learn, statsmodels, sympy, polars";
-
-    config = {
-      home.packages = [
+    home.packages = [
         jupyterWrapped
         jupyterLabDesktop
       ];
@@ -143,7 +138,6 @@
         categories = [ "Development" "Education" "Science" ];
         mimeType = [ "application/x-ipynb+json" ];
         startupNotify = true;
-      };
     };
   };
 }

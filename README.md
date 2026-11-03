@@ -53,7 +53,6 @@ modules/
     system/                          # flake.nixosModules.*  (+ perSystem wrappers)
       core.nix
       tiny.nix                       # nixosModules.tiny — old X+i3 core, not imported
-      tex.nix                        # nixosModules.tex — not imported
       waydroid.nix                   # nixosModules.waydroid — Aurelius only
       desk.nix
       game.nix
@@ -74,7 +73,6 @@ modules/
       hermes.nix                     # Hermes Agent (imports grokbot)
       grokbot.nix                    # Grok Bot package
       jupyter.nix                    # JupyterLab + Chromium desktop entry
-      jupyter-science.nix            # homeModules.jupyterScience — not imported
       karousel.nix                   # Karousel shortcuts / kwinrc
   hosts/
     Default/   Aurelius/   Unison/
@@ -301,7 +299,7 @@ Imported automatically by `nixosModules.plasma`. Do not import the home module o
 
 #### `office` → `nixosModules.office`
 
-Imports `plasma` (and therefore desk + karousel + plasma rice). Adds LibreOffice-qt6, hunspell en-GB/en-US, pdfarranger, ghostscript, poppler-utils, krita, gimp, kdenlive. TeX is `nixosModules.tex` and is not imported.
+Imports `plasma` (and therefore desk + karousel + plasma rice). Adds LibreOffice-qt6, hunspell en-GB/en-US, pdfarranger, texstudio, texliveMedium, ghostscript, poppler-utils, krita, gimp, kdenlive.
 
 Use this for a Plasma workstation. Do not combine with `niri` on the same host unless you intentionally want both sessions in ly.
 
