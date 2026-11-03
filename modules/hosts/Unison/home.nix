@@ -24,7 +24,7 @@
     imports = [
       self.homeModules.catfish
       self.homeModules.hermes
-      self.homeModules.jupyter
+      self.homeModules.jupyterScience
     ];
 
     programs.bash.enable = true;
