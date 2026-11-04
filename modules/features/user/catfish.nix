@@ -44,6 +44,7 @@
         shell = "fish";
         enabled_layouts = "tall";
       };
+      themeFile = "Catppuccin-Mocha";
       extraConfig = ''
         include themes/noctalia.conf
         map control+shift+v paste_from_clipboard

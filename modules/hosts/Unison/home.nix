@@ -28,20 +28,6 @@
     ];
 
     programs.bash.enable = true;
-    home = {
-      stateVersion = "26.05";
-      packages = with pkgs; [
-        anki
-        google-chrome
-        obsidian
-        dropbox
-        brave
-      ];
-    };
-
-    programs.fish.shellAliases.python =
-      "cd ~/Python && nix-shell --run \"python\"";
-
-    programs.kitty.themeFile = "Catppuccin-Mocha";
+    home = { stateVersion = "26.05";};
   };
 }

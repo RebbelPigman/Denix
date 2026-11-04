@@ -303,7 +303,7 @@
     "wallpaper": {
       "enabled": true,
       "overviewEnabled": true,
-      "directory": "/home/rebb/Pictures/Wallpapers",
+      "directory": "/home/rebb/Dropbox/Wallpapers",
       "monitorDirectories": [],
       "enableMultiMonitorDirectories": false,
       "showHiddenFiles": false,
@@ -743,7 +743,7 @@
     "openedPanel": "",
     "lockScreenActive": false,
     "wallpapers": {
-      "eDP-1": "/home/rebb/Pictures/Wallpapers/jupiter.png"
+      "eDP-1": "/home/rebb/Dropbox/Wallpapers/blue-kaiju.png"
     },
     "desktopWidgetsEditMode": false,
     "display": {
@@ -764,10 +764,10 @@
       }
     },
     "notificationsState": {
-      "lastSeenTs": 1789546985000
+      "lastSeenTs": 1792306695000
     },
     "changelogState": {
-      "lastSeenVersion": "v4.7.6"
+      "lastSeenVersion": "v4.7.7"
     },
     "colorSchemesList": {
       "schemes": [],

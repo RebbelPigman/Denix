@@ -29,17 +29,6 @@
     ];
 
     programs.bash.enable = true;
-    home = {
-      stateVersion = "26.05";
-      packages = with pkgs; [
-        anki
-        google-chrome
-        obsidian
-        dropbox
-        brave
-      ];
-    };
-
-    programs.kitty.themeFile = "Catppuccin-Mocha";
+    home = { stateVersion = "26.05"; };
   };
 }

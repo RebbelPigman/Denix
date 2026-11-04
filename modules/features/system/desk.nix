@@ -61,6 +61,11 @@
       zip
       p7zip
       unrar
+      anki
+      google-chrome
+      obsidian
+      dropbox
+      brave
     ];
   };
 }
