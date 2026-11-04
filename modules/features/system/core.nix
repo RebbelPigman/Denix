@@ -59,6 +59,18 @@
       };
     };
 
+    # Force-installed into ungoogled-chromium via /etc/chromium/policies.
+    # Stylus user CSS lives in the profile DB. No theme files on disk to ship.
+    programs.chromium = {
+      enable = true;
+      extensions = [
+        "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimium
+        "iidnbdjijdkbmajdffnidomddglmieko" # Quillbot
+        "clngdbkpkpeebahjckkjfobafhncgmne" # Stylus
+        "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
+      ];
+    };
+
     environment.systemPackages = with pkgs; [
     # Critical packages for system Function
 	  kitty  vim

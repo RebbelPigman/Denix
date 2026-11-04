@@ -182,6 +182,7 @@ Baseline that every host should import.
 - Hermes Agent cachix substituter (`https://hermes-agent.cachix.org`)
 - BlexMono Nerd Font + Sarasa Gothic, fontconfig defaults
 - CLI/GUI baseline: st, vim, git, wget, yazi, lynx, fzf, eza, bat, dust, tldr, atuin, zellij, atop/btop/htop/powertop, fastfetch, brightnessctl, ungoogled-chromium, mpv, imv
+- `programs.chromium.extensions` force-installs Vimium, Quillbot, Stylus, and Proton Pass. Stylus styles are profile data, not a Nix file
 - MIME defaults: chromium / imv / mpv / vim
 - yazi openers, `TERMINAL=st`, `EDITOR=vim`
 
@@ -400,7 +401,7 @@ JupyterLab in one `python3.withPackages` env (Lab + kernel packages together) pl
 
 - packages: jupyterlab, ipykernel, ipywidgets, ipympl, numpy, pandas, polars, pyarrow, matplotlib, seaborn, plotly, scipy, statsmodels, sympy, scikit-learn, tqdm, rich, openpyxl, requests, jupyterlab-vim, catppuccin-jupyterlab 0.2.5 (wheel; not in nixpkgs)
 - `jupyterlab-vim` is vi inside the cell (normal / insert / visual). Not notebook command mode. Esc from insert enters normal. Esc from normal leaves the cell. A saved setting under `~/.jupyter/lab/user-settings` still wins
-- Lab UI is CSS. Qt/GTK only theme the Chromium frame. Default theme is Catppuccin Mocha, brand mauve (same flavor as Plasma). `JUPYTERLAB_DIR` carries `settings/overrides.json`. A theme already saved under `~/.jupyter/lab/user-settings` still wins
+- Lab UI is CSS. Qt/GTK only theme the Chromium frame. Default theme is Catppuccin Mocha, brand mauve (same flavor as Plasma). `JUPYTERLAB_DIR` carries `settings/overrides.json`. Notebook rendering layout defaults to `side-by-side` (Shift+R). A theme or layout already saved under `~/.jupyter/lab/user-settings` still wins
 - wrapper `jupyter-lab-desktop` starts Lab on `127.0.0.1` with notebook dir `~/Dropbox/Projects` and opens `ungoogled-chromium --app=<token-url>`
 - `xdg.desktopEntries.jupyter-lab` → `~/.local/share/applications/jupyter-lab.desktop` (fuzzel, Noctalia, Plasma)
 - icon `jupyterlab.svg` under `xdg.dataFile` icons

@@ -64,6 +64,9 @@
         "@axlair/jupyterlab_vim:plugin": {
           "enabled": true,
           "enabledInEditors": true
+        },
+        "@jupyterlab/notebook-extension:tracker": {
+          "renderingLayout": "side-by-side"
         }
       }
     '';
