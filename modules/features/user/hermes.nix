@@ -115,9 +115,9 @@
         approvals.mode = "smart";
         approvals.smart_policy = ''
           Allow /run/wrappers/bin/sudo -n /run/current-system/sw/bin/nixos-rebuild test --flake ${config.home.homeDirectory}/Dropbox/Projects/Denix#* so the agent can loop a failing eval. Never pass --sudo.
-          Require an explicit user phrase this turn before nixos-rebuild boot, nixos-rebuild switch, or git push.
-          Phrase "set changes" authorizes boot plus a non-force git push of this repo.
-          Phrase "update" authorizes switch only (not nix flake update).
+          Allow nixos-rebuild boot after a successful test when the Denix module goal is achieved. There is no set-changes phrase.
+          Allow nixos-rebuild switch only on the Sunday timer, or when the user said update this turn. Not nix flake update.
+          Allow git push only when the user said push this turn. Never --force.
           Deny git push --force, git reset --hard, and any write outside ${config.home.homeDirectory}/Dropbox/Projects/Denix.
         '';
       };

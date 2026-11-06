@@ -11,7 +11,7 @@
   # with the flake evaluated as rebb, once that generation is current.
   # nix-collect-garbage only deletes profile links + unreferenced store paths.
   # Boot menu files on the ESP stay until switch-to-configuration boot.
-  # denix-gc does both; it does not nix-env --set a new generation.
+  # denix-gc lives in lanSsh. It does not nix-env --set a new generation.
   flake.nixosModules.hermesRebuild = { pkgs, ... }:
   let
     denixRebuild = pkgs.writeShellApplication {
@@ -99,42 +99,8 @@
           "$result/bin/switch-to-configuration" "$action"
       '';
     };
-    denixGc = pkgs.writeShellApplication {
-      name = "denix-gc";
-      runtimeInputs = [
-        pkgs.coreutils
-        pkgs.nix
-        pkgs.systemd
-      ];
-      text = ''
-        if [ "$(id -u)" -ne 0 ]; then
-          echo "denix-gc must run as root: sudo /run/current-system/sw/bin/denix-gc" >&2
-          exit 1
-        fi
-
-        nix-collect-garbage --delete-older-than 7d
-
-        switch=/nix/var/nix/profiles/system/bin/switch-to-configuration
-        if [ ! -x "$switch" ]; then
-          echo "denix-gc: missing $switch" >&2
-          exit 1
-        fi
-
-        export NIXOS_INSTALL_BOOTLOADER=0
-        systemd-run \
-          -E LOCALE_ARCHIVE \
-          -E NIXOS_INSTALL_BOOTLOADER \
-          --collect \
-          --no-ask-password \
-          --pipe \
-          --wait \
-          --service-type=exec \
-          --unit="denix-gc-boot-$$" \
-          "$switch" boot
-      '';
-    };
   in {
-    environment.systemPackages = [ denixRebuild denixGc ];
+    environment.systemPackages = [ denixRebuild ];
     security.sudo.extraRules = [
       {
         users = [ "rebb" ];
@@ -145,14 +111,6 @@
           }
           {
             command = "/run/current-system/sw/bin/denix-rebuild";
-            options = [ "NOPASSWD" ];
-          }
-          {
-            command = "/run/current-system/sw/bin/denix-gc";
-            options = [ "NOPASSWD" ];
-          }
-          {
-            command = "/run/current-system/sw/bin/nix-collect-garbage --delete-older-than 7d";
             options = [ "NOPASSWD" ];
           }
         ];

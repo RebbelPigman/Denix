@@ -182,9 +182,9 @@
 		  "Mod+F2".spawn-sh = "kitty yazi";
 		  "Mod+F3".spawn = lib.getExe pkgs.qalculate-gtk;
 		  "Mod+F4".spawn = "grok-bot";
-		  "Mod+F5".spawn = "google-chrome";
+		  "Mod+F5".spawn = "chromium";
 		  "Mod+F6".spawn = "brave";
-		  "Mod+F7".spawn = "chromium";
+		  "Mod+F7".spawn = "google-chrome";
 		  "Mod+F8".spawn = "obsidian";
 		  "Mod+F10".spawn-sh = "kitty htop";
 		  "Mod+F11".spawn-sh = "kitty atop";

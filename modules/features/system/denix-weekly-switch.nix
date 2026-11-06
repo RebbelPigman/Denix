@@ -53,6 +53,8 @@
 
         log "switch local $local_attr"
         /run/current-system/sw/bin/nixos-rebuild switch --flake "$flake#$local_attr"
+        log "gc local (boot entries + store older than 30d)"
+        /run/current-system/sw/bin/denix-gc
 
         switch_remote() {
           local name=$1 attr=$2
@@ -70,7 +72,8 @@
              export GIT_SSH_COMMAND='ssh -F /home/rebb/.ssh/config -o BatchMode=yes -o IdentitiesOnly=yes'
              cd /tmp
              git -C $flake pull --ff-only
-             /run/wrappers/bin/sudo -n /run/current-system/sw/bin/nixos-rebuild switch --flake $flake#$attr"
+             /run/wrappers/bin/sudo -n /run/current-system/sw/bin/nixos-rebuild switch --flake $flake#$attr
+             /run/wrappers/bin/sudo -n /run/current-system/sw/bin/denix-gc"
         }
 
         switch_remote Aurelius Aurelius
@@ -81,14 +84,14 @@
   in {
     environment.systemPackages = [ script ];
     systemd.services.denix-weekly-switch = {
-      description = "Weekly Denix nixos-rebuild switch for Unison/Aurelius";
+      description = "Weekly Denix switch plus 30d GC for Unison/Aurelius";
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${script}/bin/denix-weekly-switch";
       };
     };
     systemd.timers.denix-weekly-switch = {
-      description = "Sunday 20:00 SAST Denix rebuild-switch";
+      description = "Sunday 20:00 SAST Denix switch and 30d GC";
       wantedBy = [ "timers.target" ];
       timerConfig = {
         OnCalendar = "Sun 20:00:00";

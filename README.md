@@ -182,7 +182,7 @@ Baseline that every host should import.
 - Hermes Agent cachix substituter (`https://hermes-agent.cachix.org`)
 - BlexMono Nerd Font + Sarasa Gothic, fontconfig defaults
 - CLI/GUI baseline: st, vim, git, wget, yazi, lynx, fzf, eza, bat, dust, tldr, atuin, zellij, atop/btop/htop/powertop, fastfetch, brightnessctl, ungoogled-chromium, mpv, imv
-- `programs.chromium.extensions` force-installs Vimium, Quillbot, Stylus, and Proton Pass. Stylus styles are profile data, not a Nix file
+- Chromium extension force-install is commented out in `core.nix`. Future work. ungoogled-chromium does not install from that policy.
 - MIME defaults: chromium / imv / mpv / vim
 - yazi openers, `TERMINAL=st`, `EDITOR=vim`
 
@@ -318,12 +318,13 @@ Also grants `rebb` NOPASSWD for `/run/current-system/sw/bin/nixos-rebuild` so Un
 
 #### `denixWeeklySwitch` → `nixosModules.denixWeeklySwitch`
 
-Sunday 20:00 (host TZ, SAST) `nixos-rebuild switch`. Import on Unison only.
+Sunday 20:00 (host TZ, SAST) `nixos-rebuild switch`, then `denix-gc`. Import on Unison only.
 
 - git pull --ff-only as `rebb`
-- switch this host
-- SSH to Aurelius if it answers; skip otherwise
+- switch this host, then delete boot entries and store paths older than 30 days
+- SSH to Aurelius if it answers; switch, then the same 30-day GC. Skip if SSH fails
 - no `nix flake update`
+- `denix-gc` comes from `lanSsh` (Unison and Aurelius)
 
 Hermes cron cannot run this (3-minute interrupt).
 
