@@ -59,18 +59,17 @@
       };
     };
 
-    # Force-installed into ungoogled-chromium via /etc/chromium/policies.
-    # Stylus user CSS lives in the profile DB. No theme files on disk to ship.
-    programs.chromium = {
-      enable = true;
-      extensions = [
-        # ungoogled-chromium drops the web store update URL. A bare id never installs.
-        "dbepggeogbaibhgnhhndojpepiihcmeb;https://clients2.google.com/service/update2/crx" # Vimium
-        "iidnbdjijdkbmajdffnidomddglmieko;https://clients2.google.com/service/update2/crx" # Quillbot
-        "clngdbkpkpeebahjckkjfobafhncgmne;https://clients2.google.com/service/update2/crx" # Stylus
-        "ghmbeldphafepmbegfdlkpapadhbakde;https://clients2.google.com/service/update2/crx" # Proton Pass
-      ];
-    };
+    # Future work. ungoogled-chromium 153 reads ExtensionInstallForcelist and
+    # does not install. Do not turn this back on until an id directory appears
+    # under ~/.config/chromium/Default/Extensions.
+    # Vimium dbepggeogbaibhgnhhndojpepiihcmeb
+    # Quillbot iidnbdjijdkbmajdffnidomddglmieko
+    # Stylus clngdbkpkpeebahjckkjfobafhncgmne
+    # Proton Pass ghmbeldphafepmbegfdlkpapadhbakde
+    # programs.chromium = {
+    #   enable = true;
+    #   extensions = [ ];
+    # };
 
     environment.systemPackages = with pkgs; [
     # Critical packages for system Function
