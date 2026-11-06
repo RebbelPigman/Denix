@@ -137,7 +137,7 @@
 			  { app-id = "^brave-browser$"; }
 			  { app-id = "^google-chrome$"; }
 			];
-            default-column-width.proportion = 0.80;
+            default-column-width.proportion = 0.85;
 			open-on-workspace = "Browser";
 		  }
 		  {
@@ -157,7 +157,7 @@
 			  { app-id = "^grok-bot$"; } 
 			];
 			open-floating = false;
-			default-column-width.proportion = 0.80;
+			default-column-width.proportion = 0.70;
 			open-on-workspace = "Drawr";
 			opacity = 0.90 ;
 			draw-border-with-background = false;
@@ -166,7 +166,7 @@
 		    matches = [
 			  { app-id = "^steam$"; }
 			];
-            default-column-width.proportion = 0.80;
+            default-column-width.proportion = 0.70;
 			open-on-workspace = "Drawr";
 		  }
 		];
