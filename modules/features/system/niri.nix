@@ -226,12 +226,12 @@
 		  "Mod+0".focus-workspace = 10;
 		  "Mod+Space".toggle-window-floating = {};
 		  "Mod+Alt+Space".switch-focus-between-floating-and-tiling = {};
-		  "Mod+Minus".set-column-width = "-20%";
-		  "Mod+Equal".set-column-width = "+20%";
+		  "Mod+Minus".set-column-width = "-10%";
+		  "Mod+Equal".set-column-width = "+10%";
 		  "Mod+Alt+V".set-column-width = "30%";
 		  "Mod+V".set-column-width = "50%";
 		  "Mod+Shift+V".set-column-width = "60%";
-		  "Mod+Shift+Alt+V".set-column-width = "70%";
+		  "Mod+Shift+Alt+V".set-column-width = "67%";
 		  "Mod+Ctrl+V".set-column-width = "80%";
 		  "Mod+Alt+F".set-column-width = "100%";
 		  "Mod+F".maximize-window-to-edges = {};
