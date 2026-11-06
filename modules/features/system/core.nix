@@ -64,10 +64,11 @@
     programs.chromium = {
       enable = true;
       extensions = [
-        "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimium
-        "iidnbdjijdkbmajdffnidomddglmieko" # Quillbot
-        "clngdbkpkpeebahjckkjfobafhncgmne" # Stylus
-        "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
+        # ungoogled-chromium drops the web store update URL. A bare id never installs.
+        "dbepggeogbaibhgnhhndojpepiihcmeb;https://clients2.google.com/service/update2/crx" # Vimium
+        "iidnbdjijdkbmajdffnidomddglmieko;https://clients2.google.com/service/update2/crx" # Quillbot
+        "clngdbkpkpeebahjckkjfobafhncgmne;https://clients2.google.com/service/update2/crx" # Stylus
+        "ghmbeldphafepmbegfdlkpapadhbakde;https://clients2.google.com/service/update2/crx" # Proton Pass
       ];
     };
 
