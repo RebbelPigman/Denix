@@ -1,6 +1,7 @@
 { ... }: {
   # OpenSSH + mDNS for Unison <-> Aurelius.
-  # Private key lives in ~/.ssh/id_ed25519_lan (not this repo).
+  # Private keys live in ~/.ssh/id_ed25519_lan on each host (not this repo).
+  # Client Host blocks: homeModules.lanSshClient.
   # Import from those hosts:
   #   self.nixosModules.lanSsh
   flake.nixosModules.lanSsh = { pkgs, ... }:
@@ -52,8 +53,10 @@
       };
     };
 
+    # Unison key (rebb@lan) + Aurelius key (rebb@lan-aurelius). Private halves stay off-repo.
     users.users.rebb.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGvCM2N/+T32dZhEn3A2NeoO7JiAnIU2QwB5vOsDFMvu rebb@lan"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIORpmSuKJvVLFaPteIgr3tNc8fDKaUPE7v261dP/Zms8 rebb@lan-aurelius"
     ];
 
     # Unattended remote switch from Unison's weekly timer.

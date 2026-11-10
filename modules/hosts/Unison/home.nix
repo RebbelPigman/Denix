@@ -25,7 +25,16 @@
       self.homeModules.catfish
       self.homeModules.hermes
       self.homeModules.jupyter
+      self.homeModules.lanSshClient
     ];
+
+    # Preserve Unison's github identity path when HM owns ~/.ssh/config.
+    programs.ssh.matchBlocks."github.com" = {
+      hostname = "github.com";
+      user = "git";
+      identityFile = "~/.ssh/id_ed25519_github";
+      identitiesOnly = true;
+    };
 
     programs.bash.enable = true;
     home = { stateVersion = "26.05";};

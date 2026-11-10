@@ -304,15 +304,15 @@ Imports `plasma` (and therefore desk + karousel + plasma rice). Adds LibreOffice
 
 Use this for a Plasma workstation. Do not combine with `niri` on the same host unless you intentionally want both sessions in ly.
 
-#### `lanSsh` → `nixosModules.lanSsh`
+#### `lanSsh` → `nixosModules.lanSsh` + `homeModules.lanSshClient` / `hermesRemoteWebui`
 
 Unison <-> Aurelius SSH over the LAN. No private keys in this repo.
 
 - `services.openssh` (key-only)
 - Avahi mDNS so they resolve as `Unison.local` / `Aurelius.local`
-- `rebb` authorized key is the public half of `~/.ssh/id_ed25519_lan`
-
-Client `Host` stanzas live in `~/.ssh/config` on the machines, not here.
+- `rebb` authorized keys: Unison `id_ed25519_lan` (`rebb@lan`) and Aurelius `id_ed25519_lan` (`rebb@lan-aurelius`)
+- Client `Host` stanzas: `homeModules.lanSshClient` on both homes (`IdentityFile ~/.ssh/id_ed25519_lan`, `StrictHostKeyChecking accept-new`). Each host still sets its own `github.com` identity path in that host's `home.nix`
+- Aurelius only: `homeModules.hermesRemoteWebui` — user unit `hermes-webui-tunnel` does `ssh -N -L 9119:127.0.0.1:9119 Unison`; desktop entry **Hermes (Unison)** opens Chromium at `http://127.0.0.1:9119`. Dashboard process stays on Unison
 
 Also grants `rebb` NOPASSWD for `/run/current-system/sw/bin/nixos-rebuild` so Unison can switch Aurelius unattended.
 

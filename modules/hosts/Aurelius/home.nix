@@ -26,7 +26,17 @@
       self.homeModules.tela
       self.homeModules.jupyter
       self.homeModules.grokbot
+      self.homeModules.lanSshClient
+      self.homeModules.hermesRemoteWebui
     ];
+
+    # Preserve Aurelius's github identity path when HM owns ~/.ssh/config.
+    programs.ssh.matchBlocks."github.com" = {
+      hostname = "github.com";
+      user = "git";
+      identityFile = "~/.ssh/GH";
+      identitiesOnly = true;
+    };
 
     programs.bash.enable = true;
     home = { stateVersion = "26.05"; };
