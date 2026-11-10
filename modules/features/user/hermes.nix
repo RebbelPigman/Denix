@@ -97,12 +97,17 @@
       backend.mode = "none";
       hermesHomeFiles = {
         "skills/denix-host/SKILL.md" = ./denix-host/SKILL.md;
+        "skins/catppuccin-mocha.yaml" = ./hermes-catppuccin/catppuccin-mocha.skin.yaml;
+        "dashboard-themes/catppuccin-mocha.yaml" = ./hermes-catppuccin/catppuccin-mocha.dashboard.yaml;
       };
       settings = {
         model.provider = "xai-oauth";
         # Root ~/Hermes/config.yaml only. Profile files pin their own model.
         # Was grok-4.6, and activation kept writing that over the root file.
         model.default = "grok-4.7";
+        # Catppuccin Mocha for CLI/TUI skin + Web dashboard theme.
+        display.skin = "catppuccin-mocha";
+        dashboard.theme = "catppuccin-mocha";
         # Banner is noise while denix-rebuild tracks upstream HEAD.
         updates.check = false;
         # Root ~/Hermes/config.yaml only. The HM module deep-merges settings
@@ -164,6 +169,22 @@
       if [ ! -f ${lib.escapeShellArg secretsEnv} ]; then
         umask 077
         printf '%s\n' '# API_SERVER_KEY=replace-me' > ${lib.escapeShellArg secretsEnv}
+      fi
+      # Seed Catppuccin into every profile home. CLI skins and dashboard themes
+      # resolve from the active profile's HERMES_HOME, not only the root tree.
+      skinSrc=${lib.escapeShellArg hermesHome}/skins/catppuccin-mocha.yaml
+      dashSrc=${lib.escapeShellArg hermesHome}/dashboard-themes/catppuccin-mocha.yaml
+      if [ -d ${lib.escapeShellArg hermesHome}/profiles ]; then
+        for profile in ${lib.escapeShellArg hermesHome}/profiles/*; do
+          [ -d "$profile" ] || continue
+          mkdir -p "$profile/skins" "$profile/dashboard-themes"
+          if [ -f "$skinSrc" ]; then
+            cp -f "$skinSrc" "$profile/skins/catppuccin-mocha.yaml"
+          fi
+          if [ -f "$dashSrc" ]; then
+            cp -f "$dashSrc" "$profile/dashboard-themes/catppuccin-mocha.yaml"
+          fi
+        done
       fi
     '';
   };

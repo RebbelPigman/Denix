@@ -1,0 +1,62 @@
+name: catppuccin-mocha
+description: Catppuccin Mocha — mauve accent on dark latte base
+
+colors:
+  background: "#1e1e2e"
+
+  ui_accent: "#cba6f7"
+  banner_accent: "#cba6f7"
+  ui_tool: "#89b4fa"
+  ui_thinking: "#6c7086"
+
+  banner_title: "#cba6f7"
+  banner_text: "#cdd6f4"
+  ui_text: "#cdd6f4"
+  ui_primary: "#cdd6f4"
+  ui_label: "#bac2de"
+  banner_dim: "#6c7086"
+  banner_border: "#45475a"
+  ui_border: "#45475a"
+
+  ui_ok: "#a6e3a1"
+  ui_warn: "#f9e2af"
+  ui_error: "#f38ba8"
+
+  prompt: "#cdd6f4"
+  input_rule: "#cba6f7"
+  response_border: "#89b4fa"
+
+  status_bar_bg: "#181825"
+  status_bar_text: "#cdd6f4"
+  status_bar_strong: "#cba6f7"
+  status_bar_dim: "#6c7086"
+  status_bar_good: "#a6e3a1"
+  status_bar_warn: "#f9e2af"
+  status_bar_bad: "#fab387"
+  status_bar_critical: "#f38ba8"
+
+  session_label: "#89b4fa"
+  session_border: "#45475a"
+
+  completion_menu_bg: "#181825"
+  completion_menu_current_bg: "#313244"
+  selection_bg: "#45475a"
+  shell_dollar: "#89b4fa"
+  voice_status_bg: "#181825"
+
+  syntax_string: "#a6e3a1"
+  syntax_number: "#fab387"
+  syntax_keyword: "#cba6f7"
+  syntax_comment: "#6c7086"
+
+  diff_added: "#a6e3a1"
+  diff_removed: "#f38ba8"
+  diff_added_word: "#94e2d5"
+  diff_removed_word: "#eba0ac"
+
+branding:
+  agent_name: Hermes Agent
+  prompt_symbol: "❯"
+  help_header: "(^_^)? Commands"
+
+tool_prefix: "┊"
