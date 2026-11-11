@@ -29,10 +29,15 @@
 
     networking.hostName = "Unison";
 
+    # Login/SSH shell for rebb (HM catfish is config only; this wires PATH).
+    programs.fish.enable = true;
+
     users.users.rebb = {
       isNormalUser = true;
       description = "rebb";
       extraGroups = [ "wheel" "networkmanager" ];
+      # SSH login shell (kitty already runs fish via catfish).
+      shell = pkgs.fish;
       linger = true;
     };
 

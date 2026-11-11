@@ -354,6 +354,7 @@ Shared fish + kitty.
 - `home.packages` includes `neovim`. Activation clones or fast-forwards https://github.com/RebbelPigman/nvim into `~/.config/nvim`. A different checkout is left alone.
 - abbrs: `nixos-test`, `nixos-switch` (`--flake ~/Dropbox/Projects/Denix`), `git-acp`
 - kitty: BlexMono, fish, tall layout, noctalia theme include, split/tab maps
+- Login/SSH shell is not this module — set `users.users.rebb.shell = pkgs.fish` on the host (Unison does)
 
 Host homes import this and then overlay host-only fish/kitty bits (Aurelius: python nix-shell alias + Catppuccin-Mocha themeFile).
 
