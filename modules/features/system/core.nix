@@ -1,5 +1,69 @@
 { self, inputs, ... }: {
-  flake.nixosModules.core = { pkgs, ... }: {
+  flake.nixosModules.core = { pkgs, lib, ... }:
+  let
+    batTheme = pkgs.fetchurl {
+      name = "catppuccin-mocha.tmTheme";
+      url = "https://raw.githubusercontent.com/catppuccin/bat/main/themes/Catppuccin%20Mocha.tmTheme";
+      hash = "sha256-OVVm8IzrMBuTa5HAd2kO+U9662UbEhVT8gHJnCvUqnc=";
+    };
+    btopTheme = pkgs.fetchurl {
+      name = "catppuccin_mocha.theme";
+      url = "https://raw.githubusercontent.com/catppuccin/btop/main/themes/catppuccin_mocha.theme";
+      hash = "sha256-THRpq5vaKCwf9gaso3ycC4TNDLZtBB5Ofh/tOXkfRkQ=";
+    };
+    atuinTheme = pkgs.fetchurl {
+      name = "catppuccin-mocha-mauve.toml";
+      url = "https://raw.githubusercontent.com/catppuccin/atuin/main/themes/mocha/catppuccin-mocha-mauve.toml";
+      hash = "sha256-X66L7YmWQ4ClPeQoFhXkkWXPrmpLwWfHcDNbvnc+K3g=";
+    };
+    yaziFlavors = pkgs.fetchFromGitHub {
+      owner = "yazi-rs";
+      repo = "flavors";
+      rev = "38c08d8eb9ea0d28c8c911a249a08f27ba2151ac";
+      hash = "sha256-lITDt1QvL54u6gbJiGixPyP6lk72f3rkiNPDrUg6G8I=";
+    };
+    btopThemes = pkgs.runCommand "btop-themes" { } ''
+      mkdir -p $out
+      cp ${btopTheme} $out/catppuccin_mocha.theme
+    '';
+    btopConf = pkgs.writeText "btop.conf" ''
+      color_theme = "catppuccin_mocha"
+      theme_background = True
+      truecolor = True
+    '';
+    swaylockConf = pkgs.writeText "swaylock.config" ''
+      ignore-empty-password
+      color=1e1e2e
+      inside-color=1e1e2e
+      inside-clear-color=1e1e2e
+      inside-caps-lock-color=1e1e2e
+      inside-ver-color=1e1e2e
+      inside-wrong-color=1e1e2e
+      key-hl-color=a6e3a1
+      bs-hl-color=f38ba8
+      caps-lock-key-hl-color=fab387
+      caps-lock-bs-hl-color=f38ba8
+      layout-bg-color=1e1e2e
+      layout-border-color=1e1e2e
+      layout-text-color=cdd6f4
+      line-color=1e1e2e
+      line-clear-color=1e1e2e
+      line-caps-lock-color=1e1e2e
+      line-ver-color=1e1e2e
+      line-wrong-color=1e1e2e
+      ring-color=cba6f7
+      ring-clear-color=f9e2af
+      ring-caps-lock-color=fab387
+      ring-ver-color=89b4fa
+      ring-wrong-color=f38ba8
+      separator-color=1e1e2e
+      text-color=cdd6f4
+      text-clear-color=cdd6f4
+      text-caps-lock-color=cdd6f4
+      text-ver-color=cdd6f4
+      text-wrong-color=cdd6f4
+    '';
+  in {
     imports = [
       self.nixosModules.sway
     ];
@@ -71,22 +135,77 @@
     #   extensions = [ ];
     # };
 
+    programs.bat = {
+      enable = true;
+      settings.theme = "Catppuccin Mocha";
+    };
+
+    programs.atuin = {
+      enable = true;
+      daemon.enable = false;
+      enableFishIntegration = false;
+      enableBashIntegration = false;
+      enableZshIntegration = false;
+      settings.theme.name = "catppuccin-mocha-mauve";
+    };
+
     environment.systemPackages = with pkgs; [
     # Critical packages for system Function
-	  kitty  vim
+	  kitty
+      (vim-full.customize {
+        name = "vim";
+        vimrcConfig.customRC = ''
+          set termguicolors
+          set background=dark
+          colorscheme catppuccin_mocha
+        '';
+        vimrcConfig.packages.catp = {
+          start = [ vimPlugins.catppuccin-vim ];
+        };
+      })
 	  git  wget
       yazi  lynx
     # Nice to Have Terminal Utilities
-      fzf  eza  bat  dust  tldr  atuin  zellij
-	  atop  btop  htop  powertop  fastfetch
+      fzf  eza  dust  tldr  zellij
+	  atop  htop  powertop  fastfetch
 	  brightnessctl
+      (lib.hiPrio (writeShellScriptBin "btop" ''
+        exec ${lib.getExe btop} --config ${btopConf} --themes-dir ${btopThemes} "$@"
+      ''))
+      (lib.hiPrio (writeShellScriptBin "swaylock" ''
+        exec ${lib.getExe swaylock} --config ${swaylockConf} "$@"
+      ''))
     # Nice to Have GUIs
   	  ungoogled-chromium
       mpv
       imv
     ];
 
+    environment.etc."bat/themes/Catppuccin Mocha.tmTheme".source = batTheme;
+    environment.etc."atuin/themes/catppuccin-mocha-mauve.toml".source = atuinTheme;
+    environment.etc."mpv/mpv.conf".text = ''
+      background-color='#1e1e2e'
+      osd-color='#cdd6f4'
+      osd-border-color='#1e1e2e'
+      osd-shadow-color='#181825'
+    '';
+    environment.etc.imv_config.text = ''
+      [options]
+      background = 1e1e2e
+    '';
+    environment.etc."zellij/config.kdl".text = ''
+      theme "catppuccin-mocha"
+    '';
+    environment.etc."fastfetch/config.jsonc".text = ''
+      {
+        "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+        "logo": { "color": { "1": "magenta", "2": "blue" } },
+        "display": { "color": { "keys": "magenta", "title": "blue" } }
+      }
+    '';
+
   # Seting Chromium, vim, imv and mpv as defaults system wide
+
 	xdg.mime.enable = true;
 	xdg.mime.defaultApplications = {
       # === Web / Default ===
@@ -139,9 +258,12 @@
 	};
 
   # Setting up yazi to open things propperly
+
 	programs.yazi = {
       enable = true;
+      flavors.catppuccin-mocha = "${yaziFlavors}/catppuccin-mocha.yazi";
       settings = {
+        theme.flavor.dark = "catppuccin-mocha";
         yazi = {
         # === Text ===
 					opener = {
@@ -170,6 +292,8 @@
       TERMINAL = "kitty";
       EDITOR = "vim";
       VISUAL = "vim";
+      ZELLIJ_CONFIG_DIR = "/etc/zellij";
+      FZF_DEFAULT_OPTS = "--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 --color=selected-bg:#45475a --color=border:#313244,label:#cdd6f4";
     };
   };
 }

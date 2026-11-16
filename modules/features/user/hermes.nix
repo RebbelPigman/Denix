@@ -4,6 +4,7 @@
   #   imports = [ self.homeModules.catfish self.homeModules.hermes ];
   # Do not also import grokbot. This module already pulls it in.
   # Do not also add this to home-manager.sharedModules.
+  # Limp-mode user timers live here (19:00 on / 07:00 off, Persistent=false).
   #
   # Host NixOS module still needs:
   #   users.users.rebb.linger = true;
@@ -58,6 +59,33 @@
         <circle cx="32" cy="48" r="5" fill="#C9A227"/>
       </svg>
     '';
+    limp = "/home/rebb/Dropbox/AgentGarden/Scripts/limpMode.sh";
+    mkLimpWrapper = action:
+      pkgs.writeShellApplication {
+        name = "limpmode-${action}";
+        runtimeInputs = [
+          pkgs.bash
+          pkgs.coreutils
+          pkgs.git
+          pkgs.gnugrep
+          pkgs.python3
+          pkgs.systemd
+        ];
+        text = ''
+          export PATH="/run/wrappers/bin:/run/current-system/sw/bin:/etc/profiles/per-user/rebb/bin:/home/rebb/.nix-profile/bin:$PATH"
+          export HOME="${config.home.homeDirectory}"
+          export HERMES_HOME="${hermesHome}"
+          exec ${pkgs.bash}/bin/bash ${limp} ${action}
+        '';
+      };
+    mkLimpService = action: {
+      Unit.Description = "Agent Garden limp mode ${action}";
+      Service = {
+        Type = "oneshot";
+        ExecStart = "${mkLimpWrapper action}/bin/limpmode-${action}";
+        TimeoutStartSec = "10min";
+      };
+    };
   in {
     imports = [
       inputs.hermes-agent.homeManagerModules.default
@@ -162,6 +190,27 @@
         WorkingDirectory = hermesHome;
       };
       Install.WantedBy = [ "default.target" ];
+    };
+
+    systemd.user.services.limpmode-on = mkLimpService "on";
+    systemd.user.services.limpmode-off = mkLimpService "off";
+    systemd.user.timers.limpmode-on = {
+      Unit.Description = "Limp mode on at 19:00 SAST";
+      Timer = {
+        OnCalendar = "*-*-* 19:00:00 Africa/Johannesburg";
+        Persistent = false;
+        Unit = "limpmode-on.service";
+      };
+      Install.WantedBy = [ "timers.target" ];
+    };
+    systemd.user.timers.limpmode-off = {
+      Unit.Description = "Limp mode off at 07:00 SAST";
+      Timer = {
+        OnCalendar = "*-*-* 07:00:00 Africa/Johannesburg";
+        Persistent = false;
+        Unit = "limpmode-off.service";
+      };
+      Install.WantedBy = [ "timers.target" ];
     };
 
     home.activation.hermesDirs = config.lib.dag.entryAfter [ "writeBoundary" ] ''

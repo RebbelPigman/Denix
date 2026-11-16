@@ -70,9 +70,8 @@ modules/
     user/                            # flake.homeModules.*
       catfish.nix                    # fish + kitty
       tela.nix                       # GTK/Qt Tela-circle for niri hosts
-      hermes.nix                     # Hermes Agent (imports grokbot)
+      hermes.nix                     # Hermes Agent (imports grokbot; limp timers)
       grokbot.nix                    # Grok Bot package
-      limpmode.nix                   # user timers: limp mode 19:00 on / 07:00 off
       jupyter.nix                    # JupyterLab + Chromium desktop entry
       karousel.nix                   # Karousel shortcuts / kwinrc
   hosts/
@@ -182,10 +181,11 @@ Baseline that every host should import.
 - flakes + nix-command
 - Hermes Agent cachix substituter (`https://hermes-agent.cachix.org`)
 - BlexMono Nerd Font + Sarasa Gothic, fontconfig defaults
-- CLI/GUI baseline: st, vim, git, wget, yazi, lynx, fzf, eza, bat, dust, tldr, atuin, zellij, atop/btop/htop/powertop, fastfetch, brightnessctl, ungoogled-chromium, mpv, imv
+- CLI/GUI baseline: kitty, vim, git, wget, yazi, lynx, fzf, eza, bat, dust, tldr, atuin, zellij, atop/btop/htop/powertop, fastfetch, brightnessctl, ungoogled-chromium, mpv, imv, swaylock
+- Catppuccin Mocha on packages that take a theme (bat, btop, fzf, yazi, zellij, atuin mauve, vim, mpv, imv, fastfetch, swaylock). Kitty stays in `catfish`.
 - Chromium extension force-install is commented out in `core.nix`. Future work. ungoogled-chromium does not install from that policy.
 - MIME defaults: chromium / imv / mpv / vim
-- yazi openers, `TERMINAL=st`, `EDITOR=vim`
+- yazi openers, `TERMINAL=kitty`, `EDITOR=vim`
 
 The first rebuild that needs the Hermes cache must pass the same `--option extra-substituters` / `--option extra-trusted-public-keys` flags. `nix.settings` only apply after a successful switch.
 
@@ -352,7 +352,7 @@ VirtualBox host and a Windows 11 Pro VM definition. Import on the host that shou
 Shared fish + kitty.
 
 - fish aliases: `ff`, `yz`, `vi`/`vim` → nvim
-- `home.packages` includes `neovim`. Activation clones or fast-forwards https://github.com/RebbelPigman/nvim into `~/.config/nvim`. A different checkout is left alone.
+- `home.packages` includes `neovim` and `visidata`. `~/.visidatarc` is Catppuccin Mocha (256-color theme `catppuccin-mocha`). Activation clones or fast-forwards https://github.com/RebbelPigman/nvim into `~/.config/nvim`. A different checkout is left alone.
 - abbrs: `nixos-test`, `nixos-switch` (`--flake ~/Dropbox/Projects/Denix`), `git-acp`
 - kitty: BlexMono, fish, tall layout, noctalia theme include, split/tab maps
 - Login/SSH shell is not this module — set `users.users.rebb.shell = pkgs.fish` on the host (Unison does)
@@ -379,6 +379,7 @@ Hermes Agent + xAI proxy + Grok Bot.
 - Hermes Web Dashboard unit on `:9119` (`hermes dashboard --no-open`)
 - Chromium desktop entry `Hermes` (fuzzel / Noctalia / Plasma). Official Electron `programs.hermes-agent.desktop` stays off
 - imports `homeModules.grokbot` (do not import grokbot again on that host)
+- limp-mode user oneshots: 19:00 SAST `Scripts/limpMode.sh on`, 07:00 SAST `off`. Both restart Hermes. `Persistent=false` so a missed wall-clock does not catch up at boot
 - `denix-rebuild` passes `--override-input hermes-agent github:NousResearch/hermes-agent` so each system rebuild evaluates upstream HEAD
 - activation creates `~/Hermes` and a placeholder secrets file
 
@@ -397,12 +398,6 @@ hermes auth add xai-oauth
 Grok Bot package from `inputs.grok-bot` (`github:jordangarrison/grok-bot-flake`). No unit of its own. Sway starts `grok-bot` when the bin is on PATH. Niri does not.
 
 `homeModules.hermes` imports this. `aureliusHome` imports it directly because Aurelius does not import hermes. A host that imports hermes must not also import grokbot.
-
-#### `limpMode` → `homeModules.limpMode`
-
-User oneshot timers on Unison only. 19:00 SAST runs `Scripts/limpMode.sh on`; 07:00 SAST runs `off`. Both restart Hermes. `Persistent=false` so a missed wall-clock does not catch up at boot.
-
-Imported from `unisonHome`. Linger is already on `users.users.rebb`.
 
 #### `jupyter` → `homeModules.jupyter`
 
@@ -428,7 +423,7 @@ See system `karousel` above. Plasma-only.
 | Host | System imports | Home imports | Notes |
 | --- | --- | --- |
 | **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game, lanSsh, windows | catfish, tela, jupyter, grokbot | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway (sway comes from core). No Xorg. Home attr `aureliusHome` / `rebbAurelius`. `windows` is VirtualBox + Windows 11 Pro. Grok Bot is the package only; niri does not exec it |
-| **Unison** | core, unisonHardware, myHomeManager, office, game, hermesRebuild, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter, limpMode | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (Wayland session only). sway comes from core. ly lists plasma and sway, not Plasma (X11). Sway uses KWallet, KDE Qt theme, and KDE portals except screencast/screenshot (wlr) and notifications (mako). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` or `sway` |
+| **Unison** | core, unisonHardware, myHomeManager, office, game, hermesRebuild, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (Wayland session only). sway comes from core. ly lists plasma and sway, not Plasma (X11). Sway uses KWallet, KDE Qt theme, and KDE portals except screencast/screenshot (wlr) and notifications (mako). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` or `sway` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
 Aurelius does not import `office` / `plasma` / `karousel`. sway is already in `core`, so ly lists niri and sway. Unison imports `office` and gets sway from `core`. Do not import `sway` again.

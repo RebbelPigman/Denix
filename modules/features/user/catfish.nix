@@ -67,7 +67,46 @@
       '';
     };
 
-    home.packages = [ pkgs.neovim ];
+    home.packages = [
+      pkgs.neovim
+      pkgs.visidata
+    ];
+
+    # Mocha accents on the terminal background. visidata 3.4 has no hex;
+    # a 256-color bg (235) reads grey next to kitty Mocha (#1e1e2e). Empty
+    # color_default keeps kitty's bg.
+    home.file.".visidatarc".text = ''
+      from visidata import vd, options
+      vd.themes["catppuccin-mocha"] = dict(
+          color_default="",
+          color_default_hdr="bold 183",
+          color_bottom_hdr="underline 189",
+          color_current_row="reverse",
+          color_current_col="183",
+          color_current_hdr="bold reverse",
+          color_column_sep="243",
+          color_key_col="183",
+          color_edit_cell="111 blue",
+          color_selected_row="on 183",
+          color_note_row="223 yellow",
+          color_note_type="111 blue",
+          color_warning="216 yellow",
+          color_error="211 red",
+          color_status="bold 189",
+          color_menu="189",
+          color_menu_active="reverse 183",
+          color_menu_help="243",
+          color_active_status="reverse 183",
+          color_inactive_status="243",
+          color_working="bold 151 green",
+          color_add_pending="151 green",
+          color_change_pending="reverse 223 yellow",
+          color_delete_pending="211 red",
+          plot_colors="111 151 223 211 183 216",
+      )
+      options.theme = "catppuccin-mocha"
+    '';
+
 
     # Mutable checkout so a later push to that repo lands on the next activation.
     # Do not clobber a checkout whose origin is not this repo.
