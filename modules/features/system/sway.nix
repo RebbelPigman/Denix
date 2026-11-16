@@ -411,7 +411,7 @@
       for_window [app_id="^chromium-browser$"] focus
       for_window [app_id="^kitty-drawr$"] floating disable, focus
       for_window [app_id="^kitty$"] floating enable, resize set width 60 ppt height 80 ppt, move position center
-      for_window [app_id="^nemo$"] floating enable, resize set width 60 ppt height 80 ppt, move position center
+      for_window [app_id="^org.kde.dolphin$"] floating enable, resize set width 60 ppt height 80 ppt, move position center
       for_window [app_id="^qalculate-gtk$"] floating enable, resize set width 60 ppt height 80 ppt, move position center
       for_window [app_id="^anki$"] floating enable, resize set width 60 ppt height 80 ppt, move position center
       for_window [app_id="^mpv$"] floating enable
@@ -423,7 +423,7 @@
       bindsym $mod+b exec brave
       bindsym $mod+Alt+b exec chromium
       bindsym $mod+Ctrl+b exec google-chrome
-      bindsym $mod+e exec nemo
+      bindsym $mod+e exec dolphin
       bindsym $mod+i exec obsidian
       bindsym $mod+q kill
       bindsym $mod+Shift+q exec ${swaymsg} exit

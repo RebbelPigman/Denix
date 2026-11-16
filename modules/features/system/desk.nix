@@ -2,10 +2,9 @@
   flake.nixosModules.desk = { pkgs, lib, ... }: {
     services.gvfs.enable = true;
 
-    # Nemo / xdg-open handlers. mkForce wins over core's vim maps.
+    # Dolphin / xdg-open handlers. mkForce wins over core's vim maps.
     xdg.mime.defaultApplications = {
-      "inode/directory" = "nemo.desktop";
-      "application/x-gnome-saved-search" = "nemo.desktop";
+      "inode/directory" = "org.kde.dolphin.desktop";
 
       # Text → Kate
       "text/plain" = lib.mkForce "org.kde.kate.desktop";
@@ -28,19 +27,7 @@
     };
 
     environment.systemPackages = with pkgs; [
-      nemo-with-extensions
-      # Upstream desktop entry is Name=Files (Nautilus-style generic name).
-      # A hiPrio sibling that only ships nemo.desktop wins the collision in
-      # /share/applications without rebuilding nemo.
-      (lib.hiPrio (pkgs.runCommand "nemo-desktop-name" { } ''
-        mkdir -p $out/share/applications
-        src=${pkgs.nemo-with-extensions}/share/applications/nemo.desktop
-        if [ ! -e "$src" ]; then
-          src=${pkgs.nemo}/share/applications/nemo.desktop
-        fi
-        sed -E 's/^Name(\[[^]]+\])?=Files$/Name\1=nemo/' "$src" \
-          > $out/share/applications/nemo.desktop
-      ''))
+      kdePackages.dolphin
       kdePackages.kalk
       kdePackages.kate
       kdePackages.kolourpaint

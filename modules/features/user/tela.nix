@@ -11,7 +11,7 @@
       [Appearance]
       color_scheme_path=${noctaliaPalette}
       custom_palette=true
-      icon_theme=Tela-circle
+      icon_theme=Tela-circle-dark
       standard_dialogs=default
       style=Fusion
 
@@ -41,35 +41,57 @@
   in {
     gtk = {
       enable = true;
+      theme = {
+        name = "adw-gtk3-dark";
+        package = pkgs.adw-gtk3;
+      };
       iconTheme = {
-        # Directory name from tela-circle-icon-theme (standard variant).
-        # Dark session: "Tela-circle-dark".
-        # Plasma rice match: "Tela-circle-purple-dark" + colorVariants = [ "purple" ].
-        name = "Tela-circle";
+        # Dark session under niri/noctalia. Plasma keeps its own iconTheme.
+        name = "Tela-circle-dark";
         package = pkgs.tela-circle-icon-theme;
       };
     };
 
-    # qt6ct is the niri wrapper's platform theme. Do not manage qt6ct.conf
-    # via xdg.configFile — that is a store symlink and qt6ct cannot Apply.
-    # Do not manage colors/noctalia.conf either: noctalia's qt template writes it.
+    # qt6ct is the niri wrapper's platform theme. Dolphin is Qt6 — qt5ct leaves
+    # Fusion chrome half-themed. Do not manage qt6ct.conf via xdg.configFile
+    # (store symlink; qt6ct cannot Apply). Noctalia's qt template owns the palette.
     qt = {
       enable = true;
       platformTheme.name = "qtct";
+      style.name = "Fusion";
     };
+
+    home.packages = [
+      pkgs.qt6Packages.qt6ct
+      pkgs.libsForQt5.qt5ct
+    ];
 
     home.activation.qt6ctConf = config.lib.dag.entryAfter [ "writeBoundary" ] ''
       conf=${lib.escapeShellArg "${homeDir}/.config/qt6ct/qt6ct.conf"}
+      conf5=${lib.escapeShellArg "${homeDir}/.config/qt5ct/qt5ct.conf"}
       run mkdir -p ${lib.escapeShellArg "${homeDir}/.config/qt6ct"}
+      run mkdir -p ${lib.escapeShellArg "${homeDir}/.config/qt5ct"}
       if [ -L "$conf" ]; then
         run rm -f "$conf"
       fi
-      if [ ! -f "$conf" ] || ! grep -q 'color_scheme_path=.*/qt6ct/colors/noctalia.conf' "$conf"; then
-        run cp ${qt6ctConf} "$conf"
-        run chmod u+w "$conf"
+      # Always refresh Appearance so a stale qt5ct / light Tela pin cannot stick.
+      run cp ${qt6ctConf} "$conf"
+      run chmod u+w "$conf"
+      # Qt5 apps still read qt5ct. Same palette + dark icons.
+      if [ -L "$conf5" ]; then
+        run rm -f "$conf5"
       fi
+      run cp ${qt6ctConf} "$conf5"
+      run chmod u+w "$conf5"
     '';
 
-    home.sessionVariables.GTK_ICON_THEME = "Tela-circle";
+    # Force qt6ct for Qt6 (Dolphin). HM qtct alone can leave qt5ct in the session.
+    home.sessionVariables = {
+      GTK_ICON_THEME = "Tela-circle-dark";
+      GTK_THEME = "adw-gtk3-dark";
+      # HM qt.platformTheme qtct still emits qt5ct. Dolphin is Qt6.
+      QT_QPA_PLATFORMTHEME = lib.mkForce "qt6ct";
+      QT_QPA_PLATFORM = "wayland;xcb";
+    };
   };
 }

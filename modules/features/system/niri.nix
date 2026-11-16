@@ -25,7 +25,7 @@
           GDK_SCALE = "1";
           GDK_DPI_SCALE = "1";
           GTK_THEME = "adw-gtk3-dark";
-          GTK_ICON_THEME = "Tela-circle";
+          GTK_ICON_THEME = "Tela-circle-dark";
           GTK_USE_PORTAL = "1";
       # QT_STYLE_OVERRIDE = "kvantum";
 		};
@@ -109,7 +109,7 @@
 	      {
             matches = [ 
 			  { app-id = "^anki$"; }
-			  { app-id = "^nemo$"; }
+			  { app-id = "^org\.kde\.dolphin$"; }
 			  { app-id = "^org.kde.kate$"; }
 			];
 			opacity = 0.90;
@@ -189,7 +189,7 @@
 		  "Mod+F10".spawn-sh = "kitty htop";
 		  "Mod+F11".spawn-sh = "kitty atop";
 		  "Mod+F12".spawn-sh = "kitty btop";
-		  "Mod+E".spawn = "nemo";
+		  "Mod+E".spawn = "dolphin";
 		  "Mod+Q".close-window = {};
 		  "Mod+Shift+Q".quit = {};
 		  "Mod+O".toggle-overview = {};
