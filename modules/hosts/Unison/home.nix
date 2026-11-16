@@ -26,6 +26,7 @@
       self.homeModules.hermes
       self.homeModules.jupyter
       self.homeModules.lanSshClient
+      self.homeModules.limpMode
     ];
 
     # Preserve Unison's github identity path when HM owns ~/.ssh/config.

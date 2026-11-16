@@ -72,6 +72,7 @@ modules/
       tela.nix                       # GTK/Qt Tela-circle for niri hosts
       hermes.nix                     # Hermes Agent (imports grokbot)
       grokbot.nix                    # Grok Bot package
+      limpmode.nix                   # user timers: limp mode 19:00 on / 07:00 off
       jupyter.nix                    # JupyterLab + Chromium desktop entry
       karousel.nix                   # Karousel shortcuts / kwinrc
   hosts/
@@ -193,8 +194,8 @@ The first rebuild that needs the Hermes cache must pass the same `--option extra
 DE-agnostic GUI layer. Import on desktop hosts (niri, sway, or plasma).
 
 - gvfs
-- MIME: directories → Dolphin, text → Kate (`mkForce` over core's vim maps), PDF/epub → zathura, torrents → qBittorrent
-- `kdePackages.dolphin`
+- MIME: directories → Nautilus, text → Kate (`mkForce` over core's vim maps), PDF/epub → zathura, torrents → qBittorrent
+- `nautilus`
 - kate, kalk, kolourpaint, qt6ct, qalculate-gtk, adw-gtk3, nwg-look, zathura, rmpc, vlc, qbittorrent, pavucontrol, wl-clipboard, wayland-utils, xdg-utils, ffmpeg, zip/unzip/p7zip/unrar
 
 #### `game` → `nixosModules.game`
@@ -241,7 +242,7 @@ Wrapper settings (in the same file):
 - US kbd with caps↔escape, ralt compose, mac numpad; touchpad tap + natural scroll
 - Catppuccin-ish layout colors, named workspaces `Browser` / `Desk` / `Drawr`
 - window rules (floating kitty, browsers on Browser, Obsidian/chromium on Desk, kitty-drawr / Steam / Vesktop on Drawr)
-- keybinds (kitty, Drawr kitty, fuzzel, noctalia IPC, browsers, yazi/dolphin, F-keys, volume/brightness)
+- keybinds (kitty, Drawr kitty, fuzzel, noctalia IPC, browsers, yazi/nautilus, F-keys, volume/brightness)
 
 Do not also put `homeModules.tela` on `home-manager.sharedModules`.
 
@@ -263,7 +264,7 @@ Wrapper (`packages.mySway`) is `wrapper-modules.lib.wrapPackage` plus `--config`
 - US kbd with caps↔escape, ralt compose, mac numpad; touchpad tap + natural scroll
 - Catppuccin-ish colors, named workspaces `Browser` / `Desk` / `Drawr`
 - window assigns + floating kitty/mpv/imv/anki/qalculate
-- keybinds match niri chords (kitty, Drawr kitty, fuzzel, browsers, yazi/dolphin, F-keys, width presets, volume/brightness). Noctalia IPC keys fall back to fuzzel / pavucontrol / swaylock. No Mod+O overview (Sway has none)
+- keybinds match niri chords (kitty, Drawr kitty, fuzzel, browsers, yazi/nautilus, F-keys, width presets, volume/brightness). Noctalia IPC keys fall back to fuzzel / pavucontrol / swaylock. No Mod+O overview (Sway has none)
 - built-in bar + i3status; exec mako, swaybg, dropbox, swayidle→swaylock
 
 Do not import `office` / `plasma` / `karousel` on a sway host. Do not also put `homeModules.tela` on `home-manager.sharedModules`. Hosts that use sway still enable pipewire + `power-profiles-daemon` + `upower` in the host configuration (volume binds use `wpctl`).
@@ -397,6 +398,12 @@ Grok Bot package from `inputs.grok-bot` (`github:jordangarrison/grok-bot-flake`)
 
 `homeModules.hermes` imports this. `aureliusHome` imports it directly because Aurelius does not import hermes. A host that imports hermes must not also import grokbot.
 
+#### `limpMode` → `homeModules.limpMode`
+
+User oneshot timers on Unison only. 19:00 SAST runs `Scripts/limpMode.sh on`; 07:00 SAST runs `off`. Both restart Hermes. `Persistent=false` so a missed wall-clock does not catch up at boot.
+
+Imported from `unisonHome`. Linger is already on `users.users.rebb`.
+
 #### `jupyter` → `homeModules.jupyter`
 
 JupyterLab in one `python3.withPackages` env (Lab + kernel packages together) plus a `.desktop` launcher.
@@ -421,7 +428,7 @@ See system `karousel` above. Plasma-only.
 | Host | System imports | Home imports | Notes |
 | --- | --- | --- |
 | **Aurelius** | core, aureliusHardware, myHomeManager, desk, niri, game, lanSsh, windows | catfish, tela, jupyter, grokbot | systemd-boot, user `rebb` with linger, pipewire, printing. ly lists niri and sway (sway comes from core). No Xorg. Home attr `aureliusHome` / `rebbAurelius`. `windows` is VirtualBox + Windows 11 Pro. Grok Bot is the package only; niri does not exec it |
-| **Unison** | core, unisonHardware, myHomeManager, office, game, hermesRebuild, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (Wayland session only). sway comes from core. ly lists plasma and sway, not Plasma (X11). Sway uses KWallet, KDE Qt theme, and KDE portals except screencast/screenshot (wlr) and notifications (mako). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` or `sway` |
+| **Unison** | core, unisonHardware, myHomeManager, office, game, hermesRebuild, lanSsh, denixWeeklySwitch | catfish, hermes, jupyter, limpMode | systemd-boot, Intel, user `rebb` with linger, pipewire, printing. Plasma via `office` (Wayland session only). sway comes from core. ly lists plasma and sway, not Plasma (X11). Sway uses KWallet, KDE Qt theme, and KDE portals except screencast/screenshot (wlr) and notifications (mako). Home attr `unisonHome` / `rebbUnison`. Do not import `tela` or `sway` |
 | **Default** | core, defaultHardware, myHomeManager | (bash only) | Template. User `john`. Hardware file is empty. See caveat below |
 
 Aurelius does not import `office` / `plasma` / `karousel`. sway is already in `core`, so ly lists niri and sway. Unison imports `office` and gets sway from `core`. Do not import `sway` again.
