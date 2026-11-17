@@ -2,9 +2,9 @@
   flake.nixosModules.desk = { pkgs, lib, ... }: {
     services.gvfs.enable = true;
 
-    # Dolphin / xdg-open handlers. mkForce wins over core's vim maps.
+    # Nautilus / xdg-open handlers. mkForce wins over core's vim maps.
     xdg.mime.defaultApplications = {
-      "inode/directory" = "org.kde.dolphin.desktop";
+      "inode/directory" = "org.gnome.Nautilus.desktop";
 
       # Text → Kate
       "text/plain" = lib.mkForce "org.kde.kate.desktop";
@@ -27,7 +27,7 @@
     };
 
     environment.systemPackages = with pkgs; [
-      kdePackages.dolphin
+      nautilus
       kdePackages.kalk
       kdePackages.kate
       kdePackages.kolourpaint

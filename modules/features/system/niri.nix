@@ -109,7 +109,7 @@
 	      {
             matches = [ 
 			  { app-id = "^anki$"; }
-			  { app-id = "^org\.kde\.dolphin$"; }
+			  { app-id = "^org\.gnome\.Nautilus$"; }
 			  { app-id = "^org.kde.kate$"; }
 			];
 			opacity = 0.90;
@@ -189,7 +189,7 @@
 		  "Mod+F10".spawn-sh = "kitty htop";
 		  "Mod+F11".spawn-sh = "kitty atop";
 		  "Mod+F12".spawn-sh = "kitty btop";
-		  "Mod+E".spawn = "dolphin";
+		  "Mod+E".spawn = "nautilus";
 		  "Mod+Q".close-window = {};
 		  "Mod+Shift+Q".quit = {};
 		  "Mod+O".toggle-overview = {};
