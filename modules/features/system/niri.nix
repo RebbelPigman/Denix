@@ -114,6 +114,7 @@
 			];
 			opacity = 0.90;
             open-floating = false;
+            draw-border-with-background = false;
           } 
 	      {
             matches = [ 
