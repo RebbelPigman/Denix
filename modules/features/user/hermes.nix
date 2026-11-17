@@ -142,6 +142,9 @@
         # and keeps every other key. Hand-set multiplex dies if this is absent
         # and an activation rewrites the gateway section.
         gateway.multiplex_profiles = true;
+        # Local plugin at ~/Hermes/plugins/hermes-session-reset-policy (do not
+        # hermes plugins update — that overwrites the thread-skip patch).
+        plugins.enabled = [ "hermes-session-reset-policy" ];
         terminal.backend = "local";
         terminal.cwd = ".";
         terminal.timeout = 600;
